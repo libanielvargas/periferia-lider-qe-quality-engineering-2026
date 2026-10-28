@@ -1,0 +1,111 @@
+
+Running 4 tests using 3 workers
+
+  ✘  3 [chromium] › tests/api-confirmation.spec.js:3:1 › consulta por API la operación 1 (105ms)
+  ✓  1 [chromium] › tests/clients.spec.js:3:1 › crea un cliente desde la interfaz (2.9s)
+  ✘  4 [chromium] › tests/summary-flaky.spec.js:3:1 › muestra el estado de la última operación (8.6s)
+  ✘  2 [chromium] › tests/operation.spec.js:5:1 › ejecuta una operación para el cliente creado anteriormente (12.1s)
+
+
+  1) [chromium] › tests/api-confirmation.spec.js:3:1 › consulta por API la operación 1 ─────────────
+
+    Error: expect(received).toBeTruthy()
+
+    Received: false
+        at /Users/libanielvargas/Downloads/Prueba_Tecnica_Lider_QE_Candidato (1)/tests/api-confirmation.spec.js:5:25)
+        at /Users/libanielvargas/Downloads/Prueba_Tecnica_Lider_QE_Candidato (1)/node_modules/playwright/lib/worker/workerProcessEntry.js:1654:9)
+        at /Users/libanielvargas/Downloads/Prueba_Tecnica_Lider_QE_Candidato (1)/node_modules/playwright/lib/worker/workerProcessEntry.js:1134:11)
+        at /Users/libanielvargas/Downloads/Prueba_Tecnica_Lider_QE_Candidato (1)/node_modules/playwright/lib/worker/workerProcessEntry.js:1652:7)
+
+    Error Context: test-results/api-confirmation-consulta-por-API-la-operación-1-chromium/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/api-confirmation-consulta-por-API-la-operación-1-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/api-confirmation-consulta-por-API-la-operación-1-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [chromium] › tests/operation.spec.js:5:1 › ejecuta una operación para el cliente creado anteriormente 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: locator('#operation-result')
+    Expected substring: "APPROVED"
+    Received string:    "client not found"
+    Timeout: 5000ms
+
+    Call log:
+      - Expect "toContainText" locator('#operation-result') with timeout 5000ms
+      - waiting for locator('#operation-result')
+        14 × locator resolved to <div aria-live="polite" class="result error" id="operation-result">client not found</div>
+           - unexpected value "client not found"
+
+        at /Users/libanielvargas/Downloads/Prueba_Tecnica_Lider_QE_Candidato (1)/tests/operation.spec.js:11:51)
+        at /Users/libanielvargas/Downloads/Prueba_Tecnica_Lider_QE_Candidato (1)/node_modules/playwright/lib/worker/workerProcessEntry.js:1654:9)
+        at /Users/libanielvargas/Downloads/Prueba_Tecnica_Lider_QE_Candidato (1)/node_modules/playwright/lib/worker/workerProcessEntry.js:1134:11)
+        at /Users/libanielvargas/Downloads/Prueba_Tecnica_Lider_QE_Candidato (1)/node_modules/playwright/lib/worker/workerProcessEntry.js:1652:7)
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/operation-ejecuta-una-oper-a4145-liente-creado-anteriormente-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/operation-ejecuta-una-oper-a4145-liente-creado-anteriormente-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/operation-ejecuta-una-oper-a4145-liente-creado-anteriormente-chromium/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/operation-ejecuta-una-oper-a4145-liente-creado-anteriormente-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/operation-ejecuta-una-oper-a4145-liente-creado-anteriormente-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) [chromium] › tests/summary-flaky.spec.js:3:1 › muestra el estado de la última operación ───────
+
+    Error: expect(locator).toHaveText(expected) failed
+
+    Locator:  locator('#summary-status')
+    Expected: "APPROVED"
+    Received: "PENDING"
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveText" locator('#summary-status') with timeout 5000ms
+      - waiting for locator('#summary-status')
+        9 × locator resolved to <strong id="summary-status">PENDING</strong>
+          - unexpected value "PENDING"
+
+        at /Users/libanielvargas/Downloads/Prueba_Tecnica_Lider_QE_Candidato (1)/tests/summary-flaky.spec.js:9:49)
+        at /Users/libanielvargas/Downloads/Prueba_Tecnica_Lider_QE_Candidato (1)/node_modules/playwright/lib/worker/workerProcessEntry.js:1654:9)
+        at /Users/libanielvargas/Downloads/Prueba_Tecnica_Lider_QE_Candidato (1)/node_modules/playwright/lib/worker/workerProcessEntry.js:1134:11)
+        at /Users/libanielvargas/Downloads/Prueba_Tecnica_Lider_QE_Candidato (1)/node_modules/playwright/lib/worker/workerProcessEntry.js:1652:7)
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/summary-flaky-muestra-el-estado-de-la-última-operación-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/summary-flaky-muestra-el-estado-de-la-última-operación-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/summary-flaky-muestra-el-estado-de-la-última-operación-chromium/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/summary-flaky-muestra-el-estado-de-la-última-operación-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/summary-flaky-muestra-el-estado-de-la-última-operación-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3 failed
+    [chromium] › tests/api-confirmation.spec.js:3:1 › consulta por API la operación 1 ──────────────
+    [chromium] › tests/operation.spec.js:5:1 › ejecuta una operación para el cliente creado anteriormente 
+    [chromium] › tests/summary-flaky.spec.js:3:1 › muestra el estado de la última operación ────────
+  1 passed (15.7s)
+exit=1

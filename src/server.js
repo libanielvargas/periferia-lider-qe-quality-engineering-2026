@@ -1,5 +1,6 @@
 import express from 'express';
 import crypto from 'node:crypto';
+import { fileURLToPath } from 'node:url';
 import {
   createClient,
   createOperation,
@@ -16,7 +17,7 @@ const app = express();
 const port = Number(process.env.PORT || 3000);
 
 app.use(express.json());
-app.use(express.static(new URL('./public', import.meta.url).pathname));
+app.use(express.static(fileURLToPath(new URL('./public', import.meta.url))));
 
 app.get('/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
