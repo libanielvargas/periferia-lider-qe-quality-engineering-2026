@@ -1,0 +1,128 @@
+
+Running 4 tests using 3 workers
+
+  ✘  1 [chromium] › tests/api-confirmation.spec.js:3:1 › consulta por API la operación 1 (54ms)
+  ✘  2 [chromium] › tests/operation.spec.js:5:1 › ejecuta una operación para el cliente creado anteriormente (22.7s)
+  ✘  4 [chromium] › tests/summary-flaky.spec.js:3:1 › muestra el estado de la última operación (22.7s)
+  ✘  3 [chromium] › tests/clients.spec.js:3:1 › crea un cliente desde la interfaz (22.7s)
+
+
+  1) [chromium] › tests/api-confirmation.spec.js:3:1 › consulta por API la operación 1 ─────────────
+
+    Error: expect(received).toBeTruthy()
+
+    Received: false
+        at /Users/libanielvargas/Downloads/Prueba_Tecnica_Lider_QE_Candidato (1)/tests/api-confirmation.spec.js:5:25)
+        at /Users/libanielvargas/Downloads/Prueba_Tecnica_Lider_QE_Candidato (1)/node_modules/playwright/lib/worker/workerProcessEntry.js:1654:9)
+        at /Users/libanielvargas/Downloads/Prueba_Tecnica_Lider_QE_Candidato (1)/node_modules/playwright/lib/worker/workerProcessEntry.js:1134:11)
+        at /Users/libanielvargas/Downloads/Prueba_Tecnica_Lider_QE_Candidato (1)/node_modules/playwright/lib/worker/workerProcessEntry.js:1652:7)
+
+    Error Context: test-results/api-confirmation-consulta-por-API-la-operación-1-chromium/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/api-confirmation-consulta-por-API-la-operación-1-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/api-confirmation-consulta-por-API-la-operación-1-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [chromium] › tests/clients.spec.js:3:1 › crea un cliente desde la interfaz ────────────────────
+
+    Test timeout of 20000ms exceeded.
+
+    Error: locator.fill: Test timeout of 20000ms exceeded.
+    Call log:
+      - waiting for locator('#client-name')
+
+        at /Users/libanielvargas/Downloads/Prueba_Tecnica_Lider_QE_Candidato (1)/tests/clients.spec.js:5:38)
+        at /Users/libanielvargas/Downloads/Prueba_Tecnica_Lider_QE_Candidato (1)/node_modules/playwright/lib/worker/workerProcessEntry.js:1654:9)
+        at /Users/libanielvargas/Downloads/Prueba_Tecnica_Lider_QE_Candidato (1)/node_modules/playwright/lib/worker/workerProcessEntry.js:1134:11)
+        at /Users/libanielvargas/Downloads/Prueba_Tecnica_Lider_QE_Candidato (1)/node_modules/playwright/lib/worker/workerProcessEntry.js:1652:7)
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/clients-crea-un-cliente-desde-la-interfaz-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/clients-crea-un-cliente-desde-la-interfaz-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/clients-crea-un-cliente-desde-la-interfaz-chromium/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/clients-crea-un-cliente-desde-la-interfaz-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/clients-crea-un-cliente-desde-la-interfaz-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) [chromium] › tests/operation.spec.js:5:1 › ejecuta una operación para el cliente creado anteriormente 
+
+    Test timeout of 20000ms exceeded.
+
+    Error: locator.fill: Test timeout of 20000ms exceeded.
+    Call log:
+      - waiting for locator('#operation-client-id')
+
+        at /Users/libanielvargas/Downloads/Prueba_Tecnica_Lider_QE_Candidato (1)/tests/operation.spec.js:7:46)
+        at /Users/libanielvargas/Downloads/Prueba_Tecnica_Lider_QE_Candidato (1)/node_modules/playwright/lib/worker/workerProcessEntry.js:1654:9)
+        at /Users/libanielvargas/Downloads/Prueba_Tecnica_Lider_QE_Candidato (1)/node_modules/playwright/lib/worker/workerProcessEntry.js:1134:11)
+        at /Users/libanielvargas/Downloads/Prueba_Tecnica_Lider_QE_Candidato (1)/node_modules/playwright/lib/worker/workerProcessEntry.js:1652:7)
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/operation-ejecuta-una-oper-a4145-liente-creado-anteriormente-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/operation-ejecuta-una-oper-a4145-liente-creado-anteriormente-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/operation-ejecuta-una-oper-a4145-liente-creado-anteriormente-chromium/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/operation-ejecuta-una-oper-a4145-liente-creado-anteriormente-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/operation-ejecuta-una-oper-a4145-liente-creado-anteriormente-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4) [chromium] › tests/summary-flaky.spec.js:3:1 › muestra el estado de la última operación ───────
+
+    Test timeout of 20000ms exceeded.
+
+    Error: locator.fill: Test timeout of 20000ms exceeded.
+    Call log:
+      - waiting for locator('#operation-client-id')
+
+        at /Users/libanielvargas/Downloads/Prueba_Tecnica_Lider_QE_Candidato (1)/tests/summary-flaky.spec.js:5:46)
+        at /Users/libanielvargas/Downloads/Prueba_Tecnica_Lider_QE_Candidato (1)/node_modules/playwright/lib/worker/workerProcessEntry.js:1654:9)
+        at /Users/libanielvargas/Downloads/Prueba_Tecnica_Lider_QE_Candidato (1)/node_modules/playwright/lib/worker/workerProcessEntry.js:1134:11)
+        at /Users/libanielvargas/Downloads/Prueba_Tecnica_Lider_QE_Candidato (1)/node_modules/playwright/lib/worker/workerProcessEntry.js:1652:7)
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/summary-flaky-muestra-el-estado-de-la-última-operación-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/summary-flaky-muestra-el-estado-de-la-última-operación-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/summary-flaky-muestra-el-estado-de-la-última-operación-chromium/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/summary-flaky-muestra-el-estado-de-la-última-operación-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/summary-flaky-muestra-el-estado-de-la-última-operación-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4 failed
+    [chromium] › tests/api-confirmation.spec.js:3:1 › consulta por API la operación 1 ──────────────
+    [chromium] › tests/clients.spec.js:3:1 › crea un cliente desde la interfaz ─────────────────────
+    [chromium] › tests/operation.spec.js:5:1 › ejecuta una operación para el cliente creado anteriormente 
+    [chromium] › tests/summary-flaky.spec.js:3:1 › muestra el estado de la última operación ────────
+exit=1

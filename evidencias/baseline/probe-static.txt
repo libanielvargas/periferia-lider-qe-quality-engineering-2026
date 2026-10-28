@@ -1,0 +1,4 @@
+Probe directo con el servidor original (ruta con espacio):
+GET /       -> HTTP/1.1 404 Not Found ("Cannot GET /")
+GET /health -> 200 {"status":"ok"}
+Causa: express.static(new URL(...).pathname) recibe "%20(1)" codificado.
