@@ -57,7 +57,7 @@ async function loadSummary() {
     summary.innerHTML = `
       <article><span>Cliente</span><strong>${data.client.name}</strong></article>
       <article><span>Saldo</span><strong id="summary-balance">$${Number(data.client.balance).toFixed(2)}</strong></article>
-      <article><span>Última operación</span><strong id="summary-status">${latest ? 'PENDING' : 'Sin operaciones'}</strong></article>
+      <article><span>Última operación</span><strong id="summary-status">${latest ? latest.status : 'Sin operaciones'}</strong></article>
     `;
   } catch (error) {
     summary.className = 'summary empty';
