@@ -3,39 +3,57 @@ import { validClient, expectedBalanceAfterApproval, formatCurrency } from '../su
 
 test.describe('Flujo completo de operación aprobada', () => {
   test('crea cliente, ejecuta operación, valida en la interfaz y confirma por API', async ({ operationsPage, api, page }, testInfo) => {
+    // Regla de negocio: una operación aprobada descuenta el monto MÁS un 10 % de cargo de
+    // servicio. Saldo inicial 1000, operación 100 → cargo 10 → total descontado 110 → saldo final 890.
     const client = validClient({ balance: 1000 });
     const amount = 100;
-    // Regla observada: monto + 10 % de cargo de servicio -> 1000 - 110 = 890.
-    const expectedBalance = expectedBalanceAfterApproval(client.balance, amount);
+    const serviceCharge = amount * 0.1; // = 10
+    const totalDeducted = amount + serviceCharge; // = 110
+    const expectedBalance = expectedBalanceAfterApproval(client.balance, amount); // = 890
     expect(expectedBalance).toBe(890);
 
-    const clientId = await test.step('Crear cliente desde la interfaz', () => operationsPage.createClient(client));
+    const clientId = await test.step(
+      'Dado: un cliente con saldo inicial de $1 000,00 es registrado en el sistema vía la interfaz web',
+      () => operationsPage.createClient(client)
+    );
 
-    await test.step('El ID del cliente queda precargado para la operación', async () => {
-      await expect(operationsPage.operationClientId).toHaveValue(String(clientId));
-    });
+    await test.step(
+      'Entonces: el sistema precarga automáticamente el ID del cliente en el formulario de operación',
+      async () => {
+        await expect(operationsPage.operationClientId).toHaveValue(String(clientId));
+      }
+    );
 
-    const operation = await test.step('Ejecutar la operación', async () => {
-      await operationsPage.executeOperation(clientId, amount);
-      return operationsPage.operationOutcome();
-    });
+    const operation = await test.step(
+      `Cuando: se envía una operación de $${amount}.00 — el sistema aplica cargo de servicio del 10 % ($${serviceCharge}) → total descontado $${totalDeducted}`,
+      async () => {
+        await operationsPage.executeOperation(clientId, amount);
+        return operationsPage.operationOutcome();
+      }
+    );
     expect(operation.status).toBe('APPROVED');
 
-    await test.step('Validar resumen en la interfaz', async () => {
-      await operationsPage.expectSummary({ name: client.name, balance: formatCurrency(expectedBalance), status: 'APPROVED' });
-    });
+    await test.step(
+      `Entonces: la interfaz muestra estado APPROVED y saldo resultante $${expectedBalance.toFixed(2)} (cálculo: $1 000 − $${totalDeducted} = $${expectedBalance})`,
+      async () => {
+        await operationsPage.expectSummary({ name: client.name, balance: formatCurrency(expectedBalance), status: 'APPROVED' });
+      }
+    );
 
-    const evidence = await test.step('Confirmar el registro por API', async () => {
-      const savedOperation = await api.getOperation(operation.id);
-      expect(savedOperation).toMatchObject({ id: operation.id, client_id: clientId, amount, status: 'APPROVED' });
-      expect(savedOperation.external_reference).toMatch(/^[0-9a-f-]{36}$/);
+    const evidence = await test.step(
+      'Y: la API confirma el registro completo: operación con referencia externa UUID, saldo $890.00 y contador de operaciones igual a 1',
+      async () => {
+        const savedOperation = await api.getOperation(operation.id);
+        expect(savedOperation).toMatchObject({ id: operation.id, client_id: clientId, amount, status: 'APPROVED' });
+        expect(savedOperation.external_reference).toMatch(/^[0-9a-f-]{36}$/);
 
-      const summary = await api.getSummary(clientId);
-      expect(summary.client).toMatchObject({ document: client.document, email: client.email, balance: expectedBalance });
-      expect(summary.operationCount).toBe(1);
-      expect(summary.operations[0].id).toBe(operation.id);
-      return { operation: savedOperation, summary };
-    });
+        const summary = await api.getSummary(clientId);
+        expect(summary.client).toMatchObject({ document: client.document, email: client.email, balance: expectedBalance });
+        expect(summary.operationCount).toBe(1);
+        expect(summary.operations[0].id).toBe(operation.id);
+        return { operation: savedOperation, summary };
+      }
+    );
 
     await attachEvidence(testInfo, 'resultado-operacion-aprobada', { page, json: evidence });
   });

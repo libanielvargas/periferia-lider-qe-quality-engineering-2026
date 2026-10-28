@@ -14,7 +14,7 @@ export default defineConfig({
   workers: isCI ? 2 : undefined,
   globalTeardown: './tests/support/global-teardown.js',
   reporter: [
-    ['list'],
+    ['list', { printSteps: true }],
     ['html', { open: 'never', outputFolder: 'playwright-report' }],
     ['junit', { outputFile: 'reports/junit.xml' }]
   ],

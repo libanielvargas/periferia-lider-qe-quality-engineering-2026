@@ -3,20 +3,68 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Quality Operations Lab</title>
+    <title>Quality Engineering | Periferia IT Group · Evaluación</title>
+    <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="stylesheet" href="/styles.css" />
   </head>
   <body>
-    <header>
-      <div>
-        <span class="eyebrow">QE PRACTICAL LAB</span>
-        <h1>Operaciones de clientes</h1>
-        <p>Creación de clientes y ejecución de operaciones financieras.</p>
-      </div>
+    <header class="site-header" id="inicio">
+      <a class="brand" href="#inicio" aria-label="Inicio de la entrega">
+        <img src="/periferia-logo.webp" alt="Periferia IT Group" />
+        <span>PRUEBA TÉCNICA · LÍDER QE</span>
+      </a>
+      <nav class="top-nav" aria-label="Navegación de la entrega">
+        <a href="#laboratorio">Aplicación</a>
+        <a href="#ejecucion">Pruebas en vivo</a>
+        <a href="#entrega">Evidencias</a>
+      </nav>
       <span id="service-status" class="status">Validando servicio...</span>
     </header>
 
-    <main>
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <span class="eyebrow">PERIFERIA IT GROUP · QUALITY ENGINEERING</span>
+        <h1 id="hero-title">Calidad que se demuestra<span class="green-dot">.</span></h1>
+        <p>Rescate de una suite de calidad: diagnóstico, automatización confiable,
+        datos sintéticos, rendimiento, integración continua y criterio técnico.</p>
+        <div class="hero-actions">
+          <a class="primary-link" href="#ejecucion">Ejecutar pruebas ahora <span aria-hidden="true">↗</span></a>
+          <a class="secondary-link" href="#laboratorio">Explorar la aplicación</a>
+        </div>
+      </div>
+      <aside class="hero-note" aria-label="Criterio de entrega">
+        <span class="eyebrow">CRITERIO QE</span>
+        <strong>La evidencia explica tanto lo que funciona como lo que todavía representa un riesgo.</strong>
+        <p>Los defectos funcionales conocidos se muestran de forma explícita; no están disimulados como éxitos.</p>
+      </aside>
+    </section>
+
+    <section class="proof-strip" aria-label="Resultados medidos">
+      <div><strong>14</strong><span>escenarios automatizados<br />1 con fallo esperado</span></div>
+      <div><strong>50 VU</strong><span>prueba k6 de 5 minutos</span></div>
+      <div><strong>18,84 ms</strong><span>p95 medido · umbral de 800 ms</span></div>
+      <div><strong>0 %</strong><span>errores en 14.901 solicitudes</span></div>
+    </section>
+
+    <section class="guide" id="entrega" aria-labelledby="guide-title">
+      <div class="guide-intro">
+        <span class="eyebrow">UNA SOLA PUERTA DE ENTRADA</span>
+        <h2 id="guide-title">Qué revisar y dónde encontrarlo</h2>
+        <p>La aplicación, las pruebas y las decisiones están conectadas aquí. No necesitas conocer comandos ni memorizar direcciones.</p>
+      </div>
+      <div class="evidence-grid">
+        <a class="evidence-card" href="#laboratorio"><span>01 / OPERACIÓN</span><strong>Probar el flujo</strong><small>Crear cliente, ejecutar una operación y consultar el saldo.</small><b>Ir a la aplicación ↗</b></a>
+        <a class="evidence-card" href="#ejecucion"><span>02 / EJECUCIÓN</span><strong>Correr la suite</strong><small>Ver cómo Playwright ejecuta pruebas reales, con avances y duración.</small><b>Ejecutar en vivo ↗</b></a>
+        <a class="evidence-card" href="/revision/reporte/" target="_blank" rel="noopener"><span>03 / RESULTADOS</span><strong>Reporte Playwright</strong><small>Escenarios, pasos comprensibles y evidencia técnica de fallos.</small><b>Ver reporte ↗</b></a>
+        <a class="evidence-card" href="/revision/documentos/DIAGNOSTICO.md" target="_blank" rel="noopener"><span>04 / DIAGNÓSTICO</span><strong>Hallazgos y riesgos</strong><small>Defectos funcionales, problemas de automatización y prioridades.</small><b>Leer diagnóstico ↗</b></a>
+        <a class="evidence-card" href="/revision/documentos/DECISIONES.md" target="_blank" rel="noopener"><span>05 / GOBIERNO QE</span><strong>Decisiones técnicas</strong><small>Estrategias de datos, pipeline, criterios y uso de IA.</small><b>Leer decisiones ↗</b></a>
+        <a class="evidence-card" href="/revision/documentos/REVISION_PR.md" target="_blank" rel="noopener"><span>06 / LIDERAZGO</span><strong>Revisión de PR</strong><small>Riesgos de seguridad y recomendación de cambios bloqueantes.</small><b>Leer revisión ↗</b></a>
+      </div>
+      <div class="risk-note"><strong>Defectos conocidos, no ocultos:</strong> el cargo del 10 % permite saldo negativo y operaciones concurrentes pueden provocar doble gasto. La suite marca el primer caso como fallo esperado. No se declara la aplicación apta para producción.</div>
+    </section>
+
+    <main id="laboratorio">
+      <div class="workspace-title"><span class="eyebrow">APLICACIÓN BAJO PRUEBA</span><h2>Simula una operación financiera</h2><p>Estos formularios conservan el comportamiento original del reto. Úsalos para explorar las reglas y los defectos que la suite debe detectar.</p></div>
       <section class="panel">
         <h2>1. Crear cliente</h2>
         <form id="client-form">
@@ -46,7 +94,28 @@
         </div>
         <div id="summary" class="summary empty">Ejecuta una operación para consultar el resumen.</div>
       </section>
+      <section class="panel full qa-runner" id="ejecucion" aria-labelledby="runner-title">
+        <div class="section-heading runner-heading">
+          <div>
+            <span class="eyebrow">PRUEBA AUTOMATIZADA · PLAYWRIGHT</span>
+            <h2 id="runner-title">Ejecución visible, no resultados preparados</h2>
+            <p>Inicia la suite real: verás cada escenario, la duración y el resultado obtenido en esta ejecución.</p>
+          </div>
+          <button id="run-suite" type="button">Ejecutar suite <span aria-hidden="true">↗</span></button>
+        </div>
+        <div class="runner-info" aria-live="polite">
+          <span id="run-pill" class="run-pill">Lista para ejecutar</span>
+          <strong id="run-clock">00:00</strong>
+          <a id="run-report" href="/revision/reporte/" target="_blank" rel="noopener">Ver reporte detallado ↗</a>
+        </div>
+        <pre id="run-log" class="run-log" tabindex="0" aria-label="Bitácora de ejecución">Al ejecutar se mostrarán los pasos y resultados en tiempo real. El reporte guarda las evidencias de cualquier fallo.</pre>
+        <p class="runner-hint">Ejecución restringida a la Mac en localhost. El modo de riesgo aprobado y rechazado usa datos sintéticos aislados. Un fallo esperado conocido no significa que el defecto esté corregido.</p>
+      </section>
     </main>
+    <footer class="site-footer">
+      <span>Evaluación técnica de Quality Engineering · Entorno de laboratorio, no aplicación productiva de Periferia IT Group.</span>
+      <a href="/revision/documentos/CAMBIOS.md" target="_blank" rel="noopener">Historial de cambios y evidencias ↗</a>
+    </footer>
     <script type="module" src="/app.js"></script>
   </body>
 </html>

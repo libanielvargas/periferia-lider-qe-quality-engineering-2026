@@ -1,5 +1,6 @@
 import express from 'express';
 import crypto from 'node:crypto';
+import { registerQualityReview } from './qa-runner.js';
 import { fileURLToPath } from 'node:url';
 import {
   createClient,
@@ -124,6 +125,8 @@ app.get('/api/operations/:id', (req, res) => {
   if (!operation) return res.status(404).json({ error: 'operation not found' });
   return res.json(operation);
 });
+
+registerQualityReview(app);
 
 app.listen(port, '0.0.0.0', () => {
   console.log(`Quality Lab running at http://127.0.0.1:${port}`);

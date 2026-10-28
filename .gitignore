@@ -1,7 +1,7 @@
 node_modules/
 playwright-report/
 test-results/
-src/data/quality-lab.json
+src/data/*.json
 .env
 artifacts/
 test-data/

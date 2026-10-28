@@ -1,5 +1,21 @@
 # Prueba técnica asincrónica: rescate de una suite de calidad
 
+## Para la persona evaluadora: una sola entrada
+
+Tras instalar dependencias (`npm ci` y `npx playwright install chromium`), inicia `npm start` y abre **http://127.0.0.1:3000**.
+
+La portada del mismo laboratorio, con identidad visual inspirada en Periferia IT Group, reúne:
+
+1. La aplicación bajo prueba (crear cliente, ejecutar operación, consultar resumen).
+2. Un botón **«Ejecutar suite»** que lanza Playwright REAL y muestra los pasos y el tiempo de la ejecución. Por seguridad funciona solo desde localhost, nunca por un túnel público.
+3. El reporte Playwright con evidencia y pasos descriptivos.
+4. Enlaces a los entregables: diagnóstico, decisiones, revisión de PR e historial de cambios.
+
+El reporte completo refleja **13 escenarios conformes y 1 escenario con fallo esperado (XFAIL)** para documentar que la aplicación permite saldos negativos. También existe riesgo demostrado de doble gasto concurrente. No se afirma que la aplicación sea apta para producción. El pipeline está validado localmente, pero no existe aún evidencia de una ejecución real en GitHub Actions.
+
+La interfaz de presentación es una ayuda para recorrer la entrega; las pruebas y fuentes de verdad siguen siendo los artefactos del repositorio.
+
+
 ## Objetivo
 
 Evaluar la capacidad para diagnosticar, automatizar, estabilizar y gobernar una solución de pruebas existente.
