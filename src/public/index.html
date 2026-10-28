@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Quality Operations Lab</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <header>
+      <div>
+        <span class="eyebrow">QE PRACTICAL LAB</span>
+        <h1>Operaciones de clientes</h1>
+        <p>Creación de clientes y ejecución de operaciones financieras.</p>
+      </div>
+      <span id="service-status" class="status">Validando servicio...</span>
+    </header>
+
+    <main>
+      <section class="panel">
+        <h2>1. Crear cliente</h2>
+        <form id="client-form">
+          <label>Nombre<input id="client-name" name="name" required /></label>
+          <label>Documento<input id="client-document" name="document" required /></label>
+          <label>Correo<input id="client-email" name="email" type="email" required /></label>
+          <label>Saldo inicial<input id="client-balance" name="balance" type="number" min="0" value="1000" required /></label>
+          <button type="submit">Crear cliente</button>
+        </form>
+        <div id="client-result" class="result" aria-live="polite"></div>
+      </section>
+
+      <section class="panel">
+        <h2>2. Ejecutar operación</h2>
+        <form id="operation-form">
+          <label>ID del cliente<input id="operation-client-id" name="clientId" type="number" required /></label>
+          <label>Valor de la operación<input id="operation-amount" name="amount" type="number" min="1" value="100" required /></label>
+          <button type="submit">Realizar operación</button>
+        </form>
+        <div id="operation-result" class="result" aria-live="polite"></div>
+      </section>
+
+      <section class="panel full">
+        <div class="section-heading">
+          <h2>3. Consultar resultado</h2>
+          <button id="refresh-summary" class="secondary" type="button">Actualizar</button>
+        </div>
+        <div id="summary" class="summary empty">Ejecuta una operación para consultar el resumen.</div>
+      </section>
+    </main>
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>

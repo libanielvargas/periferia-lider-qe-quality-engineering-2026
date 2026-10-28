@@ -1,0 +1,44 @@
+name: Quality pipeline
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  automated-tests:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 16
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install browser
+        run: npx playwright install chromium
+
+      - name: Start application
+        env:
+          RISK_API_TOKEN: qa-token-2026-visible
+        run: npm start &
+
+      - name: Execute tests
+        run: npm run e2e:test
+
+      - name: Publish report
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: qe-report
+          path: reports/
+
+  performance:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run performance test
+        run: k6 run performance/load.js || true

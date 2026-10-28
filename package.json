@@ -1,0 +1,25 @@
+{
+  "name": "qe-suite-rescue",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Aplicación de práctica para evaluación de liderazgo QE",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "db:reset": "node scripts/reset-db.js",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:report": "playwright show-report",
+    "test:performance": "k6 run performance/critical-endpoint.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.49.1"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
