@@ -1,27 +1,39 @@
 import { defineConfig, devices } from '@playwright/test';
+import { environments, baseUrl, webServerFor } from './tests/support/environments.js';
+
+const isCI = Boolean(process.env.CI);
 
 export default defineConfig({
-  testDir: './tests',
-  timeout: 20_000,
+  testDir: './tests/e2e',
+  timeout: 30_000,
+  expect: { timeout: 7_000 },
+  fullyParallel: true,
+  forbidOnly: isCI,
+  // Sin reintentos: una prueba inestable debe verse, no ocultarse.
   retries: 0,
-  workers: 3,
-  reporter: [['list'], ['html', { open: 'never' }]],
+  workers: isCI ? 2 : undefined,
+  globalTeardown: './tests/support/global-teardown.js',
+  reporter: [
+    ['list'],
+    ['html', { open: 'never', outputFolder: 'playwright-report' }],
+    ['junit', { outputFile: 'reports/junit.xml' }]
+  ],
   use: {
-    baseURL: process.env.BASE_URL || 'http://127.0.0.1:3000',
-    trace: 'on',
-    screenshot: 'on',
-    video: 'on'
+    trace: 'retain-on-failure',
+    screenshot: 'only-on-failure',
+    video: 'retain-on-failure'
   },
   projects: [
     {
-      name: 'chromium',
-      use: { ...devices['Desktop Chrome'] }
+      name: 'riesgo-aprobado',
+      testIgnore: /.*\.rejected\.spec\.js/,
+      use: { ...devices['Desktop Chrome'], baseURL: baseUrl(environments.approved) }
+    },
+    {
+      name: 'riesgo-rechazado',
+      testMatch: /.*\.rejected\.spec\.js/,
+      use: { ...devices['Desktop Chrome'], baseURL: baseUrl(environments.rejected) }
     }
   ],
-  webServer: {
-    command: 'npm start',
-    url: 'http://127.0.0.1:3000/health',
-    reuseExistingServer: true,
-    timeout: 15_000
-  }
+  webServer: [webServerFor(environments.approved), webServerFor(environments.rejected)]
 });

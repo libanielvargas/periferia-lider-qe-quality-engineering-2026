@@ -1,0 +1,7 @@
+
+Running 1 test using 1 worker
+
+  ✓  1 [riesgo-aprobado] › tests/e2e/flujo-operacion.spec.js:5:3 › Flujo completo de operación aprobada › crea cliente, ejecuta operación, valida en la interfaz y confirma por API (5.2s)
+
+  1 passed (10.4s)
+exit=0

@@ -1,0 +1,125 @@
+
+Running 14 tests using 4 workers
+
+  ✓   1 [riesgo-aprobado] › tests/e2e/negativos.spec.js:28:3 › Reglas de negocio negativas › no permite registrar un documento duplicado (96ms)
+  ✓   5 [riesgo-aprobado] › tests/e2e/negativos.spec.js:36:5 › Reglas de negocio negativas › rechaza cliente inválido: sin nombre (38ms)
+  ✓   6 [riesgo-aprobado] › tests/e2e/negativos.spec.js:36:5 › Reglas de negocio negativas › rechaza cliente inválido: sin correo (11ms)
+  ✓   7 [riesgo-aprobado] › tests/e2e/negativos.spec.js:36:5 › Reglas de negocio negativas › rechaza cliente inválido: documento de 7 dígitos (14ms)
+  ✓   8 [riesgo-aprobado] › tests/e2e/negativos.spec.js:36:5 › Reglas de negocio negativas › rechaza cliente inválido: documento de 11 dígitos (14ms)
+  ✓   9 [riesgo-aprobado] › tests/e2e/negativos.spec.js:36:5 › Reglas de negocio negativas › rechaza cliente inválido: documento con letras (11ms)
+  ✓  10 [riesgo-aprobado] › tests/e2e/negativos.spec.js:44:5 › Reglas de negocio negativas › rechaza operación inválida: monto cero (35ms)
+  ✓  11 [riesgo-aprobado] › tests/e2e/negativos.spec.js:44:5 › Reglas de negocio negativas › rechaza operación inválida: monto negativo (18ms)
+  ✓  12 [riesgo-aprobado] › tests/e2e/negativos.spec.js:44:5 › Reglas de negocio negativas › rechaza operación inválida: monto no numérico (26ms)
+  ✓  13 [riesgo-aprobado] › tests/e2e/negativos.spec.js:53:3 › Reglas de negocio negativas › rechaza operación para un cliente inexistente (11ms)
+  ✘   4 [riesgo-aprobado] › tests/e2e/defectos-conocidos.spec.js:8:1 › no debe permitir que una operación aprobada deje saldo negativo (685ms)
+  ✓   2 [riesgo-aprobado] › tests/e2e/negativos.spec.js:11:3 › Reglas de negocio negativas › rechaza la operación por saldo insuficiente sin afectar el saldo (3.2s)
+  ✘  14 [riesgo-rechazado] › tests/e2e/riesgo-rechazado.rejected.spec.js:5:1 › una operación rechazada por riesgo queda registrada y no descuenta saldo (11.8s)
+  ✘   3 [riesgo-aprobado] › tests/e2e/flujo-operacion.spec.js:5:3 › Flujo completo de operación aprobada › crea cliente, ejecuta operación, valida en la interfaz y confirma por API (12.9s)
+
+
+  1) [riesgo-aprobado] › tests/e2e/flujo-operacion.spec.js:5:3 › Flujo completo de operación aprobada › crea cliente, ejecuta operación, valida en la interfaz y confirma por API › Validar resumen en la interfaz 
+
+    Error: expect(locator).toHaveText(expected) failed
+
+    Locator:  locator('#summary-status')
+    Expected: "APPROVED"
+    Received: "PENDING"
+    Timeout:  7000ms
+
+    Call log:
+      - Expect "toHaveText" locator('#summary-status') with timeout 7000ms
+      - waiting for locator('#summary-status')
+        18 × locator resolved to <strong id="summary-status">PENDING</strong>
+           - unexpected value "PENDING"
+
+
+       at ../pages/operations-page.js:56
+
+      54 |     await expect(this.summary).toContainText(name);
+      55 |     await expect(this.summaryBalance).toHaveText(balance);
+    > 56 |     await expect(this.summaryStatus).toHaveText(status);
+         |                                      ^
+      57 |   }
+      58 | }
+      59 |
+        at OperationsPage.expectSummary (/Users/libanielvargas/Downloads/Prueba_Tecnica_Lider_QE_Candidato (1)/tests/pages/operations-page.js:56:38)
+        at /Users/libanielvargas/Downloads/Prueba_Tecnica_Lider_QE_Candidato (1)/tests/e2e/flujo-operacion.spec.js:25:7)
+        at /Users/libanielvargas/Downloads/Prueba_Tecnica_Lider_QE_Candidato (1)/node_modules/playwright/lib/common/index.js:2417:20)
+        at /Users/libanielvargas/Downloads/Prueba_Tecnica_Lider_QE_Candidato (1)/node_modules/playwright/lib/common/index.js:2415:19)
+        at /Users/libanielvargas/Downloads/Prueba_Tecnica_Lider_QE_Candidato (1)/tests/e2e/flujo-operacion.spec.js:24:5)
+        at /Users/libanielvargas/Downloads/Prueba_Tecnica_Lider_QE_Candidato (1)/node_modules/playwright/lib/worker/workerProcessEntry.js:1654:9)
+        at /Users/libanielvargas/Downloads/Prueba_Tecnica_Lider_QE_Candidato (1)/node_modules/playwright/lib/worker/workerProcessEntry.js:1134:11)
+        at /Users/libanielvargas/Downloads/Prueba_Tecnica_Lider_QE_Candidato (1)/node_modules/playwright/lib/worker/workerProcessEntry.js:1652:7)
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/flujo-operacion-Flujo-comp-90680-interfaz-y-confirma-por-API-riesgo-aprobado/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/flujo-operacion-Flujo-comp-90680-interfaz-y-confirma-por-API-riesgo-aprobado/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/flujo-operacion-Flujo-comp-90680-interfaz-y-confirma-por-API-riesgo-aprobado/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/flujo-operacion-Flujo-comp-90680-interfaz-y-confirma-por-API-riesgo-aprobado/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/flujo-operacion-Flujo-comp-90680-interfaz-y-confirma-por-API-riesgo-aprobado/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [riesgo-rechazado] › tests/e2e/riesgo-rechazado.rejected.spec.js:5:1 › una operación rechazada por riesgo queda registrada y no descuenta saldo 
+
+    Error: expect(locator).toHaveText(expected) failed
+
+    Locator:  locator('#summary-status')
+    Expected: "REJECTED"
+    Received: "PENDING"
+    Timeout:  7000ms
+
+    Call log:
+      - Expect "toHaveText" locator('#summary-status') with timeout 7000ms
+      - waiting for locator('#summary-status')
+        18 × locator resolved to <strong id="summary-status">PENDING</strong>
+           - unexpected value "PENDING"
+
+
+       at ../pages/operations-page.js:56
+
+      54 |     await expect(this.summary).toContainText(name);
+      55 |     await expect(this.summaryBalance).toHaveText(balance);
+    > 56 |     await expect(this.summaryStatus).toHaveText(status);
+         |                                      ^
+      57 |   }
+      58 | }
+      59 |
+        at OperationsPage.expectSummary (/Users/libanielvargas/Downloads/Prueba_Tecnica_Lider_QE_Candidato (1)/tests/pages/operations-page.js:56:38)
+        at /Users/libanielvargas/Downloads/Prueba_Tecnica_Lider_QE_Candidato (1)/tests/e2e/riesgo-rechazado.rejected.spec.js:13:3)
+        at /Users/libanielvargas/Downloads/Prueba_Tecnica_Lider_QE_Candidato (1)/node_modules/playwright/lib/worker/workerProcessEntry.js:1654:9)
+        at /Users/libanielvargas/Downloads/Prueba_Tecnica_Lider_QE_Candidato (1)/node_modules/playwright/lib/worker/workerProcessEntry.js:1134:11)
+        at /Users/libanielvargas/Downloads/Prueba_Tecnica_Lider_QE_Candidato (1)/node_modules/playwright/lib/worker/workerProcessEntry.js:1652:7)
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/riesgo-rechazado.rejected--88bf8-strada-y-no-descuenta-saldo-riesgo-rechazado/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/riesgo-rechazado.rejected--88bf8-strada-y-no-descuenta-saldo-riesgo-rechazado/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/riesgo-rechazado.rejected--88bf8-strada-y-no-descuenta-saldo-riesgo-rechazado/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/riesgo-rechazado.rejected--88bf8-strada-y-no-descuenta-saldo-riesgo-rechazado/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/riesgo-rechazado.rejected--88bf8-strada-y-no-descuenta-saldo-riesgo-rechazado/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2 failed
+    [riesgo-aprobado] › tests/e2e/flujo-operacion.spec.js:5:3 › Flujo completo de operación aprobada › crea cliente, ejecuta operación, valida en la interfaz y confirma por API 
+    [riesgo-rechazado] › tests/e2e/riesgo-rechazado.rejected.spec.js:5:1 › una operación rechazada por riesgo queda registrada y no descuenta saldo 
+  12 passed (16.8s)
+exit=1

@@ -4,3 +4,6 @@ test-results/
 src/data/quality-lab.json
 .env
 artifacts/
+test-data/
+reports/
+performance/results/
