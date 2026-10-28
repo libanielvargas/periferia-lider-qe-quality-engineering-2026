@@ -1,0 +1,47 @@
+<testsuites id="" name="" tests="14" failures="0" skipped="0" errors="0" time="9.940069">
+<testsuite name="defectos-conocidos.spec.js" timestamp="2026-10-28T21:38:00.074Z" hostname="riesgo-aprobado" tests="1" failures="0" skipped="0" time="0.478" errors="0">
+<testcase name="no debe permitir que una operación aprobada deje saldo negativo" classname="defectos-conocidos.spec.js" time="0.478">
+<properties>
+<property name="fail" value="DEF-01: saldo 1000 con operación de 1000 queda en -100">
+</property>
+</properties>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|../test-results/defectos-conocidos-no-debe-02599-probada-deje-saldo-negativo-riesgo-aprobado/error-context.md]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="flujo-operacion.spec.js" timestamp="2026-10-28T21:38:00.074Z" hostname="riesgo-aprobado" tests="1" failures="0" skipped="0" time="4.327" errors="0">
+<testcase name="Flujo completo de operación aprobada › crea cliente, ejecuta operación, valida en la interfaz y confirma por API" classname="flujo-operacion.spec.js" time="4.327">
+</testcase>
+</testsuite>
+<testsuite name="negativos.spec.js" timestamp="2026-10-28T21:38:00.074Z" hostname="riesgo-aprobado" tests="11" failures="0" skipped="0" time="2.438" errors="0">
+<testcase name="Reglas de negocio negativas › rechaza la operación por saldo insuficiente sin afectar el saldo" classname="negativos.spec.js" time="2.261">
+</testcase>
+<testcase name="Reglas de negocio negativas › no permite registrar un documento duplicado" classname="negativos.spec.js" time="0.02">
+</testcase>
+<testcase name="Reglas de negocio negativas › rechaza cliente inválido: sin nombre" classname="negativos.spec.js" time="0.01">
+</testcase>
+<testcase name="Reglas de negocio negativas › rechaza cliente inválido: sin correo" classname="negativos.spec.js" time="0.011">
+</testcase>
+<testcase name="Reglas de negocio negativas › rechaza cliente inválido: documento de 7 dígitos" classname="negativos.spec.js" time="0.018">
+</testcase>
+<testcase name="Reglas de negocio negativas › rechaza cliente inválido: documento de 11 dígitos" classname="negativos.spec.js" time="0.017">
+</testcase>
+<testcase name="Reglas de negocio negativas › rechaza cliente inválido: documento con letras" classname="negativos.spec.js" time="0.023">
+</testcase>
+<testcase name="Reglas de negocio negativas › rechaza operación inválida: monto cero" classname="negativos.spec.js" time="0.022">
+</testcase>
+<testcase name="Reglas de negocio negativas › rechaza operación inválida: monto negativo" classname="negativos.spec.js" time="0.03">
+</testcase>
+<testcase name="Reglas de negocio negativas › rechaza operación inválida: monto no numérico" classname="negativos.spec.js" time="0.018">
+</testcase>
+<testcase name="Reglas de negocio negativas › rechaza operación para un cliente inexistente" classname="negativos.spec.js" time="0.008">
+</testcase>
+</testsuite>
+<testsuite name="riesgo-rechazado.rejected.spec.js" timestamp="2026-10-28T21:38:00.074Z" hostname="riesgo-rechazado" tests="1" failures="0" skipped="0" time="2.657" errors="0">
+<testcase name="una operación rechazada por riesgo queda registrada y no descuenta saldo" classname="riesgo-rechazado.rejected.spec.js" time="2.657">
+</testcase>
+</testsuite>
+</testsuites>

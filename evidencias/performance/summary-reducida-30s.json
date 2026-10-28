@@ -1,0 +1,150 @@
+{
+    "metrics": {
+        "vus_max": {
+            "value": 50,
+            "min": 50,
+            "max": 50
+        },
+        "vus": {
+            "value": 50,
+            "min": 50,
+            "max": 50
+        },
+        "http_req_connecting": {
+            "avg": 0.018315123251165886,
+            "min": 0,
+            "med": 0,
+            "max": 1.304,
+            "p(90)": 0,
+            "p(95)": 0
+        },
+        "http_req_sending": {
+            "med": 0.009,
+            "max": 1.461,
+            "p(90)": 0.044,
+            "p(95)": 0.095,
+            "avg": 0.0284916722185211,
+            "min": 0.002
+        },
+        "http_req_duration": {
+            "p(90)": 8.81,
+            "p(95)": 9.461,
+            "avg": 4.071434377081949,
+            "min": 0.174,
+            "med": 3.401,
+            "max": 16.304,
+            "thresholds": {
+                "p(95)<800": false
+            }
+        },
+        "http_reqs": {
+            "count": 1501,
+            "rate": 49.777637225687
+        },
+        "http_req_receiving": {
+            "avg": 0.03487941372418397,
+            "min": 0.008,
+            "med": 0.021,
+            "max": 1.441,
+            "p(90)": 0.057,
+            "p(95)": 0.075
+        },
+        "iteration_duration": {
+            "avg": 1004.4353807166655,
+            "min": 1000.259458,
+            "med": 1003.8585204999999,
+            "max": 1018.269375,
+            "p(90)": 1009.0064169,
+            "p(95)": 1009.7241247
+        },
+        "iterations": {
+            "count": 1500,
+            "rate": 49.74447424285843
+        },
+        "http_req_waiting": {
+            "avg": 4.0080632911392335,
+            "min": 0.161,
+            "med": 3.352,
+            "max": 16.248,
+            "p(90)": 8.768,
+            "p(95)": 9.43
+        },
+        "http_req_duration{expected_response:true}": {
+            "max": 16.304,
+            "p(90)": 8.81,
+            "p(95)": 9.461,
+            "avg": 4.071434377081949,
+            "min": 0.174,
+            "med": 3.401
+        },
+        "checks": {
+            "passes": 4500,
+            "fails": 0,
+            "thresholds": {
+                "rate>0.99": false
+            },
+            "value": 1
+        },
+        "data_sent": {
+            "count": 136591,
+            "rate": 4529.764987537517
+        },
+        "http_req_failed": {
+            "passes": 0,
+            "fails": 1501,
+            "thresholds": {
+                "rate<0.01": false
+            },
+            "value": 0
+        },
+        "http_req_tls_handshaking": {
+            "min": 0,
+            "med": 0,
+            "max": 0,
+            "p(90)": 0,
+            "p(95)": 0,
+            "avg": 0
+        },
+        "data_received": {
+            "count": 642428,
+            "rate": 21304.828732594036
+        },
+        "http_req_blocked": {
+            "p(90)": 0.011,
+            "p(95)": 0.037,
+            "avg": 0.026614257161892495,
+            "min": 0.001,
+            "med": 0.003,
+            "max": 3.23
+        }
+    },
+    "root_group": {
+        "name": "",
+        "path": "",
+        "id": "d41d8cd98f00b204e9800998ecf8427e",
+        "groups": {},
+        "checks": {
+                "status 200": {
+                    "name": "status 200",
+                    "path": "::status 200",
+                    "id": "fad9fa412b86fcb03bee97c80dcd61f1",
+                    "passes": 1500,
+                    "fails": 0
+                },
+                "resumen del cliente solicitado": {
+                    "name": "resumen del cliente solicitado",
+                    "path": "::resumen del cliente solicitado",
+                    "id": "4448a1a61f6084cb6583b7d428afacb5",
+                    "passes": 1500,
+                    "fails": 0
+                },
+                "incluye conteo de operaciones": {
+                    "passes": 1500,
+                    "fails": 0,
+                    "name": "incluye conteo de operaciones",
+                    "path": "::incluye conteo de operaciones",
+                    "id": "6d411840fb80d1cd81f55f1c7fcf827c"
+                }
+            }
+    }
+}

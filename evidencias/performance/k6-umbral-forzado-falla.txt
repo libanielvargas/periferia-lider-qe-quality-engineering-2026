@@ -1,0 +1,92 @@
+
+         /\      Grafana   /‾‾/  
+    /\  /  \     |\  __   /  /   
+   /  \/    \    | |/ /  /   ‾‾\ 
+  /          \   |   (  |  (‾)  |
+ / __________ \  |_|\_\  \_____/ 
+
+
+     execution: local
+        script: performance/critical-endpoint.js
+        output: -
+
+     scenarios: (100.00%) 1 scenario, 50 max VUs, 40s max duration (incl. graceful stop):
+              * resumen_cliente: 50 looping VUs for 10s (gracefulStop: 30s)
+
+
+running (01.0s), 50/50 VUs, 0 complete and 0 interrupted iterations
+resumen_cliente   [   9% ] 50 VUs  00.9s/10s
+
+running (02.0s), 50/50 VUs, 50 complete and 0 interrupted iterations
+resumen_cliente   [  19% ] 50 VUs  01.9s/10s
+
+running (03.0s), 50/50 VUs, 100 complete and 0 interrupted iterations
+resumen_cliente   [  29% ] 50 VUs  02.9s/10s
+
+running (04.0s), 50/50 VUs, 150 complete and 0 interrupted iterations
+resumen_cliente   [  39% ] 50 VUs  03.9s/10s
+
+running (05.0s), 50/50 VUs, 200 complete and 0 interrupted iterations
+resumen_cliente   [  49% ] 50 VUs  04.9s/10s
+
+running (06.0s), 50/50 VUs, 250 complete and 0 interrupted iterations
+resumen_cliente   [  59% ] 50 VUs  05.9s/10s
+
+running (07.0s), 50/50 VUs, 300 complete and 0 interrupted iterations
+resumen_cliente   [  69% ] 50 VUs  06.9s/10s
+
+running (08.0s), 50/50 VUs, 350 complete and 0 interrupted iterations
+resumen_cliente   [  79% ] 50 VUs  07.9s/10s
+
+running (09.0s), 50/50 VUs, 400 complete and 0 interrupted iterations
+resumen_cliente   [  89% ] 50 VUs  08.9s/10s
+
+running (10.0s), 50/50 VUs, 450 complete and 0 interrupted iterations
+resumen_cliente   [  99% ] 50 VUs  09.9s/10s
+
+
+  █ THRESHOLDS 
+
+    checks
+    ✓ 'rate>0.99' rate=100.00%
+
+    http_req_duration
+    ✗ 'p(95)<1' p(95)=27.26ms
+
+    http_req_failed
+    ✓ 'rate<0.01' rate=0.00%
+
+
+  █ TOTAL RESULTS 
+
+    checks_total.......: 1500    147.197434/s
+    checks_succeeded...: 100.00% 1500 out of 1500
+    checks_failed......: 0.00%   0 out of 1500
+
+    ✓ status 200
+    ✓ resumen del cliente solicitado
+    ✓ incluye conteo de operaciones
+
+    HTTP
+    http_req_duration..............: avg=7.11ms min=181µs med=1.74ms max=114.75ms p(90)=10.99ms p(95)=27.26ms
+      { expected_response:true }...: avg=7.11ms min=181µs med=1.74ms max=114.75ms p(90)=10.99ms p(95)=27.26ms
+    http_req_failed................: 0.00%  0 out of 501
+    http_reqs......................: 501    49.163943/s
+
+    EXECUTION
+    iteration_duration.............: avg=1s     min=1s    med=1s     max=1.11s    p(90)=1.01s   p(95)=1.02s  
+    iterations.....................: 500    49.065811/s
+    vus............................: 50     min=50       max=50
+    vus_max........................: 50     min=50       max=50
+
+    NETWORK
+    data_received..................: 214 kB 21 kB/s
+    data_sent......................: 46 kB  4.5 kB/s
+
+
+
+
+running (10.2s), 00/50 VUs, 500 complete and 0 interrupted iterations
+resumen_cliente ✓ [ 100% ] 50 VUs  10s
+time="2026-10-28T16:32:35-05:00" level=error msg="thresholds on metrics 'http_req_duration' have been crossed"
+exit=99

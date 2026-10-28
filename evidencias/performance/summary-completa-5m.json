@@ -1,0 +1,150 @@
+{
+    "metrics": {
+        "data_sent": {
+            "count": 1355991,
+            "rate": 4517.116281674943
+        },
+        "iteration_duration": {
+            "avg": 1007.1381008765749,
+            "min": 1000.214875,
+            "med": 1004.722167,
+            "max": 1121.112,
+            "p(90)": 1014.6072039000001,
+            "p(95)": 1021.1892604
+        },
+        "http_reqs": {
+            "count": 14901,
+            "rate": 49.63864045796641
+        },
+        "checks": {
+            "passes": 44700,
+            "fails": 0,
+            "thresholds": {
+                "rate>0.99": false
+            },
+            "value": 1
+        },
+        "http_req_receiving": {
+            "avg": 0.0674290316086154,
+            "min": 0.007,
+            "med": 0.022,
+            "max": 38.173,
+            "p(90)": 0.075,
+            "p(95)": 0.135
+        },
+        "vus": {
+            "value": 50,
+            "min": 50,
+            "max": 50
+        },
+        "iterations": {
+            "count": 14900,
+            "rate": 49.635309229159084
+        },
+        "http_req_duration{expected_response:true}": {
+            "avg": 5.988906918998694,
+            "min": 0.16,
+            "med": 3.821,
+            "max": 108.604,
+            "p(90)": 12.679,
+            "p(95)": 18.846
+        },
+        "vus_max": {
+            "max": 50,
+            "value": 50,
+            "min": 50
+        },
+        "http_req_tls_handshaking": {
+            "p(95)": 0,
+            "avg": 0,
+            "min": 0,
+            "med": 0,
+            "max": 0,
+            "p(90)": 0
+        },
+        "http_req_failed": {
+            "passes": 0,
+            "fails": 14901,
+            "thresholds": {
+                "rate<0.01": false
+            },
+            "value": 0
+        },
+        "http_req_waiting": {
+            "p(95)": 18.431,
+            "avg": 5.802211730756337,
+            "min": 0.142,
+            "med": 3.693,
+            "max": 106.248,
+            "p(90)": 12.347
+        },
+        "data_received": {
+            "count": 6377628,
+            "rate": 21245.338116009625
+        },
+        "http_req_duration": {
+            "min": 0.16,
+            "med": 3.821,
+            "max": 108.604,
+            "p(90)": 12.679,
+            "p(95)": 18.846,
+            "avg": 5.988906918998694,
+            "thresholds": {
+                "p(95)<800": false
+            }
+        },
+        "http_req_blocked": {
+            "p(95)": 0.043,
+            "avg": 0.054868800751623786,
+            "min": 0,
+            "med": 0.004,
+            "max": 22.149,
+            "p(90)": 0.018
+        },
+        "http_req_connecting": {
+            "p(90)": 0,
+            "p(95)": 0,
+            "avg": 0.03437635058049794,
+            "min": 0,
+            "med": 0,
+            "max": 22.005
+        },
+        "http_req_sending": {
+            "p(90)": 0.098,
+            "p(95)": 0.306,
+            "avg": 0.1192661566337847,
+            "min": 0.002,
+            "med": 0.011,
+            "max": 19.781
+        }
+    },
+    "root_group": {
+        "name": "",
+        "path": "",
+        "id": "d41d8cd98f00b204e9800998ecf8427e",
+        "groups": {},
+        "checks": {
+                "status 200": {
+                    "fails": 0,
+                    "name": "status 200",
+                    "path": "::status 200",
+                    "id": "fad9fa412b86fcb03bee97c80dcd61f1",
+                    "passes": 14900
+                },
+                "resumen del cliente solicitado": {
+                    "passes": 14900,
+                    "fails": 0,
+                    "name": "resumen del cliente solicitado",
+                    "path": "::resumen del cliente solicitado",
+                    "id": "4448a1a61f6084cb6583b7d428afacb5"
+                },
+                "incluye conteo de operaciones": {
+                    "id": "6d411840fb80d1cd81f55f1c7fcf827c",
+                    "passes": 14900,
+                    "fails": 0,
+                    "name": "incluye conteo de operaciones",
+                    "path": "::incluye conteo de operaciones"
+                }
+            }
+    }
+}

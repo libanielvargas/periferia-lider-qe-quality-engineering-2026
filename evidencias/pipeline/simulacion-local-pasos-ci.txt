@@ -1,0 +1,50 @@
+### job e2e: npm ci
+
+found 0 vulnerabilities
+exit=0
+### job e2e: npm run test:e2e
+> qe-suite-rescue@1.0.0 test:e2e
+> playwright test
+Running 14 tests using 2 workers
+  ✘   2 [riesgo-aprobado] › tests/e2e/defectos-conocidos.spec.js:8:1 › no debe permitir que una operación aprobada deje saldo negativo (478ms)
+  ✓   3 [riesgo-aprobado] › tests/e2e/negativos.spec.js:11:3 › Reglas de negocio negativas › rechaza la operación por saldo insuficiente sin afectar el saldo (2.3s)
+  ✓   4 [riesgo-aprobado] › tests/e2e/negativos.spec.js:28:3 › Reglas de negocio negativas › no permite registrar un documento duplicado (20ms)
+  ✓   5 [riesgo-aprobado] › tests/e2e/negativos.spec.js:36:5 › Reglas de negocio negativas › rechaza cliente inválido: sin nombre (10ms)
+  ✓   6 [riesgo-aprobado] › tests/e2e/negativos.spec.js:36:5 › Reglas de negocio negativas › rechaza cliente inválido: sin correo (11ms)
+  ✓   7 [riesgo-aprobado] › tests/e2e/negativos.spec.js:36:5 › Reglas de negocio negativas › rechaza cliente inválido: documento de 7 dígitos (18ms)
+  ✓   8 [riesgo-aprobado] › tests/e2e/negativos.spec.js:36:5 › Reglas de negocio negativas › rechaza cliente inválido: documento de 11 dígitos (17ms)
+  ✓   9 [riesgo-aprobado] › tests/e2e/negativos.spec.js:36:5 › Reglas de negocio negativas › rechaza cliente inválido: documento con letras (23ms)
+  ✓  10 [riesgo-aprobado] › tests/e2e/negativos.spec.js:44:5 › Reglas de negocio negativas › rechaza operación inválida: monto cero (22ms)
+  ✓  11 [riesgo-aprobado] › tests/e2e/negativos.spec.js:44:5 › Reglas de negocio negativas › rechaza operación inválida: monto negativo (30ms)
+  ✓  12 [riesgo-aprobado] › tests/e2e/negativos.spec.js:44:5 › Reglas de negocio negativas › rechaza operación inválida: monto no numérico (18ms)
+  ✓  13 [riesgo-aprobado] › tests/e2e/negativos.spec.js:53:3 › Reglas de negocio negativas › rechaza operación para un cliente inexistente (8ms)
+  ✓   1 [riesgo-aprobado] › tests/e2e/flujo-operacion.spec.js:5:3 › Flujo completo de operación aprobada › crea cliente, ejecuta operación, valida en la interfaz y confirma por API (4.3s)
+  ✓  14 [riesgo-rechazado] › tests/e2e/riesgo-rechazado.rejected.spec.js:5:1 › una operación rechazada por riesgo queda registrada y no descuenta saldo (2.7s)
+  14 passed (9.9s)
+exit=0
+artefacto playwright-report: playwright-report/index.html reports/junit.xml
+artefacto test-results (solo si falla): 1 archivos
+### job performance: levantar app y esperar /health (puerto 4321, base aislada)
+
+> qe-suite-rescue@1.0.0 db:reset
+> node scripts/reset-db.js
+
+Database reset completed
+{"status":"ok","timestamp":"2026-10-28T21:38:10.087Z"}
+exit=0
+### job performance: npm run test:performance (reducida 50 VUs / 30s)
+    ✓ 'rate>0.99' rate=100.00%
+    ✓ 'p(95)<800' p(95)=11.37ms
+    http_req_failed
+    ✓ 'rate<0.01' rate=0.00%
+    checks_succeeded...: 100.00% 4500 out of 4500
+    ✓ status 200
+    ✓ resumen del cliente solicitado
+    ✓ incluye conteo de operaciones
+    http_req_duration..............: avg=4.27ms min=202µs med=3.41ms max=24.98ms p(90)=8.37ms p(95)=11.37ms
+      { expected_response:true }...: avg=4.27ms min=202µs med=3.41ms max=24.98ms p(90)=8.37ms p(95)=11.37ms
+    http_req_failed................: 0.00%  0 out of 1501
+    iteration_duration.............: avg=1s     min=1s    med=1s     max=1.02s   p(90)=1s     p(95)=1.01s  
+resumen_cliente ✓ [ 100% ] 50 VUs  30s
+exit=0
+performance/results/summary.json
