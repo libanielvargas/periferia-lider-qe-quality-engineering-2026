@@ -1,0 +1,6 @@
+verbose: Linting .github/workflows/quality.yml
+verbose: Using project at /Users/libanielvargas/Downloads/Prueba_Tecnica_Lider_QE_Candidato (1)
+verbose: Found 0 parse errors in 4 ms for .github/workflows/quality.yml
+verbose: Rule "pyflakes" was disabled: exec: "pyflakes": executable file not found in $PATH
+verbose: Found total 0 errors in 4044 ms for .github/workflows/quality.yml
+exit=0

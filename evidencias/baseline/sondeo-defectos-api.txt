@@ -1,0 +1,13 @@
+## Saldo inicial negativo
+{"id":2,"name":"N","document":"70000001","email":"n@example.test","balance":-50,"created_at":"2026-10-28T21:34:43.802Z"}
+## Saldo inicial no numerico
+{"id":3,"name":"N","document":"70000002","email":"x","balance":null,"created_at":"2026-10-28T21:34:43.833Z"}
+## XSS en nombre (se guarda sin sanitizar y el front usa innerHTML)
+{"id":4,"name":"<img src=x onerror=alert(1)>","document":"70000003","email":"x@example.test","balance":100,"created_at":"2026-10-28T21:34:43.867Z"}
+## Saldo negativo tras operacion aprobada (saldo 1000, monto 1000)
+{"id":5,"name":"S","document":"70000004","email":"s@example.test","balance":-100,"created_at":"2026-10-28T21:34:43.899Z"}
+## Doble gasto concurrente (saldo 100, 5 operaciones de 90 en paralelo)
+201 201 201 201 201 
+saldo final -395 operaciones 5
+## Token no validado por el servicio de riesgo
+{"decision":"approved","score":820}

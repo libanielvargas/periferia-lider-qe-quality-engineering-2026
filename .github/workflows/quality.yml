@@ -2,43 +2,125 @@ name: Quality pipeline
 
 on:
   push:
+    branches: [main]
   pull_request:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Ambiente de GitHub que aporta secretos y variables
+        type: choice
+        options: [qa, staging]
+        default: qa
+      perf_vus:
+        description: Usuarios concurrentes de k6
+        default: '50'
+      perf_duration:
+        description: Duración de la prueba de rendimiento
+        default: '5m'
+
+concurrency:
+  group: quality-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  NODE_VERSION: '20'
 
 jobs:
-  automated-tests:
+  e2e:
+    name: Pruebas E2E (Playwright)
     runs-on: ubuntu-latest
-    continue-on-error: true
+    timeout-minutes: 20
+    environment: ${{ inputs.environment || 'qa' }}
+    env:
+      CI: 'true'
+      RISK_API_TOKEN: ${{ secrets.RISK_API_TOKEN }}
+      E2E_PORT_APPROVED: ${{ vars.E2E_PORT_APPROVED || '4310' }}
+      E2E_PORT_REJECTED: ${{ vars.E2E_PORT_REJECTED || '4311' }}
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 16
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
 
-      - name: Install dependencies
-        run: npm install
+      - name: Instalar dependencias
+        run: npm ci
 
-      - name: Install browser
-        run: npx playwright install chromium
+      - name: Instalar Chromium
+        run: npx playwright install --with-deps chromium
 
-      - name: Start application
-        env:
-          RISK_API_TOKEN: qa-token-2026-visible
-        run: npm start &
+      # Playwright levanta los servidores (webServer), espera /health y los apaga.
+      - name: Ejecutar pruebas
+        run: npm run test:e2e
 
-      - name: Execute tests
-        run: npm run e2e:test
-
-      - name: Publish report
-        if: success()
+      - name: Publicar reporte HTML
+        if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4
         with:
-          name: qe-report
-          path: reports/
+          name: playwright-report
+          path: |
+            playwright-report/
+            reports/junit.xml
+          retention-days: 14
+
+      - name: Conservar trazas, videos y capturas del fallo
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-failure-artifacts
+          path: test-results/
+          retention-days: 14
 
   performance:
+    name: Rendimiento (k6)
+    needs: e2e
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: ${{ inputs.environment || 'qa' }}
+    env:
+      PORT: '3000'
+      DATABASE_PATH: test-data/perf.json
+      RISK_MODE: approved
+      RISK_API_TOKEN: ${{ secrets.RISK_API_TOKEN }}
+      BASE_URL: http://127.0.0.1:3000
+      VUS: ${{ inputs.perf_vus || '50' }}
+      # PR: corrida corta bloqueante; main y ejecución manual: corrida completa.
+      DURATION: ${{ inputs.perf_duration || (github.event_name == 'pull_request' && '1m' || '5m') }}
     steps:
       - uses: actions/checkout@v4
-      - name: Run performance test
-        run: k6 run performance/load.js || true
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - uses: grafana/setup-k6-action@v1
+
+      - name: Levantar la aplicación y esperar /health
+        run: |
+          npm run db:reset
+          nohup npm start > server.log 2>&1 &
+          curl --silent --fail --retry 30 --retry-delay 1 --retry-all-errors "$BASE_URL/health"
+
+      # k6 termina con código 99 si se incumple un umbral: el job falla.
+      - name: Ejecutar prueba de rendimiento
+        run: |
+          mkdir -p performance/results
+          npm run test:performance
+
+      - name: Publicar resultados de rendimiento
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: k6-results
+          path: |
+            performance/results/
+            server.log
+          retention-days: 14

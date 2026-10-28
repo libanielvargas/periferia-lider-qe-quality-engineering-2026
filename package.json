@@ -11,7 +11,7 @@
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:report": "playwright show-report",
-    "test:performance": "k6 run performance/critical-endpoint.js"
+    "test:performance": "k6 run --summary-export=performance/results/summary.json performance/critical-endpoint.js"
   },
   "dependencies": {
     "express": "^4.21.2"
