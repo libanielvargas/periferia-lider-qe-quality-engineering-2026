@@ -212,6 +212,8 @@ function page({ slug, title, description, eyebrow, lead, sources, body }) {
   <body class="reto-page">
     <a class="skip-link" href="#contenido">Ir al contenido</a>
 ${header}
+    <!-- Cloudflare ofusca los correos; las vistas los muestran como dato o como código original. -->
+    <!--email_off-->
     <main id="contenido" class="reto">
       <p class="breadcrumb"><a href="/#retos">← Volver a los seis retos</a></p>
       <div class="reto-intro">
@@ -223,6 +225,7 @@ ${header}
       ${body}
       ${retosNav(slug)}
     </main>
+    <!--/email_off-->
 ${footer}
     <script type="module" src="/retos-estado.js"></script>
   </body>
