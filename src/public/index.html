@@ -3,74 +3,126 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Quality Engineering | Periferia IT Group · Evaluación</title>
-    <link rel="icon" type="image/png" href="/favicon.png" />
+    <title>Líder QE · Prueba técnica Periferia IT Group · Libaniel Vargas</title>
+    <meta name="description" content="Rescate de una suite de calidad: diagnóstico, automatización Playwright, datos sintéticos, rendimiento con k6, pipeline y revisión de código." />
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="icon" type="image/png" href="/favicon.png" sizes="64x64" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600&display=swap" />
+    <!-- styles.css: estilos originales del sistema bajo prueba. revision.css: capa de presentación de la entrega. -->
     <link rel="stylesheet" href="/styles.css" />
+    <link rel="stylesheet" href="/revision.css" />
   </head>
   <body>
-    <header class="site-header" id="inicio">
-      <a class="brand" href="#inicio" aria-label="Inicio de la entrega">
-        <img src="/periferia-logo.webp" alt="Periferia IT Group" />
-        <span>PRUEBA TÉCNICA · LÍDER QE</span>
+    <a class="skip-link" href="#laboratorio">Ir a la aplicación bajo prueba</a>
+
+    <header class="site-header">
+      <a class="brand" href="#inicio" aria-label="Inicio">
+        <img src="/periferia-logo.webp" alt="Periferia IT Group" width="124" height="31" />
+        <span class="brand-tag">Prueba técnica · Líder QE</span>
       </a>
-      <nav class="top-nav" aria-label="Navegación de la entrega">
+      <nav class="top-nav" aria-label="Secciones">
+        <a href="#retos">Retos</a>
         <a href="#laboratorio">Aplicación</a>
-        <a href="#ejecucion">Pruebas en vivo</a>
-        <a href="#entrega">Evidencias</a>
+        <a href="#ejecucion">Ejecutar suite</a>
+        <a href="#defectos">Defectos abiertos</a>
       </nav>
       <span id="service-status" class="status">Validando servicio...</span>
     </header>
 
-    <section class="hero" aria-labelledby="hero-title">
+    <section class="hero" id="inicio" aria-labelledby="hero-title">
+      <!-- Escenas ilustrativas (src/public/hero/hero-{1,2,3}.webp). Sin imágenes, el hero conserva su fondo oscuro. -->
+      <div class="hero-slides" aria-hidden="true">
+        <div class="hero-slide is-active" data-image="/hero/hero-1.webp"></div>
+        <div class="hero-slide" data-image="/hero/hero-2.webp"></div>
+        <div class="hero-slide" data-image="/hero/hero-3.webp"></div>
+      </div>
       <div class="hero-copy">
-        <span class="eyebrow">PERIFERIA IT GROUP · QUALITY ENGINEERING</span>
-        <h1 id="hero-title">Calidad que se demuestra<span class="green-dot">.</span></h1>
-        <p>Rescate de una suite de calidad: diagnóstico, automatización confiable,
-        datos sintéticos, rendimiento, integración continua y criterio técnico.</p>
+        <p class="eyebrow">Quality Engineering · Rescate de una suite de pruebas</p>
+        <h1 id="hero-title">Una suite que fallaba 4 de 4, convertida en evidencia confiable</h1>
+        <p class="lead">Diagnóstico de causa raíz, automatización Playwright independiente, datos sintéticos, prueba de carga con k6, pipeline que bloquea ante fallos y revisión de código con decisión explícita.</p>
         <div class="hero-actions">
-          <a class="primary-link" href="#ejecucion">Ejecutar pruebas ahora <span aria-hidden="true">↗</span></a>
-          <a class="secondary-link" href="#laboratorio">Explorar la aplicación</a>
+          <a class="button-primary" href="#ejecucion">Ejecutar la suite en el servidor</a>
+          <a class="button-ghost" href="#retos">Ver los seis retos</a>
         </div>
       </div>
-      <aside class="hero-note" aria-label="Criterio de entrega">
-        <span class="eyebrow">CRITERIO QE</span>
-        <strong>La evidencia explica tanto lo que funciona como lo que todavía representa un riesgo.</strong>
-        <p>Los defectos funcionales conocidos se muestran de forma explícita; no están disimulados como éxitos.</p>
-      </aside>
+
+      <div class="hero-scenes" role="group" aria-label="Problemas de calidad abordados">
+        <button class="hero-scene is-active" type="button" data-slide="0" aria-pressed="true">
+          <b>01 · Discrepancia financiera</b>
+          <span>Saldo negativo y doble gasto concurrente: riesgos de negocio documentados.</span>
+        </button>
+        <button class="hero-scene" type="button" data-slide="1" aria-pressed="false">
+          <b>02 · Validación automatizada</b>
+          <span>Suite independiente: interfaz y API verificadas en cada ejecución.</span>
+        </button>
+        <button class="hero-scene" type="button" data-slide="2" aria-pressed="false">
+          <b>03 · Comportamiento bajo carga</b>
+          <span>50 usuarios durante 5 minutos con umbrales que bloquean el pipeline.</span>
+        </button>
+      </div>
     </section>
 
-    <section class="proof-strip" aria-label="Resultados medidos">
-      <div><strong>14</strong><span>escenarios automatizados<br />1 con fallo esperado</span></div>
-      <div><strong>50 VU</strong><span>prueba k6 de 5 minutos</span></div>
-      <div><strong>18,84 ms</strong><span>p95 medido · umbral de 800 ms</span></div>
-      <div><strong>0 %</strong><span>errores en 14.901 solicitudes</span></div>
+    <section class="metrics" aria-label="Resultados medidos">
+      <dl>
+        <div><dt>Suite Playwright</dt><dd>15 escenarios</dd><span>13 conformes · 2 defectos abiertos como fallo esperado</span></div>
+        <div><dt>Carga k6 · 50 usuarios · 5 min</dt><dd>p95 18,84 ms</dd><span>Umbral 800 ms · 0 % de errores en 14 901 solicitudes</span></div>
+        <div><dt>Estabilidad</dt><dd>75 / 75</dd><span>Las 15 pruebas repetidas 5 veces en paralelo; DEF-02 reproducido 5 de 5</span></div>
+      </dl>
+      <p class="metrics-source">Mediciones locales del 28-oct-2026, con registros en <code>evidencias/</code>. La ejecución en el servidor genera su propio reporte.</p>
     </section>
 
-    <section class="guide" id="entrega" aria-labelledby="guide-title">
-      <div class="guide-intro">
-        <span class="eyebrow">UNA SOLA PUERTA DE ENTRADA</span>
-        <h2 id="guide-title">Qué revisar y dónde encontrarlo</h2>
-        <p>La aplicación, las pruebas y las decisiones están conectadas aquí. No necesitas conocer comandos ni memorizar direcciones.</p>
+    <section class="section" id="retos" aria-labelledby="retos-title">
+      <div class="section-intro">
+        <p class="eyebrow">Entregables</p>
+        <h2 id="retos-title">Seis retos, cada uno con su evidencia</h2>
+        <p>Cada tarjeta enlaza el artefacto que permite verificar el resultado, no un resumen.</p>
       </div>
-      <div class="evidence-grid">
-        <a class="evidence-card" href="#laboratorio"><span>01 / OPERACIÓN</span><strong>Probar el flujo</strong><small>Crear cliente, ejecutar una operación y consultar el saldo.</small><b>Ir a la aplicación ↗</b></a>
-        <a class="evidence-card" href="#ejecucion"><span>02 / EJECUCIÓN</span><strong>Correr la suite</strong><small>Ver cómo Playwright ejecuta pruebas reales, con avances y duración.</small><b>Ejecutar en vivo ↗</b></a>
-        <a class="evidence-card" href="/revision/reporte/" target="_blank" rel="noopener"><span>03 / RESULTADOS</span><strong>Reporte Playwright</strong><small>Escenarios, pasos comprensibles y evidencia técnica de fallos.</small><b>Ver reporte ↗</b></a>
-        <a class="evidence-card" href="/revision/documentos/DIAGNOSTICO.md" target="_blank" rel="noopener"><span>04 / DIAGNÓSTICO</span><strong>Hallazgos y riesgos</strong><small>Defectos funcionales, problemas de automatización y prioridades.</small><b>Leer diagnóstico ↗</b></a>
-        <a class="evidence-card" href="/revision/documentos/DECISIONES.md" target="_blank" rel="noopener"><span>05 / GOBIERNO QE</span><strong>Decisiones técnicas</strong><small>Estrategias de datos, pipeline, criterios y uso de IA.</small><b>Leer decisiones ↗</b></a>
-        <a class="evidence-card" href="/revision/documentos/REVISION_PR.md" target="_blank" rel="noopener"><span>06 / LIDERAZGO</span><strong>Revisión de PR</strong><small>Riesgos de seguridad y recomendación de cambios bloqueantes.</small><b>Leer revisión ↗</b></a>
+      <ol class="challenge-list">
+        <li><a href="/revision/documentos/DIAGNOSTICO.md" target="_blank" rel="noopener">
+          <span class="challenge-num">Reto 1</span><strong>Diagnóstico del arnés</strong>
+          <p>Causa raíz, 13 hallazgos clasificados entre defecto funcional y de automatización, y orden de corrección.</p>
+          <span class="challenge-link">DIAGNOSTICO.md</span></a></li>
+        <li><a href="#ejecucion">
+          <span class="challenge-num">Reto 2</span><strong>Automatización del flujo</strong>
+          <p>Cliente → operación → validación en interfaz → confirmación por API, con Page Object y esperas por condición.</p>
+          <span class="challenge-link">Ejecutar y ver reporte</span></a></li>
+        <li><a href="/revision/documentos/DECISIONES.md" target="_blank" rel="noopener">
+          <span class="challenge-num">Reto 3</span><strong>Datos sintéticos</strong>
+          <p>Reglas centralizadas: documentos únicos, saldo insuficiente, casos inválidos y limpieza al terminar.</p>
+          <span class="challenge-link">DECISIONES.md · Datos sintéticos</span></a></li>
+        <li><a href="https://github.com/libanielvargas/periferia-lider-qe-quality-engineering-2026/tree/main/performance" target="_blank" rel="noopener">
+          <span class="challenge-num">Reto 4</span><strong>Prueba de carga</strong>
+          <p>k6 sobre el resumen del cliente: 50 usuarios, 5 minutos, p95 &lt; 800 ms y errores &lt; 1 % como umbrales bloqueantes.</p>
+          <span class="challenge-link">Script y resultados k6</span></a></li>
+        <li><a href="https://github.com/libanielvargas/periferia-lider-qe-quality-engineering-2026/actions" target="_blank" rel="noopener">
+          <span class="challenge-num">Reto 5</span><strong>Pipeline de integración</strong>
+          <p>Node 20, <code>npm ci</code>, secretos parametrizados, artefactos solo en fallo y bloqueo por pruebas o umbrales.</p>
+          <span class="challenge-link">Ejecuciones en GitHub Actions</span></a></li>
+        <li><a href="/revision/documentos/REVISION_PR.md" target="_blank" rel="noopener">
+          <span class="challenge-num">Reto 6</span><strong>Revisión de pull request</strong>
+          <p>Nueve hallazgos con severidad y corrección. Decisión: solicitar cambios bloqueantes.</p>
+          <span class="challenge-link">REVISION_PR.md</span></a></li>
+      </ol>
+    </section>
+
+    <section class="section" aria-labelledby="lab-title">
+      <div class="section-intro">
+        <p class="eyebrow">Sistema bajo prueba</p>
+        <h2 id="lab-title">La aplicación entregada por el evaluador</h2>
+        <p>Conserva sus reglas originales, incluido el cargo del 10 % y los defectos documentados. Solo se corrigieron la ruta estática y el estado fijo «PENDING» del resumen.</p>
       </div>
-      <div class="risk-note"><strong>Defectos conocidos, no ocultos:</strong> el cargo del 10 % permite saldo negativo y operaciones concurrentes pueden provocar doble gasto. La suite marca el primer caso como fallo esperado. No se declara la aplicación apta para producción.</div>
     </section>
 
     <main id="laboratorio">
-      <div class="workspace-title"><span class="eyebrow">APLICACIÓN BAJO PRUEBA</span><h2>Simula una operación financiera</h2><p>Estos formularios conservan el comportamiento original del reto. Úsalos para explorar las reglas y los defectos que la suite debe detectar.</p></div>
       <section class="panel">
         <h2>1. Crear cliente</h2>
         <form id="client-form">
-          <label>Nombre<input id="client-name" name="name" required /></label>
-          <label>Documento<input id="client-document" name="document" required /></label>
-          <label>Correo<input id="client-email" name="email" type="email" required /></label>
+          <label>Nombre<input id="client-name" name="name" autocomplete="off" required /></label>
+          <label>Documento<input id="client-document" name="document" inputmode="numeric" autocomplete="off" required /></label>
+          <label>Correo<input id="client-email" name="email" type="email" autocomplete="off" required /></label>
           <label>Saldo inicial<input id="client-balance" name="balance" type="number" min="0" value="1000" required /></label>
           <button type="submit">Crear cliente</button>
         </form>
@@ -94,28 +146,65 @@
         </div>
         <div id="summary" class="summary empty">Ejecuta una operación para consultar el resumen.</div>
       </section>
-      <section class="panel full qa-runner" id="ejecucion" aria-labelledby="runner-title">
-        <div class="section-heading runner-heading">
-          <div>
-            <span class="eyebrow">PRUEBA AUTOMATIZADA · PLAYWRIGHT</span>
-            <h2 id="runner-title">Ejecución visible, no resultados preparados</h2>
-            <p>Inicia la suite real: verás cada escenario, la duración y el resultado obtenido en esta ejecución.</p>
-          </div>
-          <button id="run-suite" type="button">Ejecutar suite <span aria-hidden="true">↗</span></button>
-        </div>
-        <div class="runner-info" aria-live="polite">
-          <span id="run-pill" class="run-pill">Lista para ejecutar</span>
-          <strong id="run-clock">00:00</strong>
-          <a id="run-report" href="/revision/reporte/" target="_blank" rel="noopener">Ver reporte detallado ↗</a>
-        </div>
-        <pre id="run-log" class="run-log" tabindex="0" aria-label="Bitácora de ejecución">Al ejecutar se mostrarán los pasos y resultados en tiempo real. El reporte guarda las evidencias de cualquier fallo.</pre>
-        <p class="runner-hint">Ejecución restringida a la Mac en localhost. El modo de riesgo aprobado y rechazado usa datos sintéticos aislados. Un fallo esperado conocido no significa que el defecto esté corregido.</p>
-      </section>
     </main>
+
+    <section class="section runner" id="ejecucion" aria-labelledby="runner-title">
+      <div class="runner-head">
+        <div>
+          <p class="eyebrow">Playwright · ejecución real en el servidor</p>
+          <h2 id="runner-title">Ejecutar la suite completa</h2>
+          <p>Lanza las 15 pruebas contra dos instancias aisladas de la aplicación: riesgo aprobado y riesgo rechazado. Usa datos sintéticos que se eliminan al terminar. Cada ejecución genera su propio reporte con ID.</p>
+        </div>
+        <button id="run-suite" class="button-primary" type="button">Ejecutar suite</button>
+      </div>
+      <div class="runner-status" aria-live="polite">
+        <span id="run-pill" class="run-pill">Consultando…</span>
+        <span id="run-id" class="run-id"></span>
+        <strong id="run-clock" class="run-clock">00:00</strong>
+        <a id="run-report" class="run-report" href="#" target="_blank" rel="noopener" hidden>Abrir reporte de esta ejecución</a>
+      </div>
+      <pre id="run-log" class="run-log" tabindex="0" aria-label="Bitácora de la ejecución">La bitácora mostrará cada escenario y sus pasos a medida que Playwright los ejecute.</pre>
+      <p class="runner-limits" id="run-limits">Controles: un solo proceso a la vez, comando fijo sin parámetros, tiempo máximo por ejecución y espera entre ejecuciones para proteger el servidor. La prueba de carga no se puede lanzar desde aquí: corre en el pipeline.</p>
+    </section>
+
+    <section class="section defects" id="defectos" aria-labelledby="defects-title">
+      <div class="section-intro">
+        <p class="eyebrow">Riesgos que siguen abiertos</p>
+        <h2 id="defects-title">Defectos conocidos, visibles en cada ejecución</h2>
+        <p>Se automatizaron como «fallo esperado»: el reporte los muestra en cada corrida y la prueba se pondrá en rojo el día que el defecto se corrija, para retirar la marca de forma consciente.</p>
+      </div>
+      <div class="defect-grid">
+        <article>
+          <h3>DEF-01 · Saldo negativo por el cargo del 10 %</h3>
+          <p>La validación compara solo el monto, pero se descuenta monto más 10 %. Un cliente con saldo de 1 000 que opera 1 000 queda en −100.</p>
+        </article>
+        <article>
+          <h3>DEF-02 · Doble gasto concurrente</h3>
+          <p>El saldo se valida antes de consultar el servicio de riesgo. Cinco operaciones simultáneas de 90 sobre un saldo de 100 se aprueban todas.</p>
+        </article>
+      </div>
+      <p class="defects-note">No se declara la aplicación apta para producción. Detalle y prioridades en <a href="/revision/documentos/DIAGNOSTICO.md" target="_blank" rel="noopener">DIAGNOSTICO.md</a>.</p>
+    </section>
+
     <footer class="site-footer">
-      <span>Evaluación técnica de Quality Engineering · Entorno de laboratorio, no aplicación productiva de Periferia IT Group.</span>
-      <a href="/revision/documentos/CAMBIOS.md" target="_blank" rel="noopener">Historial de cambios y evidencias ↗</a>
+      <div class="author">
+        <img src="/libaniel-vargas.webp" alt="Libaniel Vargas" width="88" height="88" loading="lazy" />
+        <div>
+          <p class="author-name">Libaniel Vargas</p>
+          <p>Ingeniero de Sistemas · Magíster en Gestión de TI</p>
+          <p>Liderazgo en Quality Engineering, Tecnología e Inteligencia Artificial</p>
+        </div>
+      </div>
+      <ul class="author-links">
+        <li><a href="https://github.com/libanielvargas" target="_blank" rel="noopener">GitHub</a></li>
+        <li><a href="https://www.linkedin.com/in/libaniel-vargas" target="_blank" rel="noopener">LinkedIn</a></li>
+        <li><a href="https://qirava.co" target="_blank" rel="noopener">qirava.co</a></li>
+        <li><a href="mailto:libanielvargas@gmail.com">libanielvargas@gmail.com</a></li>
+      </ul>
+      <p class="footer-note">Solución a la prueba técnica para el cargo de Líder QE en Periferia IT Group. Entorno de evaluación: no es un producto de Periferia IT Group. <a href="/revision/documentos/CAMBIOS.md" target="_blank" rel="noopener">Orden de trabajo</a> · <a href="https://github.com/libanielvargas/periferia-lider-qe-quality-engineering-2026" target="_blank" rel="noopener">Repositorio</a></p>
     </footer>
+
     <script type="module" src="/app.js"></script>
+    <script type="module" src="/revision.js"></script>
   </body>
 </html>
