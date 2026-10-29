@@ -107,3 +107,27 @@ Después de agregar la consulta entre clientes, la presentación de resultados, 
 
 ![Ejecución pública con 17 escenarios: 15 conformes y 2 defectos conocidos](ejecucion-publica-17-2026-10-29.webp)
 
+## Ejecución pública con las vistas de los retos (commit `29c63a4`)
+
+| Medición | Resultado |
+|---|---|
+| ID de la ejecución | `20261029-231725-780a` |
+| Resultado | Conforme: 18 escenarios, 16 conformes, 2 defectos conocidos y 0 fallos inesperados |
+| Duración | 105 s (límite del ejecutor: 180 s) |
+| Reporte | Contiene el mismo ID, y el enlace directo a DEF-02 abre ese escenario |
+| Procesos huérfanos | 0 |
+| Memoria | Pico de cgroup de 380 MiB, 390 MiB de swap propio y un mínimo de 233 MiB disponibles en el servidor |
+| `qirava.co` durante la ejecución | 50 de 50 respuestas HTTP 200, con promedio de 0,41 s y máximo de 0,98 s |
+
+**Vistas `/retos/diagnostico`, `/retos/datos-sinteticos`, `/retos/rendimiento` y `/retos/revision-pr` desde Internet:**
+- Responden 200 a 1440, 820 y 390 px de ancho, sin desborde horizontal ni errores de consola.
+- Muestran 13 y 9 hallazgos, igual que sus documentos.
+
+**Enlaces comprobados:** 66 en la portada y las cuatro vistas. Todos responden 200, salvo LinkedIn, que devuelve 999 a los clientes automatizados.
+
+**Correos:** Cloudflare reescribía los correos que las vistas muestran como dato o como código, así que los protegí con marcas `email_off`.
+
+**Lectura:** la suite tarda más con cada prueba nueva (93 s con 17, 105 s con 18) porque el servicio trabaja con swap en el droplet de 1 GB. Quedan 75 s de margen frente al límite.
+
+![Ejecución pública con 18 escenarios: 16 conformes y 2 defectos conocidos](ejecucion-publica-18-2026-10-29.webp)
+
