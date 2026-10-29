@@ -1,0 +1,21 @@
+
+Running 15 tests using 4 workers
+
+  ✘   4 [riesgo-aprobado] › tests/e2e/defectos-conocidos.spec.js:8:1 › DEF-01 · Defecto abierto (fallo esperado): una operación aprobada no debe dejar saldo negativo (401ms)
+  ✓   5 [riesgo-aprobado] › tests/e2e/negativos.spec.js:53:3 › Reglas de negocio negativas › no permite registrar un documento duplicado (8ms)
+  ✓   6 [riesgo-aprobado] › tests/e2e/negativos.spec.js:74:5 › Reglas de negocio negativas › rechaza cliente inválido: sin nombre (5ms)
+  ✓   7 [riesgo-aprobado] › tests/e2e/negativos.spec.js:74:5 › Reglas de negocio negativas › rechaza cliente inválido: sin correo (8ms)
+  ✓   8 [riesgo-aprobado] › tests/e2e/negativos.spec.js:74:5 › Reglas de negocio negativas › rechaza cliente inválido: documento de 7 dígitos (4ms)
+  ✓   9 [riesgo-aprobado] › tests/e2e/negativos.spec.js:74:5 › Reglas de negocio negativas › rechaza cliente inválido: documento de 11 dígitos (7ms)
+  ✓  10 [riesgo-aprobado] › tests/e2e/negativos.spec.js:74:5 › Reglas de negocio negativas › rechaza cliente inválido: documento con letras (4ms)
+  ✓  11 [riesgo-aprobado] › tests/e2e/negativos.spec.js:91:5 › Reglas de negocio negativas › rechaza operación inválida: monto cero (12ms)
+  ✓  12 [riesgo-aprobado] › tests/e2e/negativos.spec.js:91:5 › Reglas de negocio negativas › rechaza operación inválida: monto negativo (8ms)
+  ✓  13 [riesgo-aprobado] › tests/e2e/negativos.spec.js:91:5 › Reglas de negocio negativas › rechaza operación inválida: monto no numérico (10ms)
+  ✓  14 [riesgo-aprobado] › tests/e2e/negativos.spec.js:113:3 › Reglas de negocio negativas › rechaza operación para un cliente inexistente (8ms)
+  ✘   2 [riesgo-aprobado] › tests/e2e/defectos-conocidos.spec.js:37:1 › DEF-02 · Defecto abierto (fallo esperado): operaciones simultáneas no deben superar el saldo (doble gasto) (1.1s)
+  ✓   3 [riesgo-aprobado] › tests/e2e/negativos.spec.js:11:3 › Reglas de negocio negativas › rechaza la operación por saldo insuficiente sin afectar el saldo (3.6s)
+  ✓   1 [riesgo-aprobado] › tests/e2e/flujo-operacion.spec.js:5:3 › Flujo completo de operación aprobada › crea cliente, ejecuta operación, valida en la interfaz y confirma por API (4.9s)
+  ✓  15 [riesgo-rechazado] › tests/e2e/riesgo-rechazado.rejected.spec.js:5:1 › una operación rechazada por riesgo queda registrada y no descuenta saldo (5.0s)
+
+  15 passed (7.4s)
+exit=0
