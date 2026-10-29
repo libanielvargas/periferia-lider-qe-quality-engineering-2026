@@ -26,6 +26,12 @@ TasksMax=256
 Nice=10
 IOWeight=50
 
+# Red: el droplet no tiene firewall en el host (INPUT ACCEPT, ufw inactivo) y server.js escucha
+# en 0.0.0.0. El filtro de cgroup limita este servicio (incluidos los servidores de prueba en
+# 4310/4311) a localhost y a la red Docker de Caddy, sin tocar el firewall compartido.
+IPAddressDeny=any
+IPAddressAllow=localhost 172.16.0.0/12
+
 # Aislamiento
 NoNewPrivileges=yes
 PrivateTmp=yes

@@ -59,6 +59,9 @@ jobs:
           test "$(curl -sk "${R[@]}" -o /dev/null -w '%{http_code}' "$B$REPORTE")" = 200
           sleep 2
           test "$(ss -tln | grep -cE ':(4310|4311) ')" = 0   # sin procesos huérfanos
+          # Fuera de localhost y de la red de Caddy, el servicio no acepta conexiones.
+          IP=$(hostname -I | awk '{print $1}')
+          if curl -s -m 5 -o /dev/null "http://$IP:3300/health"; then echo "3300 accesible desde fuera de la red de Caddy"; exit 1; fi
           systemctl show periferia-qe -p MemoryPeak -p MemoryMax -p CPUQuotaPerSecUSec
 
       - name: Revertir con el script real y comprobar estado limpio
