@@ -50,6 +50,31 @@ La lancé desde la página desplegada, presionando el botón con Playwright a tr
 
 **Lectura.** El droplet de 1 GB aloja la suite sin errores en el portal, pero con poco margen: durante la ejecución el portal responde más lento, y la ejecución tarda más del doble que en CI porque el servicio trabaja con swap. Justo después de una ejecución, la primera carga del reporte puede tardar mientras el proceso recupera memoria del swap; en una consulta posterior tardó 1,3 s. Si la página va a recibir uso frecuente, la medida correcta es ampliar el droplet a 2 GB. Es una decisión de costo del propietario.
 
-## Pendiente
+## Publicación y ejecución desde Internet
 
-- **Registro DNS** `A prueba-tecnica-qa-lead-periferia-it → 206.81.7.100` en Cloudflare, con proxy activo. Mientras no exista, Caddy no puede emitir el certificado (`NXDOMAIN` en sus registros) y la URL pública no resuelve.
+El propietario creó el registro DNS `A prueba-tecnica-qa-lead-periferia-it → 206.81.7.100` en Cloudflare, con proxy. Antes del certificado, Cloudflare respondía 525 (sin TLS en el origen). Forcé una recarga de Caddy, que resolvió el desafío HTTP-01 a través del proxy y obtuvo el certificado de Let's Encrypt. No toqué la configuración de los demás dominios.
+
+| Comprobación desde Internet | Resultado |
+|---|---|
+| `https://prueba-tecnica-qa-lead-periferia-it.qirava.co/health` | HTTP 200 `{"status":"ok"}`, servido por Cloudflare |
+| `/` y `/revision/estado` | HTTP 200; ejecutor en modo `public` |
+| `http://206.81.7.100:3300/health` | Sin respuesta (el servicio sigue aislado) |
+| Commit servido | `f522eb9` |
+
+La suite se lanzó presionando «Ejecutar suite» en la página pública, sin túnel:
+
+| Medición | Resultado |
+|---|---|
+| ID de la ejecución | `20261029-212552-d363` |
+| Resultado | `passed`, código 0: 13 conformes, 2 defectos conocidos (DEF-01 y DEF-02), 0 fallidas, 0 inestables |
+| Duración | 62 s en el servidor |
+| Reporte | `/revision/ejecuciones/20261029-212552-d363/reporte/`, 543 KB, HTTP 200; el título contiene el mismo ID |
+| Errores de consola en la página | 0 |
+| Procesos huérfanos en 4310 y 4311 | 0 |
+| Memoria del servicio | Pico de cgroup de 380 MiB; hasta 357 MiB en swap propio |
+| Memoria disponible del servidor | Mínimo de 234 MiB |
+| Carga máxima (1 min) | 2,17 |
+| `qirava.co` durante la ejecución | 50 de 50 respuestas HTTP 200; promedio de 0,34 s y máximo de 0,46 s |
+| Contenedores existentes después | `qirava-portal` (healthy) y `caddy`, activos |
+
+![Ejecución pública finalizada: 13 conformes y 2 defectos conocidos](ejecucion-publica-2026-10-29.webp)

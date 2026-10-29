@@ -2,6 +2,8 @@
 
 Solución de Libaniel Vargas a la prueba técnica asincrónica del proceso de selección para **Líder de Quality Engineering en Periferia IT Group**. El enunciado original, sin modificaciones, está en [`ENUNCIADO.md`](ENUNCIADO.md).
 
+**Página pública:** <https://prueba-tecnica-qa-lead-periferia-it.qirava.co>. Desde ella se puede ejecutar la suite completa en el servidor y abrir el reporte de esa misma ejecución.
+
 El evaluador entregó una aplicación pequeña (Express, frontend vanilla y una base JSON) con una suite Playwright rota, un pipeline que nunca fallaba y un archivo para revisión de código. El reto era diagnosticar, estabilizar, automatizar y gobernar esa solución, no construir funcionalidades nuevas.
 
 ## Resultado en una mirada

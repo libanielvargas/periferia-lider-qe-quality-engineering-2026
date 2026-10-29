@@ -28,4 +28,4 @@ El historial de Git (`git log --reverse`) es la fuente principal. Este resumen s
 
     Sin cambios en el backend ni en `app.js`.
 17. **Perfil del droplet de 1 GB:** `MemoryHigh` 380M, `MemoryMax` 520M y swap propio de 600M. El ejecutor no lanza Chromium si el servidor tiene menos de 350 MiB libres.
-
+18. **Publicación:** registro DNS creado, certificado emitido y suite ejecutada desde el botón de https://prueba-tecnica-qa-lead-periferia-it.qirava.co (`20261029-212552-d363`): 13 conformes y 2 defectos conocidos.

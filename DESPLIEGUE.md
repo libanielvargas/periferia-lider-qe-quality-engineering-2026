@@ -3,8 +3,8 @@
 **Destino:** `https://prueba-tecnica-qa-lead-periferia-it.qirava.co`
 
 **Estado (29-oct-2026):**
-- **Servicio instalado en el VPS:** commit `e33bc04`. La suite se ejecutó en el servidor desde la página desplegada: 13 conformes y 2 defectos conocidos. El detalle y la evidencia están en `evidencias/publicacion/despliegue-vps-2026-10-29.md`.
-- **Pendiente:** crear el registro DNS en Cloudflare. Sin él, la URL no resuelve y Caddy no puede emitir el certificado.
+- **Publicado y verificado desde Internet.** Commit `f522eb9`, servido por Cloudflare (proxy) y Caddy con certificado de Let's Encrypt.
+- **Suite ejecutada desde el botón de la página pública** (`20261029-212552-d363`): 13 conformes y 2 defectos conocidos, 0 fallidas. El detalle está en `evidencias/publicacion/despliegue-vps-2026-10-29.md`.
 
 ## Comandos (desde la Mac, con la clave de despliegue de Qirava)
 
@@ -64,9 +64,9 @@ La reversión (`deploy/revertir-en-vps.sh`) hace lo siguiente:
 - [x] El puerto 3300 no responde desde Internet.
 - [x] Ejecución real de la suite en el VPS (`20261029-185108-9328`): 13 conformes y 2 defectos conocidos en 62 s, reporte con el mismo ID y 0 procesos huérfanos.
 - [x] `qirava.co` respondió 200 en las 50 muestras tomadas durante la ejecución, con un máximo de 1,64 s.
-- [ ] Crear el registro DNS `A prueba-tecnica-qa-lead-periferia-it → 206.81.7.100` en Cloudflare, con proxy activo.
-- [ ] Confirmar que Caddy emitió el certificado y que `https://prueba-tecnica-qa-lead-periferia-it.qirava.co/health` responde 200 desde Internet.
-- [ ] Ejecutar la suite desde la URL pública.
+- [x] Registro DNS `A prueba-tecnica-qa-lead-periferia-it → 206.81.7.100` en Cloudflare, con proxy activo (creado por el propietario).
+- [x] Caddy emitió el certificado de Let's Encrypt (desafío HTTP-01 a través del proxy) y `/health` responde 200 desde Internet.
+- [x] Suite ejecutada desde el botón de la URL pública (`20261029-212552-d363`): 13 conformes y 2 defectos conocidos en 62 s, reporte con el mismo ID y 0 procesos huérfanos. `qirava.co` respondió 200 en las 50 muestras (máximo 0,46 s).
 
 ## Capacidad y riesgo
 
@@ -77,7 +77,7 @@ El droplet de 1 GB aloja la suite sin errores en el portal, pero con poco margen
 | Acceso | Mecanismo | Estado |
 |---|---|---|
 | VPS (SSH) | Clave de despliegue de Qirava (`root`), autorizada por el propietario para este despliegue | Utilizada el 29-oct-2026 |
-| DNS `qirava.co` | Panel de Cloudflare (manual); no hay token con `Zone:DNS:Edit` | Pendiente: crear el registro |
+| DNS `qirava.co` | Panel de Cloudflare (manual); no hay token con `Zone:DNS:Edit` | Registro creado el 29-oct-2026 |
 | GitHub | `gh` autenticado como `libanielvargas` | Disponible |
 | Secretos de la app | `RISK_API_TOKEN` en `/etc/periferia-qe/periferia-qe.env`, generado en el servidor | Nunca en el repositorio |
 
