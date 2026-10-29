@@ -16,10 +16,11 @@ ExecStart=/usr/bin/node src/server.js
 Restart=on-failure
 RestartSec=5
 
-# Recursos: techo duro de memoria, 1 CPU, prioridad baja de CPU y disco.
-MemoryHigh=850M
-MemoryMax=1G
-MemorySwapMax=0
+# Recursos para el droplet de 1 GB: el kernel recupera primero la memoria de este servicio
+# (MemoryHigh), con techo duro y swap propio acotado; prioridad baja de CPU y disco.
+MemoryHigh=380M
+MemoryMax=520M
+MemorySwapMax=600M
 CPUQuota=100%
 TasksMax=256
 Nice=10

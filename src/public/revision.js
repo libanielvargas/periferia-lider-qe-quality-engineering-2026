@@ -84,42 +84,79 @@ function render(state) {
   }
 }
 
+// Cada falla se explica por su causa: sin red, servidor sin ejecutor (404), acceso denegado (403)
+// o error del servidor. Una respuesta que no es JSON también indica un servidor que no es el esperado.
+async function readJson(response) {
+  try {
+    return await response.json();
+  } catch {
+    return null;
+  }
+}
+
+function explain(response, body) {
+  if (response.status === 404 || !body) {
+    return 'Este servidor no tiene el ejecutor de pruebas. Suele pasar cuando el proceso de Node se inició con una versión anterior del código: detenlo y vuelve a iniciarlo con «npm start».';
+  }
+  if (response.status === 403) return body.error;
+  return body.error || `El servidor respondió con el código HTTP ${response.status}.`;
+}
+
+function showUnavailable(message) {
+  runPill.className = 'run-pill failed';
+  runPill.textContent = 'Ejecutor no disponible';
+  runLimits.textContent = message;
+  runButton.disabled = true;
+}
+
+let failedPolls = 0;
+
 async function refresh() {
   clearTimeout(pollTimer);
+  let response;
   try {
-    const response = await fetch('/revision/estado', { cache: 'no-store' });
-    const state = await response.json();
-    if (response.status === 403) {
-      runButton.disabled = true;
-      runPill.textContent = 'Ejecutor no habilitado en este entorno';
-      runLimits.textContent = state.error;
+    response = await fetch('/revision/estado', { cache: 'no-store' });
+  } catch {
+    // Durante una ejecución, un corte breve no detiene la suite: se reintenta.
+    failedPolls += 1;
+    if (runPill.classList.contains('running') && failedPolls <= 5) {
+      pollTimer = setTimeout(refresh, 2000 * failedPolls);
       return;
     }
-    render(state);
-    if (state.status === 'running') pollTimer = setTimeout(refresh, 1200);
-  } catch {
-    runPill.className = 'run-pill failed';
-    runPill.textContent = 'No fue posible consultar el estado del ejecutor';
+    showUnavailable('No hay conexión con el servidor de esta página. Verifica que siga en ejecución y recarga.');
+    return;
   }
+  failedPolls = 0;
+  const body = await readJson(response);
+  if (!response.ok || !body) {
+    showUnavailable(explain(response, body));
+    return;
+  }
+  render(body);
+  if (body.status === 'running') pollTimer = setTimeout(refresh, 1200);
 }
 
 runButton.addEventListener('click', async () => {
   runButton.disabled = true;
   runLog.textContent = 'Solicitando la ejecución al servidor…';
+  let response;
   try {
-    const response = await fetch('/revision/ejecutar', { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{}' });
-    const body = await response.json();
-    if (!response.ok) {
-      runLog.textContent = body.error || 'No fue posible iniciar la ejecución.';
-      runButton.disabled = false;
-      return;
-    }
-    render(body);
-    pollTimer = setTimeout(refresh, 800);
+    response = await fetch('/revision/ejecutar', { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{}' });
   } catch {
-    runLog.textContent = 'No fue posible contactar al servidor.';
+    runLog.textContent = 'No hay conexión con el servidor de esta página.';
     runButton.disabled = false;
+    return;
   }
+  const body = await readJson(response);
+  if (!response.ok || !body) {
+    runLog.textContent = explain(response, body);
+    // 409: ya hay una ejecución; se muestra su avance en lugar de un error.
+    if (response.status === 409) refresh();
+    else runButton.disabled = response.status === 404 || response.status === 403;
+    return;
+  }
+  render(body);
+  pollTimer = setTimeout(refresh, 800);
 });
 
 refresh();

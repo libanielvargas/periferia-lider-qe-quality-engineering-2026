@@ -13,9 +13,12 @@ PORT=3300
 NODE_VERSION=22.11.0
 DOMINIO=prueba-tecnica-qa-lead-periferia-it.qirava.co
 CADDY_DIR=${CADDY_DIR:-/opt/qirava-portal}
-# Memoria mínima disponible (MiB) con las apps de Qirava en marcha para alojar Chromium sin riesgo.
-MIN_DISPONIBLE_MB=${MIN_DISPONIBLE_MB:-900}
-LIMITE_MEMORIA=${LIMITE_MEMORIA:-700M}
+# Perfil para el droplet de 1 GB (961 MiB, medido el 29-oct-2026): por encima de MEMORIA_ALTA el kernel
+# recupera y pasa a swap primero las páginas de este servicio, no las de qirava.co.
+MIN_DISPONIBLE_MB=${MIN_DISPONIBLE_MB:-400}
+MEMORIA_ALTA=${MEMORIA_ALTA:-380M}
+LIMITE_MEMORIA=${LIMITE_MEMORIA:-520M}
+LIMITE_SWAP=${LIMITE_SWAP:-600M}
 
 log() { printf '\n[periferia-qe] %s\n' "$*"; }
 falla() { printf '\n[periferia-qe][ALTO] %s\n' "$*" >&2; exit 1; }
@@ -68,7 +71,8 @@ install -d -m 0750 -o root -g periferia-qe /etc/periferia-qe
 }
 sed -e "s#^ExecStart=.*#ExecStart=$BASE/node/bin/node src/server.js#" \
     -e "s#^MemoryMax=.*#MemoryMax=$LIMITE_MEMORIA#" \
-    -e "s#^MemoryHigh=.*#MemoryHigh=$(( ${LIMITE_MEMORIA%M} * 85 / 100 ))M#" \
+    -e "s#^MemoryHigh=.*#MemoryHigh=$MEMORIA_ALTA#" \
+    -e "s#^MemorySwapMax=.*#MemorySwapMax=$LIMITE_SWAP#" \
     -e "/^EnvironmentFile=/a Environment=PATH=$BASE/node/bin:/usr/local/bin:/usr/bin:/bin" \
     deploy/periferia-qe.service > /etc/systemd/system/periferia-qe.service
 systemctl daemon-reload && systemctl enable --now periferia-qe && systemctl restart periferia-qe

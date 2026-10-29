@@ -19,7 +19,9 @@ const limits = {
   cooldownMs: Number(process.env.QA_RUNNER_COOLDOWN_SECONDS || 90) * 1000,
   perIpPerHour: Number(process.env.QA_RUNNER_MAX_RUNS_PER_IP_HOUR || 4),
   globalPerHour: Number(process.env.QA_RUNNER_MAX_RUNS_HOUR || 15),
-  keepRuns: Number(process.env.QA_RUNNER_KEEP_RUNS || 5)
+  keepRuns: Number(process.env.QA_RUNNER_KEEP_RUNS || 5),
+  // El VPS es compartido: no se lanza Chromium si el servidor no tiene esta memoria libre.
+  minFreeMb: Number(process.env.QA_RUNNER_MIN_FREE_MB || 0)
 };
 
 const state = {
@@ -46,6 +48,23 @@ function sameOrigin(req) {
   } catch {
     return false;
   }
+}
+
+// MemAvailable de Linux; en otros sistemas no se aplica la guardia.
+function availableMemoryMb() {
+  try {
+    const match = fs.readFileSync('/proc/meminfo', 'utf8').match(/^MemAvailable:\s+(\d+) kB/m);
+    return match ? Math.floor(Number(match[1]) / 1024) : null;
+  } catch {
+    return null;
+  }
+}
+
+function deniedMessage() {
+  if (mode === 'local') {
+    return 'En modo local el ejecutor solo acepta solicitudes hechas desde esta misma máquina, abriendo la página en http://127.0.0.1 o http://localhost.';
+  }
+  return 'El ejecutor de pruebas no está habilitado en este entorno.';
 }
 
 function allowed(req) {
@@ -105,6 +124,10 @@ function rejectionReason(ip) {
   if (lastHour.length >= limits.globalPerHour) return [429, 'Se alcanzó el límite de ejecuciones por hora del servidor. Intenta más tarde.'];
   if (lastHour.filter(entry => entry.ip === ip).length >= limits.perIpPerHour) {
     return [429, 'Alcanzaste el límite de ejecuciones por hora desde tu conexión.'];
+  }
+  const freeMb = availableMemoryMb();
+  if (limits.minFreeMb && freeMb !== null && freeMb < limits.minFreeMb) {
+    return [503, `El servidor tiene ${freeMb} MiB de memoria libre y la suite necesita al menos ${limits.minFreeMb} MiB. Intenta en unos minutos.`];
   }
   return null;
 }
@@ -199,12 +222,12 @@ export function registerQualityReview(app) {
   });
 
   app.get('/revision/estado', (req, res) => {
-    if (!allowed(req)) return res.status(403).json({ mode, error: 'El ejecutor de pruebas no está habilitado en este entorno.' });
+    if (!allowed(req)) return res.status(403).json({ mode, error: deniedMessage() });
     return res.json(publicState());
   });
 
   app.post('/revision/ejecutar', (req, res) => {
-    if (!allowed(req)) return res.status(403).json({ error: 'El ejecutor de pruebas no está habilitado en este entorno.' });
+    if (!allowed(req)) return res.status(403).json({ mode, error: deniedMessage() });
     if (mode === 'public' && !sameOrigin(req)) return res.status(403).json({ error: 'Solicitud rechazada: origen no válido.' });
     const rejection = rejectionReason(req.ip);
     if (rejection) return res.status(rejection[0]).json({ error: rejection[1] });
