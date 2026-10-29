@@ -88,12 +88,19 @@ fi
 
 log "5. Caddy: respaldo, bloque nuevo, validación y recarga (sin reiniciar el contenedor)"
 cd "$CADDY_DIR"
+RESPALDO=""
 grep -q "^$DOMINIO" Caddyfile || {
-  cp Caddyfile "Caddyfile.bak-periferia-qe-$(date +%Y%m%d%H%M%S)"
+  RESPALDO="Caddyfile.bak-periferia-qe-$(date +%Y%m%d%H%M%S)"
+  cp -p Caddyfile "$RESPALDO"
+  # Se escribe sobre el mismo archivo (mismo inodo): el contenedor lo monta como archivo.
   printf '\n' >> Caddyfile
   sed "s#<UPSTREAM>#$GATEWAY:$PORT#" $APP/deploy/Caddyfile.periferia-qe.snippet | grep -v '^#' >> Caddyfile
 }
-docker exec "$CADDY" caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile
+if ! docker exec "$CADDY" caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile; then
+  # Sin esto, el archivo inválido quedaría en disco y el próximo reinicio de Caddy tumbaría qirava.co.
+  [ -n "$RESPALDO" ] && cat "$RESPALDO" > Caddyfile
+  falla "El Caddyfile con el bloque nuevo no es válido. Se restauró el respaldo; Caddy no se recargó."
+fi
 docker exec "$CADDY" caddy reload --config /etc/caddy/Caddyfile --adapter caddyfile
 
 log "6. Verificación interna"
