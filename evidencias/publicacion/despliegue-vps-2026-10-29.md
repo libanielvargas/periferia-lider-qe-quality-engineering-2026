@@ -59,7 +59,7 @@ El propietario creó el registro DNS `A prueba-tecnica-qa-lead-periferia-it → 
 | `https://prueba-tecnica-qa-lead-periferia-it.qirava.co/health` | HTTP 200 `{"status":"ok"}`, servido por Cloudflare |
 | `/` y `/revision/estado` | HTTP 200; ejecutor en modo `public` |
 | `http://206.81.7.100:3300/health` | Sin respuesta (el servicio sigue aislado) |
-| Commit servido | `f522eb9` |
+| Commit servido durante la ejecución | `f522eb9` (después redesplegué commits que solo cambian documentación) |
 
 La suite se lanzó presionando «Ejecutar suite» en la página pública, sin túnel:
 

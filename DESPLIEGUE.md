@@ -3,7 +3,7 @@
 **Destino:** `https://prueba-tecnica-qa-lead-periferia-it.qirava.co`
 
 **Estado (29-oct-2026):**
-- **Publicado y verificado desde Internet.** Commit `f522eb9`, servido por Cloudflare (proxy) y Caddy con certificado de Let's Encrypt.
+- **Publicado y verificado desde Internet**, servido por Cloudflare (proxy) y Caddy con certificado de Let's Encrypt. La ejecución pública se hizo sobre el código de `f522eb9`; los commits posteriores solo actualizan documentación y se redesplegaron con el mismo instalador.
 - **Suite ejecutada desde el botón de la página pública** (`20261029-212552-d363`): 13 conformes y 2 defectos conocidos, 0 fallidas. El detalle está en `evidencias/publicacion/despliegue-vps-2026-10-29.md`.
 
 ## Comandos (desde la Mac, con la clave de despliegue de Qirava)
