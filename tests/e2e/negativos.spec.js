@@ -30,7 +30,7 @@ test.describe('Reglas de negocio negativas', () => {
     );
 
     await test.step(
-      `Y: el resumen en pantalla muestra que el saldo permanece intacto en $${formatCurrency(client.balance)} y no hay operaciones registradas`,
+      `Y: el resumen en pantalla muestra que el saldo permanece intacto en ${formatCurrency(client.balance)} y no hay operaciones registradas`,
       async () => {
         await operationsPage.refreshSummaryButton.click();
         await operationsPage.expectSummary({ name: client.name, balance: formatCurrency(client.balance), status: 'Sin operaciones' });

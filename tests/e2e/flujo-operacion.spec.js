@@ -18,9 +18,14 @@ test.describe('Flujo completo de operación aprobada', () => {
     );
 
     await test.step(
-      'Entonces: el sistema precarga automáticamente el ID del cliente en el formulario de operación',
+      'Entonces: la interfaz confirma el cliente con sus datos y no lo preselecciona para la operación',
       async () => {
+        await expect(operationsPage.clientCard).toContainText('Cliente creado');
+        await expect(operationsPage.clientCard).toContainText(client.document);
+        // app.js sigue completando su campo oculto (comportamiento original), pero la
+        // operación solo usa el cliente que la persona elige en el selector.
         await expect(operationsPage.operationClientId).toHaveValue(String(clientId));
+        await expect(operationsPage.operationClient).toHaveValue('');
       }
     );
 
@@ -37,6 +42,9 @@ test.describe('Flujo completo de operación aprobada', () => {
       `Entonces: la interfaz muestra estado APPROVED y saldo resultante $${expectedBalance.toFixed(2)} (cálculo: $1 000 − $${totalDeducted} = $${expectedBalance})`,
       async () => {
         await operationsPage.expectSummary({ name: client.name, balance: formatCurrency(expectedBalance), status: 'APPROVED' });
+        await expect(operationsPage.operationCard).toContainText('Operación aprobada');
+        await expect(operationsPage.operationCard).toContainText(client.name);
+        await expect(operationsPage.history).toContainText('1 operación');
       }
     );
 

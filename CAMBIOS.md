@@ -18,3 +18,14 @@ El historial de Git (`git log --reverse`) es la fuente principal. Este resumen s
 11. **DEF-02 automatizado** como fallo esperado. Los títulos de DEF-01 y DEF-02 lo dicen de forma explícita. Estabilidad: 75 de 75, con DEF-02 reproducido 5 de 5.
 12. **Incidente de disco:** una construcción Docker llenó el disco de la Mac. Se liberaron solo cachés autorizadas y se descartó Docker: el despliegue pasa a Node.js con systemd (`DESPLIEGUE.md`).
 13. **Documentación:** README para lectores nuevos, enunciado original en `ENUNCIADO.md` y publicación en GitHub.
+14. **Ejecutor (29-oct):** la causa real de «No fue posible consultar el estado del ejecutor» fue un proceso de Node iniciado antes de que existiera el ejecutor. La interfaz ahora explica cada tipo de falla (`DECISIONES.md`).
+15. **Presentación en primera persona:** punto de partida con los hechos de las 4 pruebas originales, tabla de mediciones con contexto, defectos con estructura completa (`DEFECTOS.md`) y capturas reales de su reproducción.
+16. **Aplicación:**
+    - Confirmaciones con los datos que devuelve la API.
+    - Selector de clientes sin preselección y sin el valor 100 precargado.
+    - Valores en pesos colombianos.
+    - Historial completo de `GET /api/clients/:id/summary`.
+
+    Sin cambios en el backend ni en `app.js`.
+17. **Perfil del droplet de 1 GB:** `MemoryHigh` 380M, `MemoryMax` 520M y swap propio de 600M. El ejecutor no lanza Chromium si el servidor tiene menos de 350 MiB libres.
+

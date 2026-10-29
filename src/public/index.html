@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Líder QE · Prueba técnica Periferia IT Group · Libaniel Vargas</title>
-    <meta name="description" content="Rescate de una suite de calidad: diagnóstico, automatización Playwright, datos sintéticos, rendimiento con k6, pipeline y revisión de código." />
+    <meta name="description" content="Mi solución a la prueba técnica de Líder de Quality Engineering: diagnóstico, automatización con Playwright, datos sintéticos, prueba de carga con k6, pipeline, revisión de código y dos defectos documentados." />
     <link rel="icon" href="/favicon.ico" sizes="48x48" />
     <link rel="icon" type="image/png" href="/favicon.png" sizes="64x64" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
@@ -24,10 +24,11 @@
         <span class="brand-tag">Prueba técnica · Líder QE</span>
       </a>
       <nav class="top-nav" aria-label="Secciones">
-        <a href="#retos">Retos</a>
+        <a href="#punto-de-partida">Punto de partida</a>
+        <a href="#mediciones">Mediciones</a>
         <a href="#laboratorio">Aplicación</a>
         <a href="#ejecucion">Ejecutar suite</a>
-        <a href="#defectos">Defectos abiertos</a>
+        <a href="#defectos">Defectos</a>
       </nav>
       <span id="service-status" class="status">Validando servicio...</span>
     </header>
@@ -40,70 +41,147 @@
         <div class="hero-slide" data-image="/hero/hero-3.webp"></div>
       </div>
       <div class="hero-copy">
-        <p class="eyebrow">Quality Engineering · Rescate de una suite de pruebas</p>
-        <h1 id="hero-title">Una suite que fallaba 4 de 4, convertida en evidencia confiable</h1>
-        <p class="lead">Diagnóstico de causa raíz, automatización Playwright independiente, datos sintéticos, prueba de carga con k6, pipeline que bloquea ante fallos y revisión de código con decisión explícita.</p>
+        <p class="eyebrow">Prueba técnica · Líder de Quality Engineering · Periferia IT Group</p>
+        <h1 id="hero-title">Cómo resolví la prueba técnica de Líder de Quality Engineering</h1>
+        <p class="lead">Recibí una aplicación de operaciones financieras con una suite de cuatro pruebas automatizadas que no pasaba. Encontré la causa, reescribí la automatización, medí el rendimiento, reparé el pipeline y documenté dos defectos que siguen abiertos. Desde esta página puedes ejecutar la suite en el servidor y revisar el reporte de esa ejecución.</p>
         <div class="hero-actions">
-          <a class="button-primary" href="#ejecucion">Ejecutar la suite en el servidor</a>
-          <a class="button-ghost" href="#retos">Ver los seis retos</a>
+          <a class="button-primary" href="#ejecucion">Ejecutar la suite</a>
+          <a class="button-ghost" href="#punto-de-partida">Ver el punto de partida</a>
         </div>
       </div>
 
-      <div class="hero-scenes" role="group" aria-label="Problemas de calidad abordados">
+      <div class="hero-scenes" role="group" aria-label="Temas de la prueba">
         <button class="hero-scene is-active" type="button" data-slide="0" aria-pressed="true">
-          <b>01 · Discrepancia financiera</b>
-          <span>Saldo negativo y doble gasto concurrente: riesgos de negocio documentados.</span>
+          <b>01 · Defectos financieros</b>
+          <span>Encontré dos formas de dejar un saldo negativo: el cargo del 10 % y las operaciones simultáneas.</span>
         </button>
         <button class="hero-scene" type="button" data-slide="1" aria-pressed="false">
-          <b>02 · Validación automatizada</b>
-          <span>Suite independiente: interfaz y API verificadas en cada ejecución.</span>
+          <b>02 · Automatización</b>
+          <span>Quince pruebas independientes que validan la interfaz y confirman cada resultado por API.</span>
         </button>
         <button class="hero-scene" type="button" data-slide="2" aria-pressed="false">
-          <b>03 · Comportamiento bajo carga</b>
-          <span>50 usuarios durante 5 minutos con umbrales que bloquean el pipeline.</span>
+          <b>03 · Rendimiento</b>
+          <span>Medí el resumen del cliente con 50 usuarios virtuales durante cinco minutos.</span>
         </button>
       </div>
     </section>
 
-    <section class="metrics" aria-label="Resultados medidos">
-      <dl>
-        <div><dt>Suite Playwright</dt><dd>15 escenarios</dd><span>13 conformes · 2 defectos abiertos como fallo esperado</span></div>
-        <div><dt>Carga k6 · 50 usuarios · 5 min</dt><dd>p95 18,84 ms</dd><span>Umbral 800 ms · 0 % de errores en 14 901 solicitudes</span></div>
-        <div><dt>Estabilidad</dt><dd>75 / 75</dd><span>Las 15 pruebas repetidas 5 veces en paralelo; DEF-02 reproducido 5 de 5</span></div>
-      </dl>
-      <p class="metrics-source">Mediciones locales del 28-oct-2026, con registros en <code>evidencias/</code>. La ejecución en el servidor genera su propio reporte.</p>
+    <section class="section" id="punto-de-partida" aria-labelledby="partida-title">
+      <div class="section-intro">
+        <p class="eyebrow">Punto de partida</p>
+        <h2 id="partida-title">La suite original no podía pasar</h2>
+        <p>Antes de cambiar nada ejecuté la suite tal como la recibí. Este es el recorrido, con su evidencia en <code>evidencias/baseline/</code>.</p>
+      </div>
+      <ol class="timeline">
+        <li>
+          <h3>Qué ejecuté</h3>
+          <p>El comando del enunciado, <code>npm run test:e2e</code>, dos veces seguidas. La suite tenía <strong>4 pruebas</strong>: crear un cliente desde la interfaz, ejecutar una operación, consultar el estado de la última operación y consultar por API la operación con ID 1.</p>
+        </li>
+        <li>
+          <h3>Qué falló</h3>
+          <p>Las 4 pruebas fallaron en las dos ejecuciones. Las tres de interfaz agotaron sus 20 segundos esperando un campo del formulario que nunca apareció, porque la aplicación respondía <code>Cannot GET /</code>. La prueba de API daba por hecho que existía la operación con ID 1, y en la base no había ninguna operación.</p>
+        </li>
+        <li>
+          <h3>La causa</h3>
+          <p>El servidor ubicaba la carpeta de la interfaz con <code>URL.pathname</code>. La ruta del proyecto contiene un espacio, <code>Candidato (1)</code>; ese método lo convierte en <code>%20</code> y Express buscaba una carpeta que no existe. Cambié esa línea por <code>fileURLToPath</code> y la interfaz cargó.</p>
+        </li>
+        <li>
+          <h3>La segunda capa</h3>
+          <p>Con la interfaz disponible pasó 1 de 4. Las otras fallaban por la propia suite: una operación sobre un cliente con ID 2 que ninguna prueba garantizaba, un documento fijo que se duplicaba desde la segunda corrida, un saldo esperado de 900 que ignoraba el cargo del 10 %, un servicio de riesgo que rechaza al azar el 15 % y esperas fijas de 0,5 y 3 segundos.</p>
+        </li>
+        <li>
+          <h3>Qué hice</h3>
+          <p>Reescribí la suite: Page Object, datos sintéticos únicos por prueba, una base aislada por ejecución, dos instancias de la aplicación con el servicio de riesgo fijo en «aprobado» y en «rechazado», y esperas por condición. Los dos defectos de negocio que encontré quedaron automatizados como fallo esperado para que no se pierdan de vista.</p>
+        </li>
+        <li>
+          <h3>Resultado</h3>
+          <p><strong>15 pruebas</strong>: 13 conformes y 2 defectos conocidos. Repetí la suite cinco veces seguidas y las 75 ejecuciones dieron el resultado esperado.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section class="section" id="mediciones" aria-labelledby="mediciones-title">
+      <div class="section-intro">
+        <p class="eyebrow">Mediciones</p>
+        <h2 id="mediciones-title">Qué medí y qué significa cada resultado</h2>
+        <p>Cada cifra indica dónde se obtuvo. Ninguna corresponde al servidor donde está publicada esta página: la prueba de carga no se ejecuta contra un servidor compartido.</p>
+      </div>
+      <div class="table-scroll">
+        <table class="metric-table">
+          <thead>
+            <tr><th scope="col">Medición</th><th scope="col">Valor</th><th scope="col">Qué mide</th><th scope="col">Resultado</th><th scope="col">Cómo lo interpreto</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">Suite funcional (Playwright)</th>
+              <td class="metric-value">15 pruebas</td>
+              <td>Flujo completo, reglas negativas, rechazo por riesgo y los dos defectos conocidos, sobre dos instancias aisladas de la aplicación.</td>
+              <td>13 conformes y 2 fallos esperados (DEF-01 y DEF-02), sin fallos inesperados. En mi equipo y en GitHub Actions.</td>
+              <td>La automatización es confiable. La aplicación no está lista para producción mientras los dos defectos sigan abiertos.</td>
+            </tr>
+            <tr>
+              <th scope="row">Estabilidad</th>
+              <td class="metric-value">75 de 75</td>
+              <td>La suite completa repetida cinco veces (<code>--repeat-each=5</code>) en paralelo, para detectar pruebas intermitentes.</td>
+              <td>Las 75 ejecuciones dieron el resultado esperado. DEF-02 se reprodujo en las 5 repeticiones.</td>
+              <td>No encontré pruebas intermitentes en esa muestra. El doble gasto se repite siempre: no es un caso fortuito.</td>
+            </tr>
+            <tr>
+              <th scope="row">Tiempo de respuesta, percentil 95</th>
+              <td class="metric-value">18,84 ms<span>mi equipo</span>3,27 ms<span>GitHub Actions</span></td>
+              <td>Prueba de carga con k6 de cinco minutos: 50 usuarios virtuales consultan <code>GET /api/clients/1/summary</code> en ciclo, con una pausa de un segundo entre consultas. El p95 es el tiempo dentro del cual respondió el 95 % de las solicitudes.</td>
+              <td>Cumple el umbral de 800 ms. El 95 % de las respuestas tardó menos de 18,84 ms (máximo 108,6 ms) en mi equipo.</td>
+              <td>Con 50 usuarios simultáneos el resumen responde con amplio margen. No permite concluir cómo se comportaría en producción, con otra base de datos y otra infraestructura.</td>
+            </tr>
+            <tr>
+              <th scope="row">Tasa de error</th>
+              <td class="metric-value">0 %</td>
+              <td>Proporción de solicitudes HTTP fallidas durante la misma prueba de carga.</td>
+              <td>0 de 14 901 en mi equipo y 0 de 15 001 en GitHub Actions. Umbral: menos de 1 %.</td>
+              <td>El endpoint no falló bajo esa carga. Si el p95 o la tasa de error superan su umbral, el pipeline se detiene.</td>
+            </tr>
+            <tr>
+              <th scope="row">Rendimiento sostenido</th>
+              <td class="metric-value">49,6 solicitudes/s</td>
+              <td>Solicitudes atendidas por segundo durante los cinco minutos.</td>
+              <td>Coincide con la carga configurada: 50 usuarios con una solicitud por segundo.</td>
+              <td>La carga se mantuvo constante durante toda la prueba; el servidor no se rezagó.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="metrics-source">Fuentes: <code>evidencias/e2e/</code>, <code>evidencias/performance/summary-completa-5m.json</code> (28 de octubre de 2026) y la <a href="https://github.com/libanielvargas/periferia-lider-qe-quality-engineering-2026/actions/runs/40805453568" target="_blank" rel="noopener">ejecución 40805453568 de GitHub Actions</a>.</p>
     </section>
 
     <section class="section" id="retos" aria-labelledby="retos-title">
       <div class="section-intro">
         <p class="eyebrow">Entregables</p>
-        <h2 id="retos-title">Seis retos, cada uno con su evidencia</h2>
-        <p>Cada tarjeta enlaza el artefacto que permite verificar el resultado, no un resumen.</p>
+        <h2 id="retos-title">Los seis retos y dónde verificarlos</h2>
       </div>
       <ol class="challenge-list">
         <li><a href="/revision/documentos/DIAGNOSTICO.md" target="_blank" rel="noopener">
           <span class="challenge-num">Reto 1</span><strong>Diagnóstico del arnés</strong>
-          <p>Causa raíz, 13 hallazgos clasificados entre defecto funcional y de automatización, y orden de corrección.</p>
+          <p>Clasifiqué 13 hallazgos entre defectos de la aplicación y de la automatización, con prioridad y orden de corrección.</p>
           <span class="challenge-link">DIAGNOSTICO.md</span></a></li>
         <li><a href="#ejecucion">
           <span class="challenge-num">Reto 2</span><strong>Automatización del flujo</strong>
-          <p>Cliente → operación → validación en interfaz → confirmación por API, con Page Object y esperas por condición.</p>
-          <span class="challenge-link">Ejecutar y ver reporte</span></a></li>
+          <p>Creo un cliente, ejecuto una operación, valido el resultado en la interfaz y lo confirmo por API.</p>
+          <span class="challenge-link">Ejecutar y ver el reporte</span></a></li>
         <li><a href="/revision/documentos/DECISIONES.md" target="_blank" rel="noopener">
           <span class="challenge-num">Reto 3</span><strong>Datos sintéticos</strong>
-          <p>Reglas centralizadas: documentos únicos, saldo insuficiente, casos inválidos y limpieza al terminar.</p>
-          <span class="challenge-link">DECISIONES.md · Datos sintéticos</span></a></li>
+          <p>Centralicé las reglas: documentos únicos, saldo insuficiente, datos inválidos y limpieza al terminar.</p>
+          <span class="challenge-link">DECISIONES.md</span></a></li>
         <li><a href="https://github.com/libanielvargas/periferia-lider-qe-quality-engineering-2026/tree/main/performance" target="_blank" rel="noopener">
           <span class="challenge-num">Reto 4</span><strong>Prueba de carga</strong>
-          <p>k6 sobre el resumen del cliente: 50 usuarios, 5 minutos, p95 &lt; 800 ms y errores &lt; 1 % como umbrales bloqueantes.</p>
-          <span class="challenge-link">Script y resultados k6</span></a></li>
+          <p>Script de k6 con umbrales automáticos: p95 menor de 800 ms y errores por debajo del 1 %.</p>
+          <span class="challenge-link">Script y resultados</span></a></li>
         <li><a href="https://github.com/libanielvargas/periferia-lider-qe-quality-engineering-2026/actions" target="_blank" rel="noopener">
-          <span class="challenge-num">Reto 5</span><strong>Pipeline de integración</strong>
-          <p>Node 20, <code>npm ci</code>, secretos parametrizados, artefactos solo en fallo y bloqueo por pruebas o umbrales.</p>
+          <span class="challenge-num">Reto 5</span><strong>Pipeline</strong>
+          <p>El pipeline original nunca podía fallar. Ahora se detiene ante una prueba fallida o un umbral incumplido, y conserva evidencias solo cuando hay fallos.</p>
           <span class="challenge-link">Ejecuciones en GitHub Actions</span></a></li>
         <li><a href="/revision/documentos/REVISION_PR.md" target="_blank" rel="noopener">
-          <span class="challenge-num">Reto 6</span><strong>Revisión de pull request</strong>
-          <p>Nueve hallazgos con severidad y corrección. Decisión: solicitar cambios bloqueantes.</p>
+          <span class="challenge-num">Reto 6</span><strong>Revisión de código</strong>
+          <p>Registré nueve hallazgos con severidad y corrección propuesta. Mi decisión: solicitar cambios bloqueantes.</p>
           <span class="challenge-link">REVISION_PR.md</span></a></li>
       </ol>
     </section>
@@ -111,8 +189,8 @@
     <section class="section" aria-labelledby="lab-title">
       <div class="section-intro">
         <p class="eyebrow">Sistema bajo prueba</p>
-        <h2 id="lab-title">La aplicación entregada por el evaluador</h2>
-        <p>Conserva sus reglas originales, incluido el cargo del 10 % y los defectos documentados. Solo se corrigieron la ruta estática y el estado fijo «PENDING» del resumen.</p>
+        <h2 id="lab-title">La aplicación entregada</h2>
+        <p>No modifiqué el backend ni sus reglas de negocio, incluido el cargo del 10 %. Del código original solo corregí la ruta de la interfaz y el estado fijo «PENDING» del resumen. Encima agregué una capa de presentación: confirmaciones con los datos que devuelve la API, un selector de clientes, valores en pesos colombianos y el historial de operaciones.</p>
       </div>
     </section>
 
@@ -121,22 +199,38 @@
         <h2>1. Crear cliente</h2>
         <form id="client-form">
           <label>Nombre<input id="client-name" name="name" autocomplete="off" required /></label>
-          <label>Documento<input id="client-document" name="document" inputmode="numeric" autocomplete="off" required /></label>
+          <label>Documento<input id="client-document" name="document" inputmode="numeric" autocomplete="off" placeholder="Entre 8 y 10 dígitos" required /></label>
           <label>Correo<input id="client-email" name="email" type="email" autocomplete="off" required /></label>
-          <label>Saldo inicial<input id="client-balance" name="balance" type="number" min="0" value="1000" required /></label>
+          <label>Saldo inicial (COP)<input id="client-balance" name="balance" type="number" min="0" value="1000" required /></label>
           <button type="submit">Crear cliente</button>
         </form>
         <div id="client-result" class="result" aria-live="polite"></div>
+        <div id="client-card" class="result-card" role="status" hidden></div>
       </section>
 
       <section class="panel">
         <h2>2. Ejecutar operación</h2>
         <form id="operation-form">
-          <label>ID del cliente<input id="operation-client-id" name="clientId" type="number" required /></label>
-          <label>Valor de la operación<input id="operation-amount" name="amount" type="number" min="1" value="100" required /></label>
+          <label>Cliente
+            <select id="operation-client" required><option value="">Primero crea un cliente</option></select>
+          </label>
+          <!-- Campo original de app.js: recibe el ID interno del cliente elegido en el selector. -->
+          <input id="operation-client-id" name="clientId" type="hidden" />
+          <label>Valor de la operación (COP)<input id="operation-amount" name="amount" type="number" min="1" inputmode="decimal" placeholder="Ej.: 100" required /></label>
+          <p id="operation-amount-cop" class="field-hint" aria-live="polite"></p>
           <button type="submit">Realizar operación</button>
         </form>
         <div id="operation-result" class="result" aria-live="polite"></div>
+        <div id="operation-card" class="result-card" role="status" hidden></div>
+        <details class="add-client">
+          <summary>¿El cliente no aparece en la lista?</summary>
+          <p>La API no permite listar ni buscar clientes, así que la lista muestra los creados desde este navegador. Puedes agregar un cliente existente con su ID interno.</p>
+          <form id="add-client-by-id">
+            <label>ID interno<input type="number" min="1" required /></label>
+            <button class="secondary" type="submit">Agregar</button>
+            <p class="add-note" aria-live="polite"></p>
+          </form>
+        </details>
       </section>
 
       <section class="panel full">
@@ -145,15 +239,16 @@
           <button id="refresh-summary" class="secondary" type="button">Actualizar</button>
         </div>
         <div id="summary" class="summary empty">Ejecuta una operación para consultar el resumen.</div>
+        <div id="history" class="history" hidden></div>
       </section>
     </main>
 
     <section class="section runner" id="ejecucion" aria-labelledby="runner-title">
       <div class="runner-head">
         <div>
-          <p class="eyebrow">Playwright · ejecución real en el servidor</p>
+          <p class="eyebrow">Playwright · ejecución en el servidor</p>
           <h2 id="runner-title">Ejecutar la suite completa</h2>
-          <p>Lanza las 15 pruebas contra dos instancias aisladas de la aplicación: riesgo aprobado y riesgo rechazado. Usa datos sintéticos que se eliminan al terminar. Cada ejecución genera su propio reporte con ID.</p>
+          <p>El botón lanza las 15 pruebas contra dos instancias aisladas de la aplicación, una con el servicio de riesgo en «aprobado» y otra en «rechazado». Cada ejecución usa datos sintéticos que se borran al terminar y genera su propio reporte, identificado con el mismo ID que ves aquí.</p>
         </div>
         <button id="run-suite" class="button-primary" type="button">Ejecutar suite</button>
       </div>
@@ -163,27 +258,122 @@
         <strong id="run-clock" class="run-clock">00:00</strong>
         <a id="run-report" class="run-report" href="#" target="_blank" rel="noopener" hidden>Abrir reporte de esta ejecución</a>
       </div>
-      <pre id="run-log" class="run-log" tabindex="0" aria-label="Bitácora de la ejecución">La bitácora mostrará cada escenario y sus pasos a medida que Playwright los ejecute.</pre>
-      <p class="runner-limits" id="run-limits">Controles: un solo proceso a la vez, comando fijo sin parámetros, tiempo máximo por ejecución y espera entre ejecuciones para proteger el servidor. La prueba de carga no se puede lanzar desde aquí: corre en el pipeline.</p>
+      <pre id="run-log" class="run-log" tabindex="0" aria-label="Bitácora de la ejecución">La bitácora mostrará cada prueba y sus pasos a medida que Playwright los ejecute.</pre>
+      <p class="runner-limits" id="run-limits">Para proteger el servidor, solo corre una ejecución a la vez, con un comando fijo que no recibe parámetros, un tiempo máximo y una espera entre ejecuciones. La prueba de carga no se lanza desde aquí: corre en el pipeline.</p>
     </section>
 
     <section class="section defects" id="defectos" aria-labelledby="defects-title">
       <div class="section-intro">
-        <p class="eyebrow">Riesgos que siguen abiertos</p>
-        <h2 id="defects-title">Defectos conocidos, visibles en cada ejecución</h2>
-        <p>Se automatizaron como «fallo esperado»: el reporte los muestra en cada corrida y la prueba se pondrá en rojo el día que el defecto se corrija, para retirar la marca de forma consciente.</p>
+        <p class="eyebrow">Defectos abiertos</p>
+        <h2 id="defects-title">Dos defectos que dejan saldos negativos</h2>
+        <p>No los corregí: la prueba evalúa la calidad de una aplicación entregada, no su reparación. Los automaticé como «fallo esperado». Aparecen en cada reporte y, el día que alguien los corrija, la prueba se pondrá en rojo para que la marca se retire de forma consciente.</p>
       </div>
-      <div class="defect-grid">
-        <article>
-          <h3>DEF-01 · Saldo negativo por el cargo del 10 %</h3>
-          <p>La validación compara solo el monto, pero se descuenta monto más 10 %. Un cliente con saldo de 1 000 que opera 1 000 queda en −100.</p>
-        </article>
-        <article>
-          <h3>DEF-02 · Doble gasto concurrente</h3>
-          <p>El saldo se valida antes de consultar el servicio de riesgo. Cinco operaciones simultáneas de 90 sobre un saldo de 100 se aprueban todas.</p>
-        </article>
-      </div>
-      <p class="defects-note">No se declara la aplicación apta para producción. Detalle y prioridades en <a href="/revision/documentos/DIAGNOSTICO.md" target="_blank" rel="noopener">DIAGNOSTICO.md</a>.</p>
+
+      <article class="defect" id="def-01">
+        <div class="defect-head">
+          <p class="defect-id">DEF-01</p>
+          <h3>Una operación aprobada puede dejar el saldo en negativo porque la validación no incluye el cargo del 10 %</h3>
+          <ul class="defect-tags">
+            <li><span>Estado</span> Abierto</li>
+            <li class="sev-high"><span>Severidad</span> Alta</li>
+            <li><span>Reproducción</span> Siempre</li>
+          </ul>
+        </div>
+        <div class="defect-body">
+          <div class="defect-text">
+            <h4>Impacto</h4>
+            <p>Un cliente termina con saldo negativo sin que la aplicación lo advierta. Ocurre siempre que el valor de la operación cubre el saldo pero el valor más el 10 % no lo cubre: con saldo de 1 000, cualquier operación por encima de 909,09 y hasta 1 000. No depende de la concurrencia ni del azar.</p>
+            <h4>Regla de negocio afectada</h4>
+            <p>La aplicación rechaza una operación con <code>insufficient balance</code> cuando el saldo no la cubre, pero luego descuenta el valor <strong>más</strong> un cargo del 10 %. La validación y el descuento usan montos distintos. El enunciado no menciona el cargo; lo conservé como comportamiento observado.</p>
+            <h4>Precondiciones</h4>
+            <ul>
+              <li>Aplicación con el servicio de riesgo en «aprobado» (<code>RISK_MODE=approved</code>).</li>
+            </ul>
+            <h4>Datos de prueba</h4>
+            <ul>
+              <li>Saldo inicial: <strong>1 000</strong>.</li>
+              <li>Valor de la operación: <strong>1 000</strong>.</li>
+              <li>Cliente con documento único de 10 dígitos, generado por la suite.</li>
+            </ul>
+            <h4>Pasos para reproducir</h4>
+            <ol>
+              <li>En «1. Crear cliente», registra un cliente con saldo inicial de 1 000.</li>
+              <li>En «2. Ejecutar operación», elige ese cliente y escribe 1 000 como valor.</li>
+              <li>Presiona «Realizar operación».</li>
+              <li>En «3. Consultar resultado», revisa el saldo y el historial.</li>
+            </ol>
+            <h4>Resultado esperado</h4>
+            <p>La aplicación rechaza la operación por saldo insuficiente, porque el descuento total sería 1 100. El saldo nunca queda por debajo de cero.</p>
+            <h4>Resultado obtenido</h4>
+            <p>La operación se aprueba (HTTP 201) y el saldo queda en <strong>−100</strong>.</p>
+            <h4>Evidencia y trazabilidad</h4>
+            <ul>
+              <li>Prueba: <code>tests/e2e/defectos-conocidos.spec.js</code>, «DEF-01 · Defecto abierto (fallo esperado)…».</li>
+              <li>En el reporte de cada ejecución aparece como fallo esperado.</li>
+              <li>Sondeo inicial por API: <code>evidencias/baseline/sondeo-defectos-api.txt</code>.</li>
+            </ul>
+            <h4>Observaciones y riesgos</h4>
+            <p>En <code>src/server.js</code>, la validación es <code>client.balance &lt; amount</code> y el descuento, <code>amount + amount * 0.1</code>. La corrección depende de una decisión de negocio: validar contra el total que se descuenta o redefinir el cargo. Hasta resolverla, un saldo positivo no garantiza que la siguiente operación sea segura.</p>
+          </div>
+          <figure class="defect-evidence">
+            <img src="/evidencias/def-01-interfaz.webp" alt="Interfaz de la aplicación: operación de 1 000 aprobada y saldo del cliente en −100" width="1200" height="1104" loading="lazy" />
+            <figcaption>Reproducción en la interfaz con los pasos anteriores: operación aprobada y saldo de −100 según la API.</figcaption>
+          </figure>
+        </div>
+      </article>
+
+      <article class="defect" id="def-02">
+        <div class="defect-head">
+          <p class="defect-id">DEF-02</p>
+          <h3>Operaciones simultáneas sobre un mismo cliente se aprueban todas y superan el saldo (doble gasto)</h3>
+          <ul class="defect-tags">
+            <li><span>Estado</span> Abierto</li>
+            <li class="sev-critical"><span>Severidad</span> Crítica</li>
+            <li><span>Reproducción</span> 5 de 5 intentos</li>
+          </ul>
+        </div>
+        <div class="defect-body">
+          <div class="defect-text">
+            <h4>Impacto</h4>
+            <p>La pérdida no tiene límite: cada solicitud simultánea adicional vuelve a descontar. En la reproducción, un saldo de 100 terminó en −395, es decir, se descontaron 495. Basta con que lleguen solicitudes al mismo tiempo, algo que provocan los reintentos de red, un doble clic o una integración.</p>
+            <h4>Regla de negocio afectada</h4>
+            <p>El saldo debe validarse y descontarse como una sola operación. La aplicación valida el saldo, espera la respuesta del servicio de riesgo (entre 150 y 1 050 ms) y solo después descuenta. Durante esa espera, las demás solicitudes leen el mismo saldo sin descontar.</p>
+            <h4>Precondiciones</h4>
+            <ul>
+              <li>Aplicación con el servicio de riesgo en «aprobado» (<code>RISK_MODE=approved</code>).</li>
+              <li>Acceso a la API, porque la interfaz envía una operación a la vez.</li>
+            </ul>
+            <h4>Datos de prueba</h4>
+            <ul>
+              <li>Saldo inicial: <strong>100</strong>.</li>
+              <li>Cinco operaciones de <strong>90</strong>, enviadas al mismo tiempo.</li>
+            </ul>
+            <h4>Pasos para reproducir</h4>
+            <ol>
+              <li>Crea un cliente con saldo de 100: <code>POST /api/clients</code>. Anota su ID.</li>
+              <li>Envía en paralelo cinco <code>POST /api/operations</code> con <code>{"clientId": ID, "amount": 90}</code>. Por ejemplo, con <code>Promise.all</code> o con cinco <code>curl</code> en segundo plano.</li>
+              <li>Consulta <code>GET /api/clients/ID/summary</code>.</li>
+            </ol>
+            <h4>Resultado esperado</h4>
+            <p>Se aprueba una sola operación (90 más 9 de cargo) y el saldo queda en 1. Las otras cuatro se rechazan por saldo insuficiente.</p>
+            <h4>Resultado obtenido</h4>
+            <p>Las cinco operaciones se aprueban (HTTP 201), quedan cinco registros y el saldo termina en <strong>−395</strong>.</p>
+            <h4>Evidencia y trazabilidad</h4>
+            <ul>
+              <li>Prueba: <code>tests/e2e/defectos-conocidos.spec.js</code>, «DEF-02 · Defecto abierto (fallo esperado)…».</li>
+              <li>Reproducido en las 5 repeticiones de la prueba de estabilidad: <code>evidencias/e2e/estabilidad-repeat-each-5-15.txt</code>.</li>
+              <li>Sondeo inicial por API: <code>evidencias/baseline/sondeo-defectos-api.txt</code>.</li>
+            </ul>
+            <h4>Observaciones y riesgos</h4>
+            <p>La persistencia es un archivo JSON que se lee y se reescribe completo, sin bloqueo. La corrección requiere que la validación y el descuento sean atómicos, por ejemplo con un bloqueo por cliente o una transacción en una base de datos real. Es el defecto que bloquearía una salida a producción.</p>
+          </div>
+          <figure class="defect-evidence">
+            <img src="/evidencias/def-02-interfaz.webp" alt="Historial del cliente en la interfaz: cinco operaciones de 90 aprobadas y saldo de −395" width="1200" height="1085" loading="lazy" />
+            <figcaption>Envié las cinco operaciones en paralelo por API. Para cargar el resumen en la interfaz intenté una sexta operación de 90, que la aplicación rechazó por saldo insuficiente porque el saldo ya era −395. El historial muestra las cinco aprobadas.</figcaption>
+          </figure>
+        </div>
+      </article>
+      <p class="defects-note">Detalle completo en <a href="/revision/documentos/DEFECTOS.md" target="_blank" rel="noopener">DEFECTOS.md</a>. Prioridades y demás hallazgos en <a href="/revision/documentos/DIAGNOSTICO.md" target="_blank" rel="noopener">DIAGNOSTICO.md</a>.</p>
     </section>
 
     <footer class="site-footer">
@@ -192,19 +382,21 @@
         <div>
           <p class="author-name">Libaniel Vargas</p>
           <p>Ingeniero de Sistemas · Magíster en Gestión de TI</p>
-          <p>Liderazgo en Quality Engineering, Tecnología e Inteligencia Artificial</p>
+          <p>Certified Tester Foundation Level (ISTQB)</p>
+          <p>Liderazgo en Quality Engineering, tecnología e inteligencia artificial</p>
         </div>
       </div>
       <ul class="author-links">
         <li><a href="https://github.com/libanielvargas" target="_blank" rel="noopener">GitHub</a></li>
-        <li><a href="https://www.linkedin.com/in/libaniel-vargas" target="_blank" rel="noopener">LinkedIn</a></li>
+        <li><a href="https://www.linkedin.com/in/libanielvargas" target="_blank" rel="noopener">LinkedIn</a></li>
         <li><a href="https://qirava.co" target="_blank" rel="noopener">qirava.co</a></li>
         <li><a href="mailto:libanielvargas@gmail.com">libanielvargas@gmail.com</a></li>
       </ul>
-      <p class="footer-note">Solución a la prueba técnica para el cargo de Líder QE en Periferia IT Group. Entorno de evaluación: no es un producto de Periferia IT Group. <a href="/revision/documentos/CAMBIOS.md" target="_blank" rel="noopener">Orden de trabajo</a> · <a href="https://github.com/libanielvargas/periferia-lider-qe-quality-engineering-2026" target="_blank" rel="noopener">Repositorio</a></p>
+      <p class="footer-note">Desarrollé esta solución para la prueba técnica de Líder QE de Periferia IT Group. Es un entorno de evaluación, no un producto de Periferia IT Group. <a href="/revision/documentos/CAMBIOS.md" target="_blank" rel="noopener">Orden de trabajo</a> · <a href="https://github.com/libanielvargas/periferia-lider-qe-quality-engineering-2026" target="_blank" rel="noopener">Repositorio</a></p>
     </footer>
 
     <script type="module" src="/app.js"></script>
+    <script type="module" src="/laboratorio.js"></script>
     <script type="module" src="/revision.js"></script>
   </body>
 </html>

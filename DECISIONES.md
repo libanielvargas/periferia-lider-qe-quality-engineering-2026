@@ -111,12 +111,45 @@ La sesión previa dejó la presentación mezclada con `app.js` y `styles.css`. S
 
 ### Presentación
 
-- **Separación:** capa propia en `revision.css` y `revision.js`.
+- **Separación:** capa propia en `revision.css`, `revision.js` y `laboratorio.js`.
+- **Redacción:** primera persona, con cada cifra acompañada de qué mide, dónde se obtuvo y cómo la interpreto. Ninguna medición se atribuye al VPS.
 - **Tipografía:** Outfit (la de Periferia) para titulares y la fuente del sistema para el texto, por legibilidad.
 - **Favicon:** derivado de la variante transparente; canal alfa verificado sobre pestañas claras y oscuras (`evidencias/visual/favicon-temas.png`).
 - **Hero:** carrusel de tres escenas en WebP (49 a 60 KB). Respeta `prefers-reduced-motion` y sin imágenes conserva un fondo oscuro.
 - **Pie de página:** fotografía tomada del CV del candidato, con los datos de contacto autorizados; sin dirección ni documento de identidad.
 - **Verificación visual:** escritorio, tableta y móvil (`evidencias/visual/`), sin desborde horizontal ni errores de consola.
+
+### Ajustes de presentación del 29-oct-2026: alcance
+
+Antes de tocar la interfaz separé tres grupos, contrastándolos con `ENUNCIADO.md` y el commit base `3e3215b`:
+
+| Grupo | Qué incluye | Qué hice |
+|---|---|---|
+| A. Presentación autorizada | `index.html` (envoltorio y formularios), `revision.*`, `laboratorio.js` | Implementado. |
+| B. Defectos del sistema bajo prueba | DEF-01, DEF-02 y los hallazgos de `DIAGNOSTICO.md` | Documentados en `DEFECTOS.md`; no corregidos. |
+| C. Funcionalidades nuevas | Endpoint para listar o buscar clientes, historial persistente propio, cambios de reglas | No implementadas. |
+
+- **Sin cambios en el sistema entregado:** `src/server.js`, `src/db.js`, `src/public/app.js` y `src/public/styles.css` no cambiaron en esta etapa. La capa nueva, `laboratorio.js`, observa lo que escribe `app.js` y consulta la API existente: `GET /api/clients/:id`, `GET /api/operations/:id` y `GET /api/clients/:id/summary`. Escribe con `textContent`, sin `innerHTML`.
+- **Selector de clientes:** la API no tiene un endpoint para listar clientes, así que el selector ofrece los creados desde el navegador (guardados en `localStorage`, y validados contra la API al cargar) o los que se agregan por su ID interno. `app.js` sigue completando su campo de ID, que ahora está oculto, pero la operación usa solo el cliente que la persona elige. El formulario ya no precarga el valor 100.
+- **Historial:** `GET /api/clients/:id/summary` sí devuelve todas las operaciones (`operations[]` y `operationCount`). El resumen original muestra solo la primera; la capa nueva presenta el historial tal como lo devuelve la API, sin fabricar datos.
+- **Valores en pesos colombianos:** solo en la presentación (`Intl.NumberFormat('es-CO')`). La API sigue recibiendo y devolviendo números.
+- **Respuesta literal:** la línea que escribe `app.js` («Operación 3: APPROVED», «insufficient balance») sigue visible, con la etiqueta «Respuesta de la aplicación». Las tarjetas la traducen sin ocultarla.
+
+### Error del ejecutor en el puerto 4329 (29-oct-2026)
+
+**Síntoma.** Al presionar el botón aparecía «No fue posible consultar el estado del ejecutor».
+
+**Causa.** El proceso de Node del puerto 4329 se inició el 28-oct a las 17:26, antes del commit que agregó el ejecutor (`d6daeb0`, 21:16). Node conserva en memoria el `server.js` de ese momento, sin las rutas `/revision/*`. En cambio, `express.static` sirve `index.html` y `revision.js` desde el disco en cada petición. La página nueva consultaba un servidor viejo y recibía un 404 en HTML.
+
+**Defecto propio.** `revision.js` trataba cualquier falla (red, 404, respuesta que no es JSON) con el mismo mensaje genérico. No fue un problema de CORS ni de puerto.
+
+**Corrección.**
+- La interfaz distingue sin red, servidor sin ejecutor (404), acceso denegado (403) y error del servidor.
+- La interfaz reintenta durante una ejecución en curso.
+- En modo local, el 403 explica que solo se aceptan solicitudes desde la misma máquina.
+- Reinicié el proceso con la misma configuración.
+
+**Verificación.** Ejecución `20261029-182655-eaf0` desde la interfaz: 13 conformes, 2 defectos conocidos, el reporte con el mismo ID y 0 procesos huérfanos. No relajé ningún control del ejecutor.
 
 ### Incidente: Docker llenó el disco de la Mac
 

@@ -10,7 +10,12 @@ export class OperationsPage {
     this.clientBalance = page.locator('#client-balance');
     this.createClientButton = page.getByRole('button', { name: 'Crear cliente' });
     this.clientResult = page.locator('#client-result');
+    // Campo oculto original de app.js; la persona elige el cliente en el selector.
     this.operationClientId = page.locator('#operation-client-id');
+    this.operationClient = page.locator('#operation-client');
+    this.operationCard = page.locator('#operation-card');
+    this.clientCard = page.locator('#client-card');
+    this.history = page.locator('#history');
     this.operationAmount = page.locator('#operation-amount');
     this.executeOperationButton = page.getByRole('button', { name: 'Realizar operación' });
     this.operationResult = page.locator('#operation-result');
@@ -37,7 +42,8 @@ export class OperationsPage {
   }
 
   async executeOperation(clientId, amount) {
-    await this.operationClientId.fill(String(clientId));
+    // selectOption espera a que la capa de presentación agregue al cliente recién creado.
+    await this.operationClient.selectOption(String(clientId));
     await this.operationAmount.fill(String(amount));
     await this.executeOperationButton.click();
     await expect(this.operationResult).not.toHaveText(/^$|Procesando operación/);

@@ -9,7 +9,7 @@ import express from 'express';
 
 const projectRoot = fileURLToPath(new URL('../', import.meta.url));
 const runsRoot = path.resolve(process.env.QA_RUNS_DIR || path.join(projectRoot, 'runs'));
-const documents = new Set(['DIAGNOSTICO.md', 'DECISIONES.md', 'REVISION_PR.md', 'CAMBIOS.md', 'DESPLIEGUE.md']);
+const documents = new Set(['DIAGNOSTICO.md', 'DECISIONES.md', 'REVISION_PR.md', 'CAMBIOS.md', 'DESPLIEGUE.md', 'DEFECTOS.md']);
 
 // off: deshabilitado · local: solo desde localhost · public: detrás del reverse proxy con límites.
 const mode = process.env.QA_RUNNER_MODE || 'local';
