@@ -157,7 +157,13 @@ Una construcción de imagen Docker (Chromium y caché de BuildKit) agotó el dis
 
 ### Despliegue
 
-El código y el procedimiento están listos (`DESPLIEGUE.md`, `deploy/`). No se ejecutó porque desde la Mac no existe un acceso autorizado al VPS; el detalle está en `DESPLIEGUE.md`.
+El propietario autorizó usar la clave de despliegue de Qirava. La inspección del servidor real cambió dos decisiones:
+- **Memoria:** el droplet tiene 961 MiB, así que el servicio quedó con `MemoryHigh` de 380M, `MemoryMax` de 520M y swap propio.
+- **Red:** el host no tiene firewall, así que limité la red del servicio con `IPAddressDeny`/`IPAddressAllow` de systemd.
+
+El filtro de red reveló que la página dependía de Google Fonts, y ahora la fuente se sirve desde la aplicación.
+
+Instalé el commit `e33bc04` y ejecuté la suite en el servidor: 13 conformes y 2 defectos conocidos en 62 s, con `qirava.co` respondiendo 200 durante toda la ejecución. La evidencia está en `evidencias/publicacion/despliegue-vps-2026-10-29.md`. Falta el registro DNS.
 
 ## Pendientes y riesgos
 
@@ -168,7 +174,8 @@ El código y el procedimiento están listos (`DESPLIEGUE.md`, `deploy/`). No se 
 | Saldo inicial negativo o `null`, correo sin formato, XSS por `innerHTML` | Datos corruptos, ejecución de script | Validación en el servidor y `textContent` en el frontend; pruebas negativas. |
 | `qa-token-2026-visible` y `Admin2026!` siguen en el historial | Son valores ficticios sembrados por el enunciado (reto 5 y reto 6), no credenciales reales | En un sistema real: rotar y purgar el historial. Aquí se conservan porque son el objeto de la evaluación. |
 | Persistencia en JSON | No escala ni soporta varios procesos | Base de datos real para ambientes compartidos. |
-| Despliegue en el VPS sin ejecutar | La página pública no existe todavía | Ejecutar `DESPLIEGUE.md` cuando existan el acceso SSH y el registro DNS. |
+| Registro DNS en Cloudflare | Sin él, la URL pública no resuelve | Crear `A prueba-tecnica-qa-lead-periferia-it → 206.81.7.100` con proxy activo; verificar el certificado y ejecutar la suite desde la URL. |
+| Droplet de 1 GB | Durante una ejecución el portal responde más lento y la suite usa swap | Ampliar a 2 GB si la página tendrá uso frecuente (decisión de costo). |
 
 ## Herramientas y asistentes de IA
 

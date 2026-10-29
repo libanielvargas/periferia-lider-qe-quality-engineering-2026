@@ -106,4 +106,4 @@ docker exec "$CADDY" caddy reload --config /etc/caddy/Caddyfile --adapter caddyf
 log "6. Verificación interna"
 docker exec "$CADDY" wget -qO- "http://$GATEWAY:$PORT/health" && echo
 systemctl --no-pager status periferia-qe | head -12
-log "Listo. Desplegado $(git -C $APP rev-parse --short HEAD). Falta comprobar desde Internet: https://$DOMINIO"
+log "Listo. Desplegado $(sudo -u periferia-qe git -C $APP rev-parse --short HEAD). Falta comprobar desde Internet: https://$DOMINIO"
