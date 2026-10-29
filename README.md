@@ -12,7 +12,7 @@ El evaluador entregó una aplicación pequeña (Express, frontend vanilla y una 
 | 2. Automatización | [`tests/e2e/`](tests/e2e) | Flujo cliente → operación → interfaz → API, con Page Object, esperas por condición y pruebas independientes. **15 pruebas: 13 conformes y 2 defectos abiertos como fallo esperado.** |
 | 3. Datos sintéticos | [`tests/support/data-rules.js`](tests/support/data-rules.js) | Reglas centralizadas, documentos únicos, saldo insuficiente, casos inválidos y limpieza al terminar. |
 | 4. Rendimiento | [`performance/critical-endpoint.js`](performance/critical-endpoint.js) | k6 con 50 usuarios durante 5 min: p95 de 18,84 ms (umbral 800 ms) y 0 % de errores en 14 901 solicitudes. |
-| 5. Pipeline | [`.github/workflows/quality.yml`](.github/workflows/quality.yml) | Node 20, `npm ci`, secretos parametrizados, artefactos solo en fallo, y bloqueo por pruebas o umbrales. |
+| 5. Pipeline | [`.github/workflows/quality.yml`](.github/workflows/quality.yml) | Node 20, `npm ci`, secretos parametrizados, artefactos solo en fallo, y bloqueo por pruebas o umbrales. [Ejecución real en verde](https://github.com/libanielvargas/periferia-lider-qe-quality-engineering-2026/actions/runs/40805453568): E2E 15/15 y k6 de 5 min con p95 de 3,27 ms. |
 | 6. Revisión de PR | [`REVISION_PR.md`](REVISION_PR.md) | Nueve hallazgos con severidad. Decisión: **solicitar cambios bloqueantes**. |
 
 Las decisiones técnicas, las limitaciones, los tiempos y el uso de IA están en [`DECISIONES.md`](DECISIONES.md); el orden de trabajo, en [`CAMBIOS.md`](CAMBIOS.md) y en el historial de Git.

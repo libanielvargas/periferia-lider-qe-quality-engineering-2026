@@ -72,7 +72,8 @@
   1. `actionlint` 1.7.12 sin errores (`evidencias/pipeline/`).
   2. Simulación local de los pasos con `CI=true`: `npm ci`, `npm run test:e2e`, arranque de la app con `curl --retry` y `npm run test:performance` (`evidencias/pipeline/`).
   3. Verificación de que la suite falla ante una regresión inyectada (`evidencias/e2e/mutacion-pending-detectada.txt`) y de que k6 devuelve 99 al incumplir un umbral.
-- **No validado:** la ejecución real en GitHub, la creación de los ambientes `qa` y `staging`, el secreto configurado y la acción `grafana/setup-k6-action`.
+- **Ejecución real en GitHub Actions:** run [40805453568](https://github.com/libanielvargas/periferia-lider-qe-quality-engineering-2026/actions/runs/40805453568) en `success`. E2E: 15 pasadas (13 conformes y 2 defectos abiertos). k6 completo: p95 de 3,27 ms y 0 % de errores en 15 001 solicitudes (`evidencias/publicacion/`).
+- **No validado:** el ambiente `staging` y el secreto `RISK_API_TOKEN` configurado. El mock de riesgo no lo exige; el pipeline corre con el valor por defecto.
 
 ## Fase 2: presentación, ejecutor público y publicación
 
@@ -134,7 +135,7 @@ El código y el procedimiento están listos (`DESPLIEGUE.md`, `deploy/`). No se 
 | Saldo inicial negativo o `null`, correo sin formato, XSS por `innerHTML` | Datos corruptos, ejecución de script | Validación en el servidor y `textContent` en el frontend; pruebas negativas. |
 | `qa-token-2026-visible` y `Admin2026!` siguen en el historial | Son valores ficticios sembrados por el enunciado (reto 5 y reto 6), no credenciales reales | En un sistema real: rotar y purgar el historial. Aquí se conservan porque son el objeto de la evaluación. |
 | Persistencia en JSON | No escala ni soporta varios procesos | Base de datos real para ambientes compartidos. |
-| Pipeline no ejecutado en GitHub | Diferencias de entorno | Primer run en una rama y ajustar si algo difiere. |
+| Despliegue en el VPS sin ejecutar | La página pública no existe todavía | Ejecutar `DESPLIEGUE.md` cuando existan el acceso SSH y el registro DNS. |
 
 ## Herramientas y asistentes de IA
 
