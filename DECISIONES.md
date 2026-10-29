@@ -151,6 +151,33 @@ Antes de tocar la interfaz separé tres grupos, contrastándolos con `ENUNCIADO.
 
 **Verificación.** Ejecución `20261029-182655-eaf0` desde la interfaz: 13 conformes, 2 defectos conocidos, el reporte con el mismo ID y 0 procesos huérfanos. No relajé ningún control del ejecutor.
 
+### Ajustes de cierre (29-oct-2026, tarde)
+
+Los cinco ajustes son del grupo A (presentación). `src/server.js`, `src/db.js`, `src/public/app.js` y el contrato de la API no cambiaron.
+
+- **Consulta entre clientes.**
+  - **Problema:** «3. Consultar resultado» mostraba solo al cliente de la última operación, porque `app.js` consulta siempre a ese cliente.
+  - **Solución:** agregué un selector propio de consulta que usa únicamente `GET /api/clients/:id/summary`.
+  - **Comportamiento:** si la persona no ha elegido un cliente, la consulta sigue al operado, como hacía `app.js`. Si ya eligió uno, lo conserva aunque se opere sobre otro.
+  - **«Actualizar»:** se intercepta en fase de captura para que consulte al cliente elegido.
+  - **Prueba de regresión:** `tests/e2e/consulta-clientes.spec.js`.
+  - **Regresión que detecté y corregí:** en una primera versión, «Actualizar», usado después de una operación rechazada sin cliente elegido, mostraba «Elige un cliente». La prueba de saldo insuficiente lo detectó.
+- **Resultados del ejecutor.**
+  - **Fuente:** el servidor lee el JSON oficial de Playwright (`resultado.json`) y entrega el estado, la duración, los conteos y la lista de escenarios con resultado, duración, pasos y adjuntos.
+  - **Página:** muestra esos datos y enlaza cada escenario al reporte HTML oficial (`#?testId=`). El registro técnico queda contraído bajo «Ver registro técnico».
+  - **Lo que no cambió:** no hay UI Mode en producción, ni servidores nuevos, ni videos adicionales. La configuración de capturas, trazas y videos sigue siendo `retain-on-failure`.
+- **Pie de página.**
+  - **Contenido:** identidad y contactos tomados del perfil canónico del Vault (`PERFIL_PROFESIONAL_CANONICO.md`).
+  - **LinkedIn:** el CV V8 en PDF todavía tiene el enlace con guion, que el perfil canónico marca como desactualizado. `linkedin.com/in/libanielvargas/` redirige con 301 a `/in/libanielvargas`. Más allá de eso, LinkedIn responde 999 a los clientes automatizados.
+- **Evidencias del punto de partida.**
+  - **Problema:** la página citaba `evidencias/baseline/` como texto, y esa ruta respondía `Cannot GET`. El problema era de nuestra presentación, no de la aplicación entregada.
+  - **Solución:** cada paso enlaza su evidencia, y un catálogo indica qué demuestra cada archivo y si corresponde al estado inicial o al sistema intervenido.
+  - **Cómo se publican:** se sirven desde una lista cerrada en `qa-runner.js` (`/revision/evidencias/...`), sin listado de directorios. `/evidencias/baseline/` redirige al catálogo.
+  - **Prueba:** `tests/e2e/presentacion-evidencias.spec.js` comprueba que cada enlace responde con el tipo esperado y que ninguna ruta interna aparece como texto sin enlace.
+- **Accesos de Qirava.** El inventario canónico, sin secretos, quedó en el Knowledge Vault (`10-fabrica/gobierno/docs/devops/INVENTARIO_ACCESOS_INFRAESTRUCTURA.md`).
+
+La suite pasó de 15 a 17 pruebas: 15 conformes y 2 defectos conocidos. Repetida cinco veces, dio 85 de 85 (`evidencias/e2e/estabilidad-repeat-each-5-17.txt`). Las cifras anteriores conservan su fecha y su contexto.
+
 ### Incidente: Docker llenó el disco de la Mac
 
 Una construcción de imagen Docker (Chromium y caché de BuildKit) agotó el disco local y dejó el motor de Docker en estado de error. Se liberaron solo cachés autorizadas y se descartó Docker como requisito. El despliegue propuesto usa Node.js con systemd y límites de cgroup (`DESPLIEGUE.md`). Ninguna imagen Docker se publicó ni se dejó en el repositorio sin verificar.

@@ -20,6 +20,7 @@ export class OperationsPage {
     this.executeOperationButton = page.getByRole('button', { name: 'Realizar operación' });
     this.operationResult = page.locator('#operation-result');
     this.refreshSummaryButton = page.getByRole('button', { name: 'Actualizar' });
+    this.summaryClient = page.locator('#summary-client');
     this.summary = page.locator('#summary');
     this.summaryBalance = page.locator('#summary-balance');
     this.summaryStatus = page.locator('#summary-status');
@@ -53,6 +54,10 @@ export class OperationsPage {
     await expect(this.operationResult).toHaveText(/^Operación \d+: (APPROVED|REJECTED)$/);
     const [, id, status] = (await this.operationResult.textContent()).match(/^Operación (\d+): (\w+)$/);
     return { id: Number(id), status };
+  }
+
+  async consultClient(clientId) {
+    await this.summaryClient.selectOption(String(clientId));
   }
 
   async expectSummary({ name, balance, status }) {

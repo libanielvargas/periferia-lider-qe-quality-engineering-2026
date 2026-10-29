@@ -2,8 +2,8 @@
 // observa lo que app.js escribe en pantalla y consulta la API existente para mostrarlo con
 // más contexto. Nunca calcula saldos ni resultados; solo presenta lo que devuelve la API.
 //
-// Límite de la API: no existe un endpoint para listar o buscar clientes. Por eso el selector
-// solo ofrece los clientes creados desde este navegador o agregados por su ID interno.
+// Límite de la API: no existe un endpoint para listar o buscar clientes. Por eso los selectores
+// solo ofrecen los clientes creados desde este navegador o agregados por su ID interno.
 
 const storeKey = 'periferia-qe:clientes';
 const cop = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0, maximumFractionDigits: 2 });
@@ -19,11 +19,14 @@ const amountHint = document.querySelector('#operation-amount-cop');
 const clientCard = document.querySelector('#client-card');
 const operationCard = document.querySelector('#operation-card');
 const summary = document.querySelector('#summary');
+const summaryClient = document.querySelector('#summary-client');
 const history = document.querySelector('#history');
 const addById = document.querySelector('#add-client-by-id');
 
 const clients = new Map();
-let summaryClientId = null;
+const summaries = new Map();
+let operatedClientId = null;
+let consultToken = 0;
 
 const messages = {
   'name, document and email are required': 'Faltan datos: nombre, documento y correo son obligatorios.',
@@ -83,8 +86,8 @@ function saveClients() {
   try { localStorage.setItem(storeKey, JSON.stringify([...clients.keys()])); } catch { /* sin almacenamiento */ }
 }
 
-function renderOptions() {
-  const selected = clientSelect.value;
+function fillSelect(select) {
+  const selected = select.value;
   const placeholder = element('option', '', clients.size ? 'Selecciona un cliente' : 'Primero crea un cliente');
   placeholder.value = '';
   const options = [...clients.values()].map(client => {
@@ -92,8 +95,13 @@ function renderOptions() {
     option.value = String(client.id);
     return option;
   });
-  clientSelect.replaceChildren(placeholder, ...options);
-  clientSelect.value = clients.has(Number(selected)) ? selected : '';
+  select.replaceChildren(placeholder, ...options);
+  select.value = clients.has(Number(selected)) ? selected : '';
+}
+
+function renderOptions() {
+  fillSelect(clientSelect);
+  fillSelect(summaryClient);
 }
 
 function remember(client) {
@@ -159,7 +167,9 @@ new MutationObserver(async () => {
 document.addEventListener('submit', event => {
   if (event.target !== operationForm) return;
   hiddenClientId.value = clientSelect.value;
-  summaryClientId = clientSelect.value;
+  operatedClientId = clientSelect.value;
+  // Sin una consulta elegida, «3. Consultar resultado» sigue al cliente operado, como en app.js.
+  if (!summaryClient.value) summaryClient.value = operatedClientId;
   operationCard.hidden = true;
 }, true);
 
@@ -225,30 +235,92 @@ function historyTable(operations) {
   return wrap;
 }
 
-async function renderHistory() {
-  if (!summaryClientId || !summary.querySelector('#summary-balance')) {
-    history.hidden = true;
+// 3. Consulta: un selector propio, independiente del cliente de la última operación.
+// app.js consulta siempre el cliente operado; esta capa respeta el cliente que la persona eligió.
+function renderHistory(data) {
+  const balance = Number(data.client.balance);
+  const header = element('div', 'history-head');
+  header.append(
+    element('p', 'card-title', `Historial de ${data.client.name} · ${data.operationCount} ${data.operationCount === 1 ? 'operación' : 'operaciones'}`),
+    element('p', `history-balance${balance < 0 ? ' negative' : ''}`, `Saldo según la API: ${money(balance)}`)
+  );
+  history.replaceChildren(header);
+  if (data.operations.length) history.append(historyTable(data.operations));
+  history.append(element('p', 'history-note',
+    'Fuente: GET /api/clients/:id/summary. El resumen original de la aplicación muestra solo la última operación; la API devuelve el historial completo.'));
+  history.hidden = false;
+}
+
+// Mismo contenido y formato que el resumen de app.js, escrito con textContent.
+function renderSummary(data) {
+  const latest = data.operations[0];
+  const cell = (label, value, id) => {
+    const article = element('article');
+    const strong = element('strong', '', value);
+    if (id) strong.id = id;
+    article.append(element('span', '', label), strong);
+    return article;
+  };
+  summary.className = 'summary';
+  summary.replaceChildren(
+    cell('Cliente', data.client.name),
+    cell('Saldo', `$${Number(data.client.balance).toFixed(2)}`, 'summary-balance'),
+    cell('Última operación', latest ? latest.status : 'Sin operaciones', 'summary-status')
+  );
+  summaryObserver.takeRecords();
+  renderHistory(data);
+}
+
+function showSummaryMessage(text) {
+  summary.className = 'summary empty';
+  summary.textContent = text;
+  summaryObserver.takeRecords();
+  history.hidden = true;
+}
+
+async function consult(id) {
+  const token = ++consultToken;
+  if (!id) {
+    showSummaryMessage('Elige un cliente para consultar su saldo e historial.');
     return;
   }
+  if (summaries.has(id)) renderSummary(summaries.get(id));
   try {
-    const data = await getJson(`/api/clients/${summaryClientId}/summary`);
-    const balance = Number(data.client.balance);
-    const header = element('div', 'history-head');
-    header.append(
-      element('p', 'card-title', `Historial de ${data.client.name} · ${data.operationCount} ${data.operationCount === 1 ? 'operación' : 'operaciones'}`),
-      element('p', `history-balance${balance < 0 ? ' negative' : ''}`, `Saldo según la API: ${money(balance)}`)
-    );
-    history.replaceChildren(header);
-    if (data.operations.length) history.append(historyTable(data.operations));
-    history.append(element('p', 'history-note',
-      'Fuente: GET /api/clients/:id/summary. El resumen original de la aplicación muestra solo la última operación; la API devuelve el historial completo.'));
-    history.hidden = false;
+    const data = await getJson(`/api/clients/${id}/summary`);
+    summaries.set(id, data);
+    if (token === consultToken && summaryClient.value === id) renderSummary(data);
   } catch {
-    history.hidden = true;
+    if (token === consultToken) showSummaryMessage('No fue posible consultar este cliente en la API.');
   }
 }
 
-new MutationObserver(renderHistory).observe(summary, { childList: true });
+// app.js escribe el resumen del cliente operado. Si la persona no ha elegido uno, la consulta
+// adopta ese cliente; si eligió otro, se vuelve a mostrar el suyo.
+const summaryObserver = new MutationObserver(() => {
+  if (!operatedClientId) return;
+  // Señal observable para las pruebas: cuántas veces app.js ha escrito el resumen.
+  summary.dataset.appWrites = String(Number(summary.dataset.appWrites || 0) + 1);
+  summaryObserver.takeRecords();
+  if (summaryClient.value === operatedClientId && summary.querySelector('#summary-balance')) {
+    getJson(`/api/clients/${operatedClientId}/summary`).then(data => {
+      summaries.set(operatedClientId, data);
+      if (summaryClient.value === operatedClientId) renderHistory(data);
+    }).catch(() => { history.hidden = true; });
+    return;
+  }
+  consult(summaryClient.value);
+});
+summaryObserver.observe(summary, { childList: true });
+
+summaryClient.addEventListener('change', () => consult(summaryClient.value));
+
+// «Actualizar» consulta el cliente elegido. Se intercepta en fase de captura para que el
+// manejador de app.js, que consulta el último cliente operado, no lo reemplace.
+document.addEventListener('click', event => {
+  if (!event.target.closest('#refresh-summary')) return;
+  event.stopPropagation();
+  consult(summaryClient.value);
+}, true);
 
 // Agregar un cliente existente por su ID interno (la API no permite buscar por documento).
 addById.addEventListener('submit', async event => {

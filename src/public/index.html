@@ -55,7 +55,7 @@
         </button>
         <button class="hero-scene" type="button" data-slide="1" aria-pressed="false">
           <b>02 · Automatización</b>
-          <span>Quince pruebas independientes que validan la interfaz y confirman cada resultado por API.</span>
+          <span>Diecisiete pruebas independientes que validan la interfaz y confirman cada resultado por API.</span>
         </button>
         <button class="hero-scene" type="button" data-slide="2" aria-pressed="false">
           <b>03 · Rendimiento</b>
@@ -68,34 +68,65 @@
       <div class="section-intro">
         <p class="eyebrow">Punto de partida</p>
         <h2 id="partida-title">La suite original no podía pasar</h2>
-        <p>Antes de cambiar nada ejecuté la suite tal como la recibí. Este es el recorrido, con su evidencia en <code>evidencias/baseline/</code>.</p>
+        <p>Antes de cambiar nada ejecuté la suite tal como la recibí. Este es el recorrido: situación inicial, evidencia, diagnóstico, intervención y resultado. Cada paso enlaza el archivo que lo respalda, y la lista completa está <a href="#evidencias-partida">al final de esta sección</a>.</p>
       </div>
       <ol class="timeline">
         <li>
+          <p class="stage">Situación inicial</p>
           <h3>Qué ejecuté</h3>
           <p>El comando del enunciado, <code>npm run test:e2e</code>, dos veces seguidas. La suite tenía <strong>4 pruebas</strong>: crear un cliente desde la interfaz, ejecutar una operación, consultar el estado de la última operación y consultar por API la operación con ID 1.</p>
         </li>
         <li>
+          <p class="stage">Evidencia</p>
           <h3>Qué falló</h3>
           <p>Las 4 pruebas fallaron en las dos ejecuciones. Las tres de interfaz agotaron sus 20 segundos esperando un campo del formulario que nunca apareció, porque la aplicación respondía <code>Cannot GET /</code>. La prueba de API daba por hecho que existía la operación con ID 1, y en la base no había ninguna operación.</p>
+          <p class="stage-links">Evidencia: <a href="/revision/evidencias/baseline/cannot-get-root.png">captura del error <code>Cannot GET /</code></a> · <a href="/revision/evidencias/baseline/suite-original-corrida-1.txt">primera ejecución</a> · <a href="/revision/evidencias/baseline/suite-original-corrida-2-sin-reset.txt">segunda ejecución</a></p>
         </li>
         <li>
+          <p class="stage">Diagnóstico</p>
           <h3>La causa</h3>
           <p>El servidor ubicaba la carpeta de la interfaz con <code>URL.pathname</code>. La ruta del proyecto contiene un espacio, <code>Candidato (1)</code>; ese método lo convierte en <code>%20</code> y Express buscaba una carpeta que no existe. Cambié esa línea por <code>fileURLToPath</code> y la interfaz cargó.</p>
+          <p class="stage-links">Evidencia: <a href="/revision/evidencias/baseline/probe-static.txt">consulta directa al servidor original</a>, donde <code>/</code> respondía 404 y <code>/health</code>, 200</p>
         </li>
         <li>
+          <p class="stage">Diagnóstico</p>
           <h3>La segunda capa</h3>
           <p>Con la interfaz disponible pasó 1 de 4. Las otras fallaban por la propia suite: una operación sobre un cliente con ID 2 que ninguna prueba garantizaba, un documento fijo que se duplicaba desde la segunda corrida, un saldo esperado de 900 que ignoraba el cargo del 10 %, un servicio de riesgo que rechaza al azar el 15 % y esperas fijas de 0,5 y 3 segundos.</p>
+          <p class="stage-links">Evidencia: <a href="/revision/evidencias/baseline/suite-original-tras-fix-static.txt">ejecución después de corregir la ruta</a> · <a href="/revision/evidencias/baseline/suite-original-reutilizo-servidor-viejo.txt">ejecución que reutilizó un servidor viejo</a> · <a href="/revision/evidencias/baseline/sondeo-defectos-api.txt">sondeo de defectos por API</a></p>
         </li>
         <li>
+          <p class="stage">Intervención</p>
           <h3>Qué hice</h3>
           <p>Reescribí la suite: Page Object, datos sintéticos únicos por prueba, una base aislada por ejecución, dos instancias de la aplicación con el servicio de riesgo fijo en «aprobado» y en «rechazado», y esperas por condición. Los dos defectos de negocio que encontré quedaron automatizados como fallo esperado para que no se pierdan de vista.</p>
         </li>
         <li>
+          <p class="stage">Resultado</p>
           <h3>Resultado</h3>
-          <p><strong>15 pruebas</strong>: 13 conformes y 2 defectos conocidos. Repetí la suite cinco veces seguidas y las 75 ejecuciones dieron el resultado esperado.</p>
+          <p>La suite reescrita tenía <strong>15 pruebas</strong>: 13 conformes y 2 defectos conocidos. La repetí cinco veces seguidas y las 75 ejecuciones dieron el resultado esperado. Después agregué dos pruebas de la capa de presentación; hoy son 17 y puedes <a href="#ejecucion">ejecutarlas desde esta página</a>.</p>
+          <p class="stage-links">Evidencia: <a href="/revision/evidencias/e2e/suite-completa-15.txt">suite reescrita, 15 de 15 con el resultado esperado</a> · <a href="/revision/evidencias/e2e/estabilidad-repeat-each-5-15.txt">estabilidad, 75 de 75</a></p>
         </li>
       </ol>
+
+      <div class="evidence-catalog" id="evidencias-partida">
+        <h3>Evidencias del punto de partida</h3>
+        <p>Salidas originales de las ejecuciones y del sondeo, sin editar. Se abren en el navegador y también están en la <a href="https://github.com/libanielvargas/periferia-lider-qe-quality-engineering-2026/tree/main/evidencias/baseline" target="_blank" rel="noopener">carpeta <code>evidencias/baseline</code> del repositorio</a>.</p>
+        <div class="table-scroll">
+          <table class="evidence-table">
+            <thead><tr><th scope="col">Evidencia</th><th scope="col">Qué demuestra</th><th scope="col">Estado del sistema</th></tr></thead>
+            <tbody>
+              <tr><th scope="row"><a href="/revision/evidencias/baseline/cannot-get-root.png">Captura del error <code>Cannot GET /</code></a><span>Imagen PNG</span></th><td>La aplicación entregada no mostraba la interfaz: la ruta raíz respondía 404.</td><td><span class="state initial">Estado inicial</span></td></tr>
+              <tr><th scope="row"><a href="/revision/evidencias/baseline/suite-original-corrida-1.txt">Primera ejecución de la suite original</a><span>Texto</span></th><td>4 de 4 pruebas fallidas: tres por tiempo de espera y una porque la operación con ID 1 no existía.</td><td><span class="state initial">Estado inicial</span></td></tr>
+              <tr><th scope="row"><a href="/revision/evidencias/baseline/suite-original-corrida-2-sin-reset.txt">Segunda ejecución, sin reiniciar la base</a><span>Texto</span></th><td>El resultado se repite: 4 de 4 fallidas. No es un fallo intermitente.</td><td><span class="state initial">Estado inicial</span></td></tr>
+              <tr><th scope="row"><a href="/revision/evidencias/baseline/probe-static.txt">Consulta directa al servidor original</a><span>Texto</span></th><td><code>GET /</code> responde 404 y <code>GET /health</code> responde 200: el servidor funciona, pero no encuentra la carpeta de la interfaz.</td><td><span class="state initial">Estado inicial</span></td></tr>
+              <tr><th scope="row"><a href="/revision/evidencias/baseline/suite-original-reutilizo-servidor-viejo.txt">Ejecución que reutilizó un servidor viejo</a><span>Texto</span></th><td>Con <code>reuseExistingServer</code>, Playwright se conectó a un servidor que ya estaba en marcha, y las 4 fallaron igual. Por eso la suite nueva levanta sus propios servidores.</td><td><span class="state initial">Estado inicial</span></td></tr>
+              <tr><th scope="row"><a href="/revision/evidencias/baseline/suite-original-tras-fix-static.txt">Ejecución después de corregir la ruta estática</a><span>Texto</span></th><td>Con la interfaz disponible pasa 1 de 4. Las otras 3 fallan por defectos de la propia suite.</td><td><span class="state intervened">Intervenido: solo la ruta</span></td></tr>
+              <tr><th scope="row"><a href="/revision/evidencias/baseline/sondeo-defectos-api.txt">Sondeo inicial de defectos por API</a><span>Texto</span></th><td>Saldo de −100 tras una operación aprobada (DEF-01), saldo de −395 con cinco operaciones simultáneas (DEF-02) y validaciones ausentes en la creación de clientes.</td><td><span class="state initial">Estado inicial, reglas de negocio sin cambios</span></td></tr>
+              <tr><th scope="row"><a href="/revision/evidencias/e2e/suite-completa-15.txt">Suite reescrita</a><span>Texto</span></th><td>15 de 15 con el resultado esperado: 13 conformes y los 2 defectos como fallo esperado.</td><td><span class="state intervened">Intervenido: suite nueva</span></td></tr>
+              <tr><th scope="row"><a href="/revision/evidencias/e2e/estabilidad-repeat-each-5-15.txt">Prueba de estabilidad</a><span>Texto</span></th><td>La suite repetida cinco veces: 75 de 75 con el resultado esperado.</td><td><span class="state intervened">Intervenido: suite nueva</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </section>
 
     <section class="section" id="mediciones" aria-labelledby="mediciones-title">
@@ -112,16 +143,16 @@
           <tbody>
             <tr>
               <th scope="row">Suite funcional (Playwright)</th>
-              <td class="metric-value">15 pruebas</td>
-              <td>Flujo completo, reglas negativas, rechazo por riesgo y los dos defectos conocidos, sobre dos instancias aisladas de la aplicación.</td>
-              <td>13 conformes y 2 fallos esperados (DEF-01 y DEF-02), sin fallos inesperados. En mi equipo y en GitHub Actions.</td>
+              <td class="metric-value">17 pruebas</td>
+              <td>Flujo completo, reglas negativas, rechazo por riesgo, los dos defectos conocidos, la consulta entre clientes y los enlaces a las evidencias, sobre dos instancias aisladas de la aplicación.</td>
+              <td>15 conformes y 2 fallos esperados (DEF-01 y DEF-02), sin fallos inesperados. En mi equipo, en GitHub Actions y en el servidor de esta página.</td>
               <td>La automatización es confiable. La aplicación no está lista para producción mientras los dos defectos sigan abiertos.</td>
             </tr>
             <tr>
               <th scope="row">Estabilidad</th>
-              <td class="metric-value">75 de 75</td>
+              <td class="metric-value">85 de 85</td>
               <td>La suite completa repetida cinco veces (<code>--repeat-each=5</code>) en paralelo, para detectar pruebas intermitentes.</td>
-              <td>Las 75 ejecuciones dieron el resultado esperado. DEF-02 se reprodujo en las 5 repeticiones.</td>
+              <td>Con 17 pruebas, las 85 ejecuciones dieron el resultado esperado (29 de octubre). Con la suite anterior de 15 fueron 75 de 75, y DEF-02 se reprodujo en las 5 repeticiones.</td>
               <td>No encontré pruebas intermitentes en esa muestra. El doble gasto se repite siempre: no es un caso fortuito.</td>
             </tr>
             <tr>
@@ -148,7 +179,7 @@
           </tbody>
         </table>
       </div>
-      <p class="metrics-source">Fuentes: <code>evidencias/e2e/</code>, <code>evidencias/performance/summary-completa-5m.json</code> (28 de octubre de 2026) y la <a href="https://github.com/libanielvargas/periferia-lider-qe-quality-engineering-2026/actions/runs/40805453568" target="_blank" rel="noopener">ejecución 40805453568 de GitHub Actions</a>.</p>
+      <p class="metrics-source">Fuentes: <a href="/revision/evidencias/e2e/suite-completa-15.txt">suite completa</a>, pruebas de estabilidad con <a href="/revision/evidencias/e2e/estabilidad-repeat-each-5-17.txt">17</a> y con <a href="/revision/evidencias/e2e/estabilidad-repeat-each-5-15.txt">15 pruebas</a>, <a href="/revision/evidencias/performance/summary-completa-5m.json">resumen de k6 de la prueba de cinco minutos</a> y <a href="/revision/evidencias/performance/k6-completa-50vus-5m.txt">su salida completa</a> (28 de octubre de 2026), y la <a href="https://github.com/libanielvargas/periferia-lider-qe-quality-engineering-2026/actions/runs/40805453568" target="_blank" rel="noopener">ejecución 40805453568 de GitHub Actions</a>.</p>
     </section>
 
     <section class="section" id="retos" aria-labelledby="retos-title">
@@ -234,9 +265,15 @@
       <section class="panel full">
         <div class="section-heading">
           <h2>3. Consultar resultado</h2>
+        </div>
+        <div class="query-bar">
+          <label>Cliente a consultar
+            <select id="summary-client"><option value="">Primero crea un cliente</option></select>
+          </label>
           <button id="refresh-summary" class="secondary" type="button">Actualizar</button>
         </div>
-        <div id="summary" class="summary empty">Ejecuta una operación para consultar el resumen.</div>
+        <p class="field-hint query-hint">Elige cualquier cliente para ver su saldo y su historial, sin ejecutar operaciones. Si ejecutas una operación sobre otro cliente, esta consulta no cambia.</p>
+        <div id="summary" class="summary empty">Elige un cliente para consultar su saldo e historial.</div>
         <div id="history" class="history" hidden></div>
       </section>
     </main>
@@ -246,17 +283,41 @@
         <div>
           <p class="eyebrow">Playwright · ejecución en el servidor</p>
           <h2 id="runner-title">Ejecutar la suite completa</h2>
-          <p>El botón lanza las 15 pruebas contra dos instancias aisladas de la aplicación, una con el servicio de riesgo en «aprobado» y otra en «rechazado». Cada ejecución usa datos sintéticos que se borran al terminar y genera su propio reporte, identificado con el mismo ID que ves aquí.</p>
+          <p>El botón lanza las 17 pruebas contra dos instancias aisladas de la aplicación, una con el servicio de riesgo en «aprobado» y otra en «rechazado». Cada ejecución usa datos sintéticos que se borran al terminar y genera su propio reporte oficial de Playwright, identificado con el mismo ID que ves aquí.</p>
         </div>
         <button id="run-suite" class="button-primary" type="button">Ejecutar suite</button>
       </div>
       <div class="runner-status" aria-live="polite">
         <span id="run-pill" class="run-pill">Consultando…</span>
-        <span id="run-id" class="run-id"></span>
-        <strong id="run-clock" class="run-clock">00:00</strong>
-        <a id="run-report" class="run-report" href="#" target="_blank" rel="noopener" hidden>Abrir reporte de esta ejecución</a>
+        <span id="run-progress" class="run-progress"></span>
       </div>
-      <pre id="run-log" class="run-log" tabindex="0" aria-label="Bitácora de la ejecución">La bitácora mostrará cada prueba y sus pasos a medida que Playwright los ejecute.</pre>
+
+      <div id="run-results" class="run-results" hidden>
+        <dl class="run-kpis">
+          <div><dt>Estado</dt><dd id="kpi-status">—</dd></div>
+          <div><dt>Ejecución</dt><dd id="run-id" class="mono">—</dd></div>
+          <div><dt>Duración</dt><dd id="run-clock">00:00</dd></div>
+          <div class="kpi-ok"><dt>Conformes</dt><dd id="kpi-pass">—</dd></div>
+          <div class="kpi-known"><dt>Defectos conocidos</dt><dd id="kpi-known">—</dd></div>
+          <div class="kpi-fail"><dt>Fallos inesperados</dt><dd id="kpi-fail">—</dd></div>
+        </dl>
+        <a id="run-report" class="run-report" href="#" target="_blank" rel="noopener" hidden>
+          <strong>Abrir el reporte HTML de Playwright de esta ejecución</strong>
+          <span>Pasos, capturas, adjuntos y errores de cada escenario. Es el reporte oficial que genera Playwright.</span>
+        </a>
+        <div class="table-scroll">
+          <table class="scenario-table" id="run-scenarios">
+            <caption>Escenarios de la ejecución, según el JSON que Playwright genera al terminar</caption>
+            <thead><tr><th scope="col">Escenario</th><th scope="col">Resultado</th><th scope="col">Duración</th><th scope="col">Pasos y evidencias</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <details class="run-log-details" id="run-log-details">
+        <summary>Ver registro técnico</summary>
+        <pre id="run-log" class="run-log" tabindex="0" aria-label="Registro técnico de la ejecución">El registro mostrará la salida de Playwright a medida que avance la ejecución.</pre>
+      </details>
       <p class="runner-limits" id="run-limits">Para proteger el servidor, solo corre una ejecución a la vez, con un comando fijo que no recibe parámetros, un tiempo máximo y una espera entre ejecuciones. La prueba de carga no se lanza desde aquí: corre en el pipeline.</p>
     </section>
 
@@ -306,9 +367,9 @@
             <p>La operación se aprueba (HTTP 201) y el saldo queda en <strong>−100</strong>.</p>
             <h4>Evidencia y trazabilidad</h4>
             <ul>
-              <li>Prueba: <code>tests/e2e/defectos-conocidos.spec.js</code>, «DEF-01 · Defecto abierto (fallo esperado)…».</li>
+              <li>Prueba: <a href="https://github.com/libanielvargas/periferia-lider-qe-quality-engineering-2026/blob/main/tests/e2e/defectos-conocidos.spec.js" target="_blank" rel="noopener"><code>tests/e2e/defectos-conocidos.spec.js</code></a>, «DEF-01 · Defecto abierto (fallo esperado)…».</li>
               <li>En el reporte de cada ejecución aparece como fallo esperado.</li>
-              <li>Sondeo inicial por API: <code>evidencias/baseline/sondeo-defectos-api.txt</code>.</li>
+              <li><a href="/revision/evidencias/baseline/sondeo-defectos-api.txt">Sondeo inicial por API</a>, sobre la aplicación original.</li>
             </ul>
             <h4>Observaciones y riesgos</h4>
             <p>En <code>src/server.js</code>, la validación es <code>client.balance &lt; amount</code> y el descuento, <code>amount + amount * 0.1</code>. La corrección depende de una decisión de negocio: validar contra el total que se descuenta o redefinir el cargo. Hasta resolverla, un saldo positivo no garantiza que la siguiente operación sea segura.</p>
@@ -358,9 +419,9 @@
             <p>Las cinco operaciones se aprueban (HTTP 201), quedan cinco registros y el saldo termina en <strong>−395</strong>.</p>
             <h4>Evidencia y trazabilidad</h4>
             <ul>
-              <li>Prueba: <code>tests/e2e/defectos-conocidos.spec.js</code>, «DEF-02 · Defecto abierto (fallo esperado)…».</li>
-              <li>Reproducido en las 5 repeticiones de la prueba de estabilidad: <code>evidencias/e2e/estabilidad-repeat-each-5-15.txt</code>.</li>
-              <li>Sondeo inicial por API: <code>evidencias/baseline/sondeo-defectos-api.txt</code>.</li>
+              <li>Prueba: <a href="https://github.com/libanielvargas/periferia-lider-qe-quality-engineering-2026/blob/main/tests/e2e/defectos-conocidos.spec.js" target="_blank" rel="noopener"><code>tests/e2e/defectos-conocidos.spec.js</code></a>, «DEF-02 · Defecto abierto (fallo esperado)…».</li>
+              <li>Reproducido en las 5 repeticiones de la <a href="/revision/evidencias/e2e/estabilidad-repeat-each-5-15.txt">prueba de estabilidad</a>.</li>
+              <li><a href="/revision/evidencias/baseline/sondeo-defectos-api.txt">Sondeo inicial por API</a>, sobre la aplicación original.</li>
             </ul>
             <h4>Observaciones y riesgos</h4>
             <p>La persistencia es un archivo JSON que se lee y se reescribe completo, sin bloqueo. La corrección requiere que la validación y el descuento sean atómicos, por ejemplo con un bloqueo por cliente o una transacción en una base de datos real. Es el defecto que bloquearía una salida a producción.</p>
@@ -375,22 +436,34 @@
     </section>
 
     <footer class="site-footer">
-      <div class="author">
-        <img src="/libaniel-vargas.webp" alt="Libaniel Vargas" width="88" height="88" loading="lazy" />
-        <div>
-          <p class="author-name">Libaniel Vargas</p>
-          <p>Ingeniero de Sistemas · Magíster en Gestión de TI</p>
-          <p>Certified Tester Foundation Level (ISTQB)</p>
-          <p>Liderazgo en Quality Engineering, tecnología e inteligencia artificial</p>
+      <div class="footer-grid">
+        <div class="author">
+          <img src="/libaniel-vargas.webp" alt="Libaniel Vargas" width="88" height="88" loading="lazy" />
+          <div>
+            <p class="author-name">Libaniel Vargas</p>
+            <p class="author-degree">Ingeniero de Sistemas · Magíster en Gestión de TI</p>
+            <p class="author-focus">Quality Engineering · Automatización · Inteligencia Artificial</p>
+          </div>
         </div>
+        <ul class="contact-list" aria-label="Contacto">
+          <li><a href="mailto:libanielvargas@gmail.com">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h18a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Zm1 2.4V17h16V7.4l-7.4 5.2a1 1 0 0 1-1.2 0L4 7.4ZM5.6 7l6.4 4.5L18.4 7H5.6Z"/></svg>
+            <span><small>Correo</small>libanielvargas@gmail.com</span></a></li>
+          <li><a href="tel:+573005175178">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1l-2.2 2.23Z"/></svg>
+            <span><small>Teléfono</small>+57 300 517 5178</span></a></li>
+          <li><a href="https://www.linkedin.com/in/libanielvargas/" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05a3.74 3.74 0 0 1 3.37-1.85c3.6 0 4.27 2.37 4.27 5.46v6.28ZM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13ZM7.12 20.45H3.56V9h3.56v11.45ZM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0Z"/></svg>
+            <span><small>LinkedIn</small>linkedin.com/in/libanielvargas</span></a></li>
+          <li><a href="https://github.com/libanielvargas" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .3a12 12 0 0 0-3.8 23.38c.6.12.83-.26.83-.57v-2c-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.74.08-.73.08-.73 1.2.09 1.84 1.24 1.84 1.24 1.07 1.83 2.81 1.3 3.5 1 .1-.78.42-1.31.76-1.61-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.14-.3-.54-1.52.1-3.18 0 0 1-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.28-1.55 3.29-1.23 3.29-1.23.64 1.66.24 2.88.12 3.18a4.65 4.65 0 0 1 1.23 3.22c0 4.61-2.8 5.63-5.48 5.92.42.36.81 1.1.81 2.22v3.29c0 .32.21.7.82.58A12 12 0 0 0 12 .3Z"/></svg>
+            <span><small>GitHub</small>github.com/libanielvargas</span></a></li>
+          <li><a href="https://qirava.co" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm6.93 6h-2.95a15.7 15.7 0 0 0-1.38-3.56A8.03 8.03 0 0 1 18.93 8ZM12 4.04c.83 1.2 1.48 2.53 1.91 3.96h-3.82c.43-1.43 1.08-2.76 1.91-3.96ZM4.26 14a8.2 8.2 0 0 1 0-4h3.38a16.5 16.5 0 0 0 0 4H4.26Zm.81 2h2.95c.32 1.25.78 2.45 1.38 3.56A7.99 7.99 0 0 1 5.07 16Zm2.95-8H5.07a7.99 7.99 0 0 1 4.33-3.56A15.7 15.7 0 0 0 8.02 8ZM12 19.96A14.1 14.1 0 0 1 10.09 16h3.82A14.1 14.1 0 0 1 12 19.96ZM14.34 14H9.66a14.7 14.7 0 0 1 0-4h4.68a14.7 14.7 0 0 1 0 4Zm.25 5.56c.6-1.11 1.06-2.31 1.38-3.56h2.95a8.03 8.03 0 0 1-4.33 3.56ZM16.36 14a16.5 16.5 0 0 0 0-4h3.38a8.2 8.2 0 0 1 0 4h-3.38Z"/></svg>
+            <span><small>Qirava</small>qirava.co</span></a></li>
+        </ul>
       </div>
-      <ul class="author-links">
-        <li><a href="https://github.com/libanielvargas" target="_blank" rel="noopener">GitHub</a></li>
-        <li><a href="https://www.linkedin.com/in/libanielvargas" target="_blank" rel="noopener">LinkedIn</a></li>
-        <li><a href="https://qirava.co" target="_blank" rel="noopener">qirava.co</a></li>
-        <li><a href="mailto:libanielvargas@gmail.com">libanielvargas@gmail.com</a></li>
-      </ul>
-      <p class="footer-note">Desarrollé esta solución para la prueba técnica de Líder QE de Periferia IT Group. Es un entorno de evaluación, no un producto de Periferia IT Group. <a href="/revision/documentos/CAMBIOS.md" target="_blank" rel="noopener">Orden de trabajo</a> · <a href="https://github.com/libanielvargas/periferia-lider-qe-quality-engineering-2026" target="_blank" rel="noopener">Repositorio</a></p>
+      <p class="footer-note">Este es un ejercicio técnico que desarrollé para el proceso de Líder de Quality Engineering de Periferia IT Group. No es un producto oficial de Periferia IT Group. <a href="/revision/documentos/CAMBIOS.md" target="_blank" rel="noopener">Orden de trabajo</a> · <a href="https://github.com/libanielvargas/periferia-lider-qe-quality-engineering-2026" target="_blank" rel="noopener">Repositorio</a></p>
     </footer>
 
     <script type="module" src="/app.js"></script>

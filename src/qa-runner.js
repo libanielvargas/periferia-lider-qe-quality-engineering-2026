@@ -10,6 +10,21 @@ import express from 'express';
 const projectRoot = fileURLToPath(new URL('../', import.meta.url));
 const runsRoot = path.resolve(process.env.QA_RUNS_DIR || path.join(projectRoot, 'runs'));
 const documents = new Set(['DIAGNOSTICO.md', 'DECISIONES.md', 'REVISION_PR.md', 'CAMBIOS.md', 'DESPLIEGUE.md', 'DEFECTOS.md']);
+// Evidencias que la página enlaza. Lista cerrada: no se publica la carpeta ni se listan directorios.
+const evidence = new Set([
+  'baseline/cannot-get-root.png',
+  'baseline/probe-static.txt',
+  'baseline/suite-original-corrida-1.txt',
+  'baseline/suite-original-corrida-2-sin-reset.txt',
+  'baseline/suite-original-reutilizo-servidor-viejo.txt',
+  'baseline/suite-original-tras-fix-static.txt',
+  'baseline/sondeo-defectos-api.txt',
+  'e2e/suite-completa-15.txt',
+  'e2e/estabilidad-repeat-each-5-15.txt',
+  'e2e/estabilidad-repeat-each-5-17.txt',
+  'performance/summary-completa-5m.json',
+  'performance/k6-completa-50vus-5m.txt'
+]);
 
 // off: deshabilitado · local: solo desde localhost · public: detrás del reverse proxy con límites.
 const mode = process.env.QA_RUNNER_MODE || 'local';
@@ -26,7 +41,7 @@ const limits = {
 
 const state = {
   status: 'idle', runId: null, startedAt: null, finishedAt: null,
-  exitCode: null, timedOut: false, summary: null, log: []
+  exitCode: null, timedOut: false, summary: null, durationMs: null, tests: [], log: []
 };
 const history = [];
 let activeChild = null;
@@ -79,27 +94,46 @@ function appendLog(chunk) {
   if (state.log.length > 400) state.log.splice(0, state.log.length - 400);
 }
 
-// Distingue conformes de defectos conocidos (test.fail): Playwright cuenta ambos como "passed".
-function readSummary(jsonFile) {
+// Lee el JSON oficial de Playwright. Distingue conformes de defectos conocidos (test.fail):
+// Playwright cuenta ambos como "expected".
+function outcomeOf(test) {
+  if (test.status === 'unexpected') return 'fallida';
+  if (test.status === 'flaky') return 'inestable';
+  if (test.status === 'skipped') return 'omitida';
+  return test.expectedStatus === 'failed' ? 'defecto' : 'conforme';
+}
+
+function readResults(jsonFile) {
   try {
     const report = JSON.parse(fs.readFileSync(jsonFile, 'utf8'));
     const summary = { conformes: 0, defectosConocidos: 0, fallidas: 0, inestables: 0, omitidas: 0 };
-    const visit = suite => {
+    const keys = { conforme: 'conformes', defecto: 'defectosConocidos', fallida: 'fallidas', inestable: 'inestables', omitida: 'omitidas' };
+    const tests = [];
+    const visit = (suite, groups) => {
       for (const spec of suite.specs || []) {
         for (const test of spec.tests) {
-          if (test.status === 'unexpected') summary.fallidas += 1;
-          else if (test.status === 'flaky') summary.inestables += 1;
-          else if (test.status === 'skipped') summary.omitidas += 1;
-          else if (test.expectedStatus === 'failed') summary.defectosConocidos += 1;
-          else summary.conformes += 1;
+          const result = test.results.at(-1) || {};
+          const outcome = outcomeOf(test);
+          summary[keys[outcome]] += 1;
+          tests.push({
+            id: test.testId || spec.id,
+            title: spec.title,
+            group: groups.join(' › '),
+            file: spec.file,
+            project: test.projectName,
+            outcome,
+            durationMs: Math.round(test.results.reduce((total, run) => total + (run.duration || 0), 0)),
+            steps: (result.steps || []).map(step => ({ title: step.title, durationMs: Math.round(step.duration || 0), failed: Boolean(step.error) })),
+            attachments: (result.attachments || []).filter(item => item.name !== 'error-context').map(item => item.name)
+          });
         }
       }
-      (suite.suites || []).forEach(visit);
+      for (const child of suite.suites || []) visit(child, [...groups, child.title]);
     };
-    report.suites.forEach(visit);
-    return summary;
+    report.suites.forEach(suite => visit(suite, []));
+    return { summary, tests, durationMs: Math.round(report.stats?.duration || 0) };
   } catch {
-    return null;
+    return { summary: null, tests: [], durationMs: null };
   }
 }
 
@@ -157,7 +191,7 @@ function startRun(ip) {
 
   Object.assign(state, {
     status: 'running', runId, startedAt: Date.now(), finishedAt: null,
-    exitCode: null, timedOut: false, summary: null,
+    exitCode: null, timedOut: false, summary: null, durationMs: null, tests: [],
     log: [`Ejecución ${runId}: Playwright con ${limits.workers} worker, dos servidores aislados (riesgo aprobado y rechazado).`]
   });
 
@@ -201,7 +235,7 @@ function startRun(ip) {
       exitCode,
       finishedAt: Date.now(),
       status: exitCode === 0 && !state.timedOut ? 'passed' : 'failed',
-      summary: readSummary(path.join(runsRoot, state.runId, 'resultado.json'))
+      ...readResults(path.join(runsRoot, state.runId, 'resultado.json'))
     });
     appendLog(state.status === 'passed'
       ? 'Suite conforme. Los defectos conocidos aparecen como «fallo esperado»: siguen abiertos en la aplicación.'
@@ -220,6 +254,16 @@ export function registerQualityReview(app) {
     if (!documents.has(name)) return res.sendStatus(404);
     return res.type('text/plain; charset=utf-8').sendFile(path.join(projectRoot, name));
   });
+
+  app.get('/revision/evidencias/:folder/:name', (req, res) => {
+    const name = `${req.params.folder}/${req.params.name}`;
+    if (!evidence.has(name)) return res.sendStatus(404);
+    const file = path.join(projectRoot, 'evidencias', name);
+    if (name.endsWith('.txt')) res.type('text/plain; charset=utf-8');
+    return res.sendFile(file);
+  });
+  // La página antes citaba esta carpeta como texto; quien la escriba llega a la lista de evidencias.
+  app.get(['/evidencias/baseline', '/evidencias/baseline/'], (req, res) => res.redirect(302, '/#evidencias-partida'));
 
   app.get('/revision/estado', (req, res) => {
     if (!allowed(req)) return res.status(403).json({ mode, error: deniedMessage() });

@@ -44,12 +44,20 @@ schedule();
 
 const runButton = document.querySelector('#run-suite');
 const runPill = document.querySelector('#run-pill');
+const runProgress = document.querySelector('#run-progress');
+const runResults = document.querySelector('#run-results');
 const runId = document.querySelector('#run-id');
 const runClock = document.querySelector('#run-clock');
+const kpiStatus = document.querySelector('#kpi-status');
+const kpiPass = document.querySelector('#kpi-pass');
+const kpiKnown = document.querySelector('#kpi-known');
+const kpiFail = document.querySelector('#kpi-fail');
+const scenarioBody = document.querySelector('#run-scenarios tbody');
 const runLog = document.querySelector('#run-log');
 const runReport = document.querySelector('#run-report');
 const runLimits = document.querySelector('#run-limits');
 let pollTimer;
+let renderedScenarios = '';
 
 const labels = {
   idle: 'Sin ejecuciones desde el último reinicio',
@@ -57,27 +65,94 @@ const labels = {
   passed: 'Finalizada: suite conforme',
   failed: 'Finalizada con fallos'
 };
+const shortLabels = { running: 'En curso', passed: 'Conforme', failed: 'Con fallos' };
+const outcomes = {
+  conforme: 'Conforme',
+  defecto: 'Defecto conocido (fallo esperado)',
+  fallida: 'Fallo inesperado',
+  inestable: 'Inestable',
+  omitida: 'Omitida'
+};
 
 function clock(seconds) {
   return [Math.floor(seconds / 60), seconds % 60].map(value => String(value).padStart(2, '0')).join(':');
 }
 
-function summaryText(summary) {
-  if (!summary) return '';
-  const names = { conformes: 'conformes', defectosConocidos: 'defectos conocidos (fallo esperado)', fallidas: 'fallidas', inestables: 'inestables', omitidas: 'omitidas' };
-  return Object.entries(summary).filter(([, value]) => value > 0).map(([key, value]) => `${value} ${names[key]}`).join(' · ');
+function duration(ms) {
+  return ms < 1000 ? `${ms} ms` : `${(ms / 1000).toLocaleString('es-CO', { maximumFractionDigits: 1 })} s`;
+}
+
+function node(tag, className, text) {
+  const item = document.createElement(tag);
+  if (className) item.className = className;
+  if (text !== undefined) item.textContent = text;
+  return item;
+}
+
+// Avance durante la ejecución: Playwright anuncia el total y marca cada escenario terminado.
+function progress(log) {
+  const total = log.map(line => line.match(/Running (\d+) tests?/)).find(Boolean)?.[1];
+  const done = log.filter(line => /^\s*[✓✘-]\s+\d+\s+\[/.test(line)).length;
+  return total ? `${done} de ${total} escenarios terminados` : 'Preparando los servidores de prueba…';
+}
+
+function scenarioRow(test, reportUrl) {
+  const row = node('tr');
+  const name = node('td', 'scenario-name');
+  name.append(node('strong', '', test.title), node('span', '', [test.project, test.file, test.group].filter(Boolean).join(' · ')));
+  const result = node('td');
+  result.append(node('span', `outcome ${test.outcome}`, outcomes[test.outcome] || test.outcome));
+  const evidence = node('td');
+  if (test.steps.length) {
+    const steps = node('details');
+    steps.append(node('summary', '', `${test.steps.length} ${test.steps.length === 1 ? 'paso' : 'pasos'}`));
+    const list = node('ol');
+    for (const step of test.steps) list.append(node('li', step.failed ? 'failed' : '', `${step.title} (${duration(step.durationMs)})`));
+    steps.append(list);
+    evidence.append(steps);
+  }
+  if (test.attachments.length) evidence.append(node('p', 'attachments', `Adjuntos: ${test.attachments.join(', ')}`));
+  if (reportUrl) {
+    const link = node('a', 'report-link', 'Ver en el reporte');
+    link.href = `${reportUrl}#?testId=${encodeURIComponent(test.id)}`;
+    link.target = '_blank';
+    link.rel = 'noopener';
+    evidence.append(link);
+  }
+  row.append(name, result, node('td', 'num', duration(test.durationMs)), evidence);
+  return row;
 }
 
 function render(state) {
+  const running = state.status === 'running';
+  const summary = state.summary;
   runPill.className = `run-pill ${state.status}`;
-  const summary = summaryText(state.summary);
-  runPill.textContent = summary && state.status !== 'running' ? `${labels[state.status]} · ${summary}` : labels[state.status];
-  runId.textContent = state.runId ? `ID ${state.runId}` : '';
+  runPill.textContent = labels[state.status];
+  runProgress.textContent = running ? progress(state.log || []) : '';
+  runButton.disabled = running;
+  runButton.textContent = running ? 'Ejecutando…' : 'Ejecutar suite';
+
+  runResults.hidden = !state.runId;
+  runId.textContent = state.runId || '—';
   runClock.textContent = clock(state.elapsedSeconds || 0);
-  runButton.disabled = state.status === 'running';
-  runButton.textContent = state.status === 'running' ? 'Ejecutando…' : 'Ejecutar suite';
+  kpiStatus.textContent = shortLabels[state.status] || '—';
+  kpiPass.textContent = summary ? summary.conformes : '—';
+  kpiKnown.textContent = summary ? summary.defectosConocidos : '—';
+  const unexpected = summary ? summary.fallidas + summary.inestables : null;
+  kpiFail.textContent = summary ? unexpected : '—';
+  kpiFail.parentElement.classList.toggle('has-fail', Boolean(unexpected));
+
   runReport.hidden = !state.reportUrl;
   if (state.reportUrl) runReport.href = state.reportUrl;
+
+  const tests = state.tests || [];
+  const key = `${state.runId}:${tests.length}`;
+  if (key !== renderedScenarios) {
+    renderedScenarios = key;
+    scenarioBody.replaceChildren(...tests.map(test => scenarioRow(test, state.reportUrl)));
+    scenarioBody.closest('.table-scroll').hidden = !tests.length;
+  }
+
   if (state.log?.length) {
     runLog.textContent = state.log.join('\n');
     runLog.scrollTop = runLog.scrollHeight;
@@ -138,18 +213,18 @@ async function refresh() {
 
 runButton.addEventListener('click', async () => {
   runButton.disabled = true;
-  runLog.textContent = 'Solicitando la ejecución al servidor…';
+  runProgress.textContent = 'Solicitando la ejecución al servidor…';
   let response;
   try {
     response = await fetch('/revision/ejecutar', { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{}' });
   } catch {
-    runLog.textContent = 'No hay conexión con el servidor de esta página.';
+    runProgress.textContent = 'No hay conexión con el servidor de esta página.';
     runButton.disabled = false;
     return;
   }
   const body = await readJson(response);
   if (!response.ok || !body) {
-    runLog.textContent = explain(response, body);
+    runProgress.textContent = explain(response, body);
     // 409: ya hay una ejecución; se muestra su avance en lugar de un error.
     if (response.status === 409) refresh();
     else runButton.disabled = response.status === 404 || response.status === 403;
