@@ -9,6 +9,7 @@ on:
     paths:
       - 'deploy/**'
       - 'src/**'
+      - 'tests/**'
       - 'playwright.config.js'
       - '.github/workflows/deploy-smoke.yml'
 
