@@ -1,5 +1,15 @@
 /* Capa de presentación de la entrega. Se carga después de styles.css (estilos originales
    del sistema bajo prueba) y no cambia IDs, formularios ni lógica de app.js. */
+
+/* Outfit (SIL Open Font License 1.1, ver fonts/OFL-Outfit.txt) servida desde la propia
+   aplicación: la página no depende de terceros y el servicio puede vivir sin salida a Internet. */
+@font-face {
+  font-family: "Outfit";
+  font-style: normal;
+  font-weight: 500 600;
+  font-display: swap;
+  src: url("/fonts/outfit-latin.woff2") format("woff2");
+}
 :root {
   --ink: #0a1210;
   --ink-soft: #3d4b46;
