@@ -1,7 +1,17 @@
 # Despliegue en el VPS de Qirava
 
 **Destino:** `https://prueba-tecnica-qa-lead-periferia-it.qirava.co`
-**Estado:** procedimiento listo y probado en local. **Sin ejecutar en el servidor** por falta de acceso autorizado (ver «Accesos»).
+**Estado:** scripts `deploy/instalar-en-vps.sh` y `deploy/revertir-en-vps.sh` verificados de punta a punta en un simulacro de la topología del droplet ([run 40888112817](https://github.com/libanielvargas/periferia-lider-qe-quality-engineering-2026/actions/runs/40888112817), evidencia en `evidencias/publicacion/`). **Sin ejecutar en el VPS real**: falta un acceso SSH utilizable por el ejecutor y el registro DNS (ver «Accesos»).
+
+**Despliegue con un solo comando** (desde la Mac, con la clave de despliegue cargada en el agente):
+
+```bash
+ssh root@206.81.7.100 'bash -s -- <commit>' < deploy/instalar-en-vps.sh      # instala; aborta si no hay recursos
+ssh root@206.81.7.100 'SOLO_INSPECCION=1 bash -s' < deploy/instalar-en-vps.sh # solo lectura
+ssh root@206.81.7.100 'bash -s' < deploy/revertir-en-vps.sh                   # reversión
+```
+
+**Capacidad medida:** durante la suite completa, el servicio alcanzó un pico de 595 MiB (cgroup). El script fija `MemoryMax=700M` y aborta si el droplet no tiene al menos 900 MiB disponibles con las apps de Qirava en marcha. Una nota de septiembre describe el droplet como de 1 GB; si es así, la instalación se detendrá sin tocar nada y hará falta ampliar el droplet.
 
 ## Infraestructura verificada (28-oct-2026, solo lectura)
 
@@ -22,7 +32,7 @@
 
 | Acceso | Estado | Qué se necesita |
 |---|---|---|
-| VPS (SSH) | **Falta.** El agente SSH local no tiene identidades; `root` está deshabilitado por diseño; el host está en `known_hosts`. | Usuario no root con `sudo` y su clave cargada en el agente (`ssh-add`). Alternativa: token de DigitalOcean para `doctl` (hoy responde 401). |
+| VPS (SSH) | La clave de despliegue de Qirava existe en la Mac (heredada de Mission Control, usada en septiembre de 2026), pero no está en el agente SSH, y la política de permisos del ejecutor bloquea usarla directamente desde su archivo. `doctl` responde 401. | Cargar esa clave en el agente (`ssh-add`) o autorizar al ejecutor a usarla. |
 | DNS `qirava.co` (Cloudflare) | **Falta.** El `cert.pem` local solo tiene alcance de túnel, sin `Zone:DNS:Edit`. | Registro `A prueba-tecnica-qa-lead-periferia-it → 206.81.7.100` creado en el panel, o un token con `Zone:DNS:Edit`. |
 | GitHub | Disponible (`gh` autenticado como `libanielvargas`). | — |
 | Secretos de la app | Solo `RISK_API_TOKEN`. El mock de riesgo interno no lo valida. | Definirlo en `/etc/periferia-qe/periferia-qe.env`, nunca en el repositorio. |
