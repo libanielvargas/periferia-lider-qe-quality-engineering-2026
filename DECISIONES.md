@@ -178,6 +178,36 @@ Los cinco ajustes son del grupo A (presentación). `src/server.js`, `src/db.js`,
 
 La suite pasó de 15 a 17 pruebas: 15 conformes y 2 defectos conocidos. Repetida cinco veces, dio 85 de 85 (`evidencias/e2e/estabilidad-repeat-each-5-17.txt`). Las cifras anteriores conservan su fecha y su contexto.
 
+### Vistas de los retos 1, 3, 4 y 6 (29-oct-2026)
+
+**Problema.** Varios entregables solo podían consultarse leyendo Markdown o código en GitHub.
+
+**Solución.** Agregué cuatro vistas, generadas por `src/retos.js` en cada solicitud: `/retos/diagnostico`, `/retos/datos-sinteticos`, `/retos/rendimiento` y `/retos/revision-pr`.
+
+**Fuentes canónicas.** Las vistas no tienen cifras copiadas: las leen de sus fuentes.
+- `DIAGNOSTICO.md`: los 13 hallazgos. Agregué a su tabla la columna «Evidencia» sin alargar el documento de una página.
+- `tests/support/data-rules.js` y `data-factory.js`: las reglas vigentes y un ejemplo generado en cada solicitud.
+- Los archivos de prueba: qué funciones de la fábrica usa cada uno y qué escenarios declara.
+- Los resúmenes JSON de k6 y la evidencia de la ejecución en GitHub Actions: las métricas.
+- `REVISION_PR.md` y `review-target/payment-helper.js`: los 9 hallazgos, la decisión y el código con las líneas marcadas.
+
+**Encabezado y pie compartidos.** Se extraen de `src/public/index.html`, que los marca como bloques compartidos. No hay una segunda copia.
+
+**Arquitectura.** Mismo stack: Express, HTML, CSS y JavaScript, con un intérprete mínimo de Markdown y sin dependencias nuevas. `server.js`, `db.js`, `app.js` y las reglas de negocio no cambiaron.
+
+**Rendimiento.** La vista separa los resultados locales, de CI y de producción. En producción no hay cifras porque no ejecuté la prueba de carga contra el servidor compartido.
+
+**Prueba.** `tests/e2e/presentacion-retos.spec.js` lee las fuentes por su cuenta y compara:
+- Hallazgos, severidades y prioridades.
+- Las cifras de p95.
+- Las reglas de datos.
+- Que el encabezado y el pie sean idénticos a los de la portada.
+- Que no haya enlaces internos rotos.
+
+Verifiqué que la prueba detecta errores: al alterar a propósito el p95 mostrado, falló.
+
+**Estado de la suite.** Ahora tiene 18 pruebas: 16 conformes y 2 defectos conocidos. Repetida cinco veces, dio 90 de 90 (`evidencias/e2e/estabilidad-repeat-each-5-18.txt`).
+
 ### Incidente: Docker llenó el disco de la Mac
 
 Una construcción de imagen Docker (Chromium y caché de BuildKit) agotó el disco local y dejó el motor de Docker en estado de error. Se liberaron solo cachés autorizadas y se descartó Docker como requisito. El despliegue propuesto usa Node.js con systemd y límites de cgroup (`DESPLIEGUE.md`). Ninguna imagen Docker se publicó ni se dejó en el repositorio sin verificar.

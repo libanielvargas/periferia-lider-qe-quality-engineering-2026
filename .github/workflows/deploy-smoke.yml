@@ -54,7 +54,7 @@ jobs:
             echo "$S" | grep -q '"status":"running"' || break
             sleep 3
           done
-          echo "$S" | python3 -c 'import sys,json; d=json.load(sys.stdin); print(d["status"], "exit", d["exitCode"], d["summary"], d["reportUrl"], d["elapsedSeconds"], "s"); print("\n".join(l for l in d["log"] if not l.lstrip()[:1].isdigit() or "›" not in l)[-6000:]); assert d["status"]=="passed" and d["summary"]["conformes"]==15 and d["summary"]["defectosConocidos"]==2 and d["summary"]["fallidas"]==0 and len(d["tests"])==17'
+          echo "$S" | python3 -c 'import sys,json; d=json.load(sys.stdin); print(d["status"], "exit", d["exitCode"], d["summary"], d["reportUrl"], d["elapsedSeconds"], "s"); print("\n".join(l for l in d["log"] if not l.lstrip()[:1].isdigit() or "›" not in l)[-6000:]); assert d["status"]=="passed" and d["summary"]["conformes"]==16 and d["summary"]["defectosConocidos"]==2 and d["summary"]["fallidas"]==0 and len(d["tests"])==18'
           REPORTE=$(echo "$S" | python3 -c 'import sys,json; print(json.load(sys.stdin)["reportUrl"])')
           test "$(curl -sk "${R[@]}" -o /dev/null -w '%{http_code}' "$B$REPORTE")" = 200
           sleep 2

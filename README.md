@@ -4,6 +4,8 @@ Solución de Libaniel Vargas a la prueba técnica asincrónica del proceso de se
 
 **Página pública:** <https://prueba-tecnica-qa-lead-periferia-it.qirava.co>. Desde ella se puede ejecutar la suite completa en el servidor y abrir el reporte de esa misma ejecución.
 
+Los retos 1, 3, 4 y 6 también se pueden revisar en el navegador, sin leer Markdown: [diagnóstico](https://prueba-tecnica-qa-lead-periferia-it.qirava.co/retos/diagnostico), [datos sintéticos](https://prueba-tecnica-qa-lead-periferia-it.qirava.co/retos/datos-sinteticos), [rendimiento](https://prueba-tecnica-qa-lead-periferia-it.qirava.co/retos/rendimiento) y [revisión del PR](https://prueba-tecnica-qa-lead-periferia-it.qirava.co/retos/revision-pr). Cada vista se genera a partir de estos mismos documentos y evidencias.
+
 El evaluador entregó una aplicación pequeña (Express, frontend vanilla y una base JSON) con una suite Playwright rota, un pipeline que nunca fallaba y un archivo para revisión de código. El reto era diagnosticar, estabilizar, automatizar y gobernar esa solución, no construir funcionalidades nuevas.
 
 ## Resultado en una mirada
@@ -11,7 +13,7 @@ El evaluador entregó una aplicación pequeña (Express, frontend vanilla y una 
 | Reto | Entregable | Resultado verificado |
 |---|---|---|
 | 1. Diagnóstico | [`DIAGNOSTICO.md`](DIAGNOSTICO.md) | Las 4 pruebas de la suite original fallaron en dos ejecuciones seguidas: la aplicación respondía `Cannot GET /` porque la ruta del proyecto tiene un espacio. Con esa causa corregida pasó 1 de 4; las otras 3 fallaban por la propia suite. 13 hallazgos priorizados. |
-| 2. Automatización | [`tests/e2e/`](tests/e2e) | Flujo cliente → operación → interfaz → API, con Page Object, esperas por condición y pruebas independientes. **17 pruebas: 15 conformes y 2 defectos abiertos como fallo esperado.** |
+| 2. Automatización | [`tests/e2e/`](tests/e2e) | Flujo cliente → operación → interfaz → API, con Page Object, esperas por condición y pruebas independientes. **18 pruebas: 16 conformes y 2 defectos abiertos como fallo esperado.** |
 | 3. Datos sintéticos | [`tests/support/data-rules.js`](tests/support/data-rules.js) | Reglas centralizadas, documentos únicos, saldo insuficiente, casos inválidos y limpieza al terminar. |
 | 4. Rendimiento | [`performance/critical-endpoint.js`](performance/critical-endpoint.js) | k6 con 50 usuarios durante 5 min: p95 de 18,84 ms (umbral 800 ms) y 0 % de errores en 14 901 solicitudes. |
 | 5. Pipeline | [`.github/workflows/quality.yml`](.github/workflows/quality.yml) | Node 20, `npm ci`, secretos parametrizados, artefactos solo en fallo, y bloqueo por pruebas o umbrales. [Ejecución real en verde](https://github.com/libanielvargas/periferia-lider-qe-quality-engineering-2026/actions/runs/40805453568): E2E 15/15 y k6 de 5 min con p95 de 3,27 ms. |

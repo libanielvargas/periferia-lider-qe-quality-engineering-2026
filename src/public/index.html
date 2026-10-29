@@ -16,6 +16,7 @@
   <body>
     <a class="skip-link" href="#laboratorio">Ir a la aplicación bajo prueba</a>
 
+    <!-- compartido:encabezado (src/retos.js lo reutiliza en /retos/*) -->
     <header class="site-header">
       <a class="brand" href="#inicio" aria-label="Inicio">
         <img src="/periferia-logo.webp" alt="Periferia IT Group" width="124" height="31" />
@@ -24,12 +25,14 @@
       <nav class="top-nav" aria-label="Secciones">
         <a href="#punto-de-partida">Punto de partida</a>
         <a href="#mediciones">Mediciones</a>
+        <a href="#retos">Retos</a>
         <a href="#laboratorio">Aplicación</a>
         <a href="#ejecucion">Ejecutar suite</a>
         <a href="#defectos">Defectos</a>
       </nav>
       <span id="service-status" class="status">Validando servicio...</span>
     </header>
+    <!-- /compartido:encabezado -->
 
     <section class="hero" id="inicio" aria-labelledby="hero-title">
       <!-- Escenas ilustrativas (src/public/hero/hero-{1,2,3}.webp). Sin imágenes, el hero conserva su fondo oscuro. -->
@@ -55,7 +58,7 @@
         </button>
         <button class="hero-scene" type="button" data-slide="1" aria-pressed="false">
           <b>02 · Automatización</b>
-          <span>Diecisiete pruebas independientes que validan la interfaz y confirman cada resultado por API.</span>
+          <span>Dieciocho pruebas independientes que validan la interfaz y confirman cada resultado por API.</span>
         </button>
         <button class="hero-scene" type="button" data-slide="2" aria-pressed="false">
           <b>03 · Rendimiento</b>
@@ -102,7 +105,7 @@
         <li>
           <p class="stage">Resultado</p>
           <h3>Resultado</h3>
-          <p>La suite reescrita tenía <strong>15 pruebas</strong>: 13 conformes y 2 defectos conocidos. La repetí cinco veces seguidas y las 75 ejecuciones dieron el resultado esperado. Después agregué dos pruebas de la capa de presentación; hoy son 17 y puedes <a href="#ejecucion">ejecutarlas desde esta página</a>.</p>
+          <p>La suite reescrita tenía <strong>15 pruebas</strong>: 13 conformes y 2 defectos conocidos. La repetí cinco veces seguidas y las 75 ejecuciones dieron el resultado esperado. Después agregué tres pruebas de la capa de presentación; hoy son 18 y puedes <a href="#ejecucion">ejecutarlas desde esta página</a>.</p>
           <p class="stage-links">Evidencia: <a href="/revision/evidencias/e2e/suite-completa-15.txt">suite reescrita, 15 de 15 con el resultado esperado</a> · <a href="/revision/evidencias/e2e/estabilidad-repeat-each-5-15.txt">estabilidad, 75 de 75</a></p>
         </li>
       </ol>
@@ -143,16 +146,16 @@
           <tbody>
             <tr>
               <th scope="row">Suite funcional (Playwright)</th>
-              <td class="metric-value">17 pruebas</td>
-              <td>Flujo completo, reglas negativas, rechazo por riesgo, los dos defectos conocidos, la consulta entre clientes y los enlaces a las evidencias, sobre dos instancias aisladas de la aplicación.</td>
-              <td>15 conformes y 2 fallos esperados (DEF-01 y DEF-02), sin fallos inesperados. En mi equipo, en GitHub Actions y en el servidor de esta página.</td>
+              <td class="metric-value">18 pruebas</td>
+              <td>Flujo completo, reglas negativas, rechazo por riesgo, los dos defectos conocidos, la consulta entre clientes, los enlaces a las evidencias y las vistas de los retos, sobre dos instancias aisladas de la aplicación.</td>
+              <td>16 conformes y 2 fallos esperados (DEF-01 y DEF-02), sin fallos inesperados. En mi equipo, en GitHub Actions y en el servidor de esta página.</td>
               <td>La automatización es confiable. La aplicación no está lista para producción mientras los dos defectos sigan abiertos.</td>
             </tr>
             <tr>
               <th scope="row">Estabilidad</th>
-              <td class="metric-value">85 de 85</td>
+              <td class="metric-value">90 de 90</td>
               <td>La suite completa repetida cinco veces (<code>--repeat-each=5</code>) en paralelo, para detectar pruebas intermitentes.</td>
-              <td>Con 17 pruebas, las 85 ejecuciones dieron el resultado esperado (29 de octubre). Con la suite anterior de 15 fueron 75 de 75, y DEF-02 se reprodujo en las 5 repeticiones.</td>
+              <td>Con 18 pruebas, las 90 ejecuciones dieron el resultado esperado (29 de octubre). Antes, con 17 fueron 85 de 85 y con 15, 75 de 75; y DEF-02 se reprodujo en las 5 repeticiones.</td>
               <td>No encontré pruebas intermitentes en esa muestra. El doble gasto se repite siempre: no es un caso fortuito.</td>
             </tr>
             <tr>
@@ -179,7 +182,7 @@
           </tbody>
         </table>
       </div>
-      <p class="metrics-source">Fuentes: <a href="/revision/evidencias/e2e/suite-completa-15.txt">suite completa</a>, pruebas de estabilidad con <a href="/revision/evidencias/e2e/estabilidad-repeat-each-5-17.txt">17</a> y con <a href="/revision/evidencias/e2e/estabilidad-repeat-each-5-15.txt">15 pruebas</a>, <a href="/revision/evidencias/performance/summary-completa-5m.json">resumen de k6 de la prueba de cinco minutos</a> y <a href="/revision/evidencias/performance/k6-completa-50vus-5m.txt">su salida completa</a> (28 de octubre de 2026), y la <a href="https://github.com/libanielvargas/periferia-lider-qe-quality-engineering-2026/actions/runs/40805453568" target="_blank" rel="noopener">ejecución 40805453568 de GitHub Actions</a>.</p>
+      <p class="metrics-source">Fuentes: <a href="/revision/evidencias/e2e/suite-completa-15.txt">suite completa</a>, pruebas de estabilidad con <a href="/revision/evidencias/e2e/estabilidad-repeat-each-5-18.txt">18</a>, <a href="/revision/evidencias/e2e/estabilidad-repeat-each-5-17.txt">17</a> y <a href="/revision/evidencias/e2e/estabilidad-repeat-each-5-15.txt">15 pruebas</a>, <a href="/revision/evidencias/performance/summary-completa-5m.json">resumen de k6 de la prueba de cinco minutos</a> y <a href="/revision/evidencias/performance/k6-completa-50vus-5m.txt">su salida completa</a> (28 de octubre de 2026), y la <a href="https://github.com/libanielvargas/periferia-lider-qe-quality-engineering-2026/actions/runs/40805453568" target="_blank" rel="noopener">ejecución 40805453568 de GitHub Actions</a>.</p>
     </section>
 
     <section class="section" id="retos" aria-labelledby="retos-title">
@@ -188,30 +191,54 @@
         <h2 id="retos-title">Los seis retos y dónde verificarlos</h2>
       </div>
       <ol class="challenge-list">
-        <li><a href="/revision/documentos/DIAGNOSTICO.md" target="_blank" rel="noopener">
-          <span class="challenge-num">Reto 1</span><strong>Diagnóstico del arnés</strong>
-          <p>Clasifiqué 13 hallazgos entre defectos de la aplicación y de la automatización, con prioridad y orden de corrección.</p>
-          <span class="challenge-link">DIAGNOSTICO.md</span></a></li>
-        <li><a href="#ejecucion">
-          <span class="challenge-num">Reto 2</span><strong>Automatización del flujo</strong>
-          <p>Creo un cliente, ejecuto una operación, valido el resultado en la interfaz y lo confirmo por API.</p>
-          <span class="challenge-link">Ejecutar y ver el reporte</span></a></li>
-        <li><a href="/revision/documentos/DECISIONES.md" target="_blank" rel="noopener">
-          <span class="challenge-num">Reto 3</span><strong>Datos sintéticos</strong>
-          <p>Centralicé las reglas: documentos únicos, saldo insuficiente, datos inválidos y limpieza al terminar.</p>
-          <span class="challenge-link">DECISIONES.md</span></a></li>
-        <li><a href="https://github.com/libanielvargas/periferia-lider-qe-quality-engineering-2026/tree/main/performance" target="_blank" rel="noopener">
-          <span class="challenge-num">Reto 4</span><strong>Prueba de carga</strong>
-          <p>Script de k6 con umbrales automáticos: p95 menor de 800 ms y errores por debajo del 1 %.</p>
-          <span class="challenge-link">Script y resultados</span></a></li>
-        <li><a href="https://github.com/libanielvargas/periferia-lider-qe-quality-engineering-2026/actions" target="_blank" rel="noopener">
-          <span class="challenge-num">Reto 5</span><strong>Pipeline</strong>
-          <p>El pipeline original nunca podía fallar. Ahora se detiene ante una prueba fallida o un umbral incumplido, y conserva evidencias solo cuando hay fallos.</p>
-          <span class="challenge-link">Ejecuciones en GitHub Actions</span></a></li>
-        <li><a href="/revision/documentos/REVISION_PR.md" target="_blank" rel="noopener">
-          <span class="challenge-num">Reto 6</span><strong>Revisión de código</strong>
-          <p>Registré nueve hallazgos con severidad y corrección propuesta. Mi decisión: solicitar cambios bloqueantes.</p>
-          <span class="challenge-link">REVISION_PR.md</span></a></li>
+        <li>
+          <a class="challenge-main" href="/retos/diagnostico">
+            <span class="challenge-num">Reto 1</span><strong>Diagnóstico del arnés</strong>
+            <p>Clasifiqué 13 hallazgos entre defectos de la aplicación y de la automatización, con prioridad, acción y evidencia.</p>
+            <span class="challenge-link">Ver los 13 hallazgos</span>
+          </a>
+          <p class="challenge-sources">Fuente: <a href="/revision/documentos/DIAGNOSTICO.md" target="_blank" rel="noopener">DIAGNOSTICO.md</a></p>
+        </li>
+        <li>
+          <a class="challenge-main" href="#ejecucion">
+            <span class="challenge-num">Reto 2</span><strong>Automatización del flujo</strong>
+            <p>Creo un cliente, ejecuto una operación, valido el resultado en la interfaz y lo confirmo por API.</p>
+            <span class="challenge-link">Ejecutar y ver el reporte</span>
+          </a>
+          <p class="challenge-sources">Fuente: <a href="https://github.com/libanielvargas/periferia-lider-qe-quality-engineering-2026/tree/main/tests/e2e" target="_blank" rel="noopener">tests/e2e</a></p>
+        </li>
+        <li>
+          <a class="challenge-main" href="/retos/datos-sinteticos">
+            <span class="challenge-num">Reto 3</span><strong>Datos sintéticos</strong>
+            <p>Centralicé las reglas: documentos únicos, saldo insuficiente, datos inválidos y limpieza al terminar.</p>
+            <span class="challenge-link">Ver la estrategia</span>
+          </a>
+          <p class="challenge-sources">Fuente: <a href="/revision/documentos/DECISIONES.md" target="_blank" rel="noopener">DECISIONES.md</a> · <a href="https://github.com/libanielvargas/periferia-lider-qe-quality-engineering-2026/blob/main/tests/support/data-rules.js" target="_blank" rel="noopener">data-rules.js</a></p>
+        </li>
+        <li>
+          <a class="challenge-main" href="/retos/rendimiento">
+            <span class="challenge-num">Reto 4</span><strong>Prueba de carga</strong>
+            <p>Script de k6 con umbrales automáticos: p95 menor de 800 ms y errores por debajo del 1 %.</p>
+            <span class="challenge-link">Ver resultados de k6</span>
+          </a>
+          <p class="challenge-sources">Fuente: <a href="https://github.com/libanielvargas/periferia-lider-qe-quality-engineering-2026/blob/main/performance/critical-endpoint.js" target="_blank" rel="noopener">critical-endpoint.js</a></p>
+        </li>
+        <li>
+          <a class="challenge-main" href="https://github.com/libanielvargas/periferia-lider-qe-quality-engineering-2026/actions" target="_blank" rel="noopener">
+            <span class="challenge-num">Reto 5</span><strong>Pipeline</strong>
+            <p>El pipeline original nunca podía fallar. Ahora se detiene ante una prueba fallida o un umbral incumplido, y conserva evidencias solo cuando hay fallos.</p>
+            <span class="challenge-link">Ejecuciones en GitHub Actions</span>
+          </a>
+          <p class="challenge-sources">Fuente: <a href="https://github.com/libanielvargas/periferia-lider-qe-quality-engineering-2026/blob/main/.github/workflows/quality.yml" target="_blank" rel="noopener">quality.yml</a></p>
+        </li>
+        <li>
+          <a class="challenge-main" href="/retos/revision-pr">
+            <span class="challenge-num">Reto 6</span><strong>Revisión de código</strong>
+            <p>Registré nueve hallazgos con severidad y corrección propuesta. Mi decisión: solicitar cambios bloqueantes.</p>
+            <span class="challenge-link">Ver los 9 hallazgos</span>
+          </a>
+          <p class="challenge-sources">Fuente: <a href="/revision/documentos/REVISION_PR.md" target="_blank" rel="noopener">REVISION_PR.md</a> · <a href="https://github.com/libanielvargas/periferia-lider-qe-quality-engineering-2026/blob/main/review-target/payment-helper.js" target="_blank" rel="noopener">payment-helper.js</a></p>
+        </li>
       </ol>
     </section>
 
@@ -283,7 +310,7 @@
         <div>
           <p class="eyebrow">Playwright · ejecución en el servidor</p>
           <h2 id="runner-title">Ejecutar la suite completa</h2>
-          <p>El botón lanza las 17 pruebas contra dos instancias aisladas de la aplicación, una con el servicio de riesgo en «aprobado» y otra en «rechazado». Cada ejecución usa datos sintéticos que se borran al terminar y genera su propio reporte oficial de Playwright, identificado con el mismo ID que ves aquí.</p>
+          <p>El botón lanza las 18 pruebas contra dos instancias aisladas de la aplicación, una con el servicio de riesgo en «aprobado» y otra en «rechazado». Cada ejecución usa datos sintéticos que se borran al terminar y genera su propio reporte oficial de Playwright, identificado con el mismo ID que ves aquí.</p>
         </div>
         <button id="run-suite" class="button-primary" type="button">Ejecutar suite</button>
       </div>
@@ -435,6 +462,7 @@
       <p class="defects-note">Detalle completo en <a href="/revision/documentos/DEFECTOS.md" target="_blank" rel="noopener">DEFECTOS.md</a>. Prioridades y demás hallazgos en <a href="/revision/documentos/DIAGNOSTICO.md" target="_blank" rel="noopener">DIAGNOSTICO.md</a>.</p>
     </section>
 
+    <!-- compartido:pie (src/retos.js lo reutiliza en /retos/*) -->
     <footer class="site-footer">
       <div class="footer-grid">
         <div class="author">
@@ -466,6 +494,7 @@
       </div>
       <p class="footer-note">Este es un ejercicio técnico que desarrollé para el proceso de Líder de Quality Engineering de Periferia IT Group. No es un producto oficial de Periferia IT Group. <a href="/revision/documentos/CAMBIOS.md" target="_blank" rel="noopener">Orden de trabajo</a> · <a href="https://github.com/libanielvargas/periferia-lider-qe-quality-engineering-2026" target="_blank" rel="noopener">Repositorio</a></p>
     </footer>
+    <!-- /compartido:pie -->
 
     <script type="module" src="/app.js"></script>
     <script type="module" src="/laboratorio.js"></script>

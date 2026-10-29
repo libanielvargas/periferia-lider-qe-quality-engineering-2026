@@ -6,6 +6,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import express from 'express';
+import { registerRetos } from './retos.js';
 
 const projectRoot = fileURLToPath(new URL('../', import.meta.url));
 const runsRoot = path.resolve(process.env.QA_RUNS_DIR || path.join(projectRoot, 'runs'));
@@ -22,8 +23,19 @@ const evidence = new Set([
   'e2e/suite-completa-15.txt',
   'e2e/estabilidad-repeat-each-5-15.txt',
   'e2e/estabilidad-repeat-each-5-17.txt',
+  'e2e/estabilidad-repeat-each-5-18.txt',
+  'e2e/mutacion-pending-detectada.txt',
   'performance/summary-completa-5m.json',
-  'performance/k6-completa-50vus-5m.txt'
+  'performance/k6-completa-50vus-5m.txt',
+  'performance/summary-reducida-30s.json',
+  'performance/k6-reducida-50vus-30s.txt',
+  'performance/summary-simulacion-ci-30s.json',
+  'performance/k6-umbral-forzado-falla.txt',
+  'pipeline/actionlint-original.txt',
+  'pipeline/actionlint-corregido.txt',
+  'pipeline/simulacion-local-pasos-ci.txt',
+  'publicacion/escaneo-secretos.txt',
+  'publicacion/github-actions-run-40805453568.md'
 ]);
 
 // off: deshabilitado · local: solo desde localhost · public: detrás del reverse proxy con límites.
@@ -259,9 +271,10 @@ export function registerQualityReview(app) {
     const name = `${req.params.folder}/${req.params.name}`;
     if (!evidence.has(name)) return res.sendStatus(404);
     const file = path.join(projectRoot, 'evidencias', name);
-    if (name.endsWith('.txt')) res.type('text/plain; charset=utf-8');
+    if (/\.(txt|md)$/.test(name)) res.type('text/plain; charset=utf-8');
     return res.sendFile(file);
   });
+  registerRetos(app, { evidence, documents });
   // La página antes citaba esta carpeta como texto; quien la escriba llega a la lista de evidencias.
   app.get(['/evidencias/baseline', '/evidencias/baseline/'], (req, res) => res.redirect(302, '/#evidencias-partida'));
 
