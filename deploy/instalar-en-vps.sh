@@ -52,6 +52,7 @@ fi
 export PATH=$BASE/node/bin:$PATH
 
 log "2. Código en el commit $COMMIT"
+cd $BASE   # el usuario de servicio no puede leer el directorio desde donde se lanza el script
 [ -d $APP/.git ] || sudo -u periferia-qe git clone -q $REPO $APP
 sudo -u periferia-qe git -C $APP fetch -q origin && sudo -u periferia-qe git -C $APP checkout -q "$COMMIT"
 cd $APP && sudo -u periferia-qe env PATH="$PATH" npm ci --no-audit --no-fund
