@@ -1,0 +1,40 @@
+# /etc/systemd/system/periferia-qe.service
+# Aplicación de la prueba Líder QE + ejecutor de la suite. Node.js directo, sin Docker.
+# Los límites de cgroup evitan que Chromium compita con las aplicaciones existentes.
+[Unit]
+Description=Periferia IT Group - prueba tecnica Lider QE (Node.js)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=periferia-qe
+Group=periferia-qe
+WorkingDirectory=/opt/periferia-qe/app
+EnvironmentFile=/etc/periferia-qe/periferia-qe.env
+ExecStart=/usr/bin/node src/server.js
+Restart=on-failure
+RestartSec=5
+
+# Recursos: techo duro de memoria, 1 CPU, prioridad baja de CPU y disco.
+MemoryHigh=850M
+MemoryMax=1G
+MemorySwapMax=0
+CPUQuota=100%
+TasksMax=256
+Nice=10
+IOWeight=50
+
+# Aislamiento
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+ReadWritePaths=/opt/periferia-qe/app/data /opt/periferia-qe/app/runs /opt/periferia-qe/app/test-data
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RestrictSUIDSGID=yes
+
+[Install]
+WantedBy=multi-user.target

@@ -9,3 +9,12 @@ El historial de Git (`git log --reverse`) es la fuente principal. Este resumen s
 5. **Suite E2E nueva:** Page Object, cliente API, fábrica de datos con reglas centralizadas, proyectos `approved` y `rejected` con base aislada, y teardown. Evidencia de estabilidad (`--repeat-each=5`: 70 de 70) y de detección de regresión (mutación del `PENDING`).
 6. **Rendimiento, pipeline y revisión:** prueba k6 con umbrales, pipeline corregido, `REVISION_PR.md` y `DIAGNOSTICO.md` con el sondeo de defectos de la API.
 7. **Cierre:** corrida completa de k6 (50 VUs, 5 min), simulación local de los pasos del pipeline, reporte final y `DECISIONES.md`.
+
+## Fase 2: presentación, ejecutor público y publicación (fuera de las 3 h del reto)
+
+8. **Snapshot de auditoría** (`df8edc6`): se conservó tal cual el trabajo de una sesión previa, que había mezclado la presentación con `app.js` y `styles.css`.
+9. **Separación de la presentación:** `app.js` y `styles.css` vuelven a su versión del reto (el original más la corrección del `PENDING`); la capa nueva vive en `index.html`, `revision.css` y `revision.js`. Incluye el favicon transparente, la foto del autor y el hero con tres escenas en WebP.
+10. **Ejecutor público** (`src/qa-runner.js`): comando fijo, candado, enfriamiento, límites por IP y por hora, verificación de origen, apagado en dos fases y reporte con ID por ejecución. 18 verificaciones en `evidencias/e2e/ejecutor-publico-seguridad.txt`.
+11. **DEF-02 automatizado** como fallo esperado. Los títulos de DEF-01 y DEF-02 lo dicen de forma explícita. Estabilidad: 75 de 75, con DEF-02 reproducido 5 de 5.
+12. **Incidente de disco:** una construcción Docker llenó el disco de la Mac. Se liberaron solo cachés autorizadas y se descartó Docker: el despliegue pasa a Node.js con systemd (`DESPLIEGUE.md`).
+13. **Documentación:** README para lectores nuevos, enunciado original en `ENUNCIADO.md` y publicación en GitHub.

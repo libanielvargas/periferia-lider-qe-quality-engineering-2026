@@ -1,0 +1,17 @@
+# Bloque nuevo para el Caddyfile corporativo. No modifica los bloques existentes.
+# <UPSTREAM>: 127.0.0.1:3300 si Caddy corre en el host, o <gateway de qirava-net>:3300
+# si Caddy corre en contenedor (ver DESPLIEGUE.md, paso 3).
+prueba-tecnica-qa-lead-periferia-it.qirava.co {
+	encode zstd gzip
+	reverse_proxy <UPSTREAM>
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		X-Frame-Options "SAMEORIGIN"
+		-Server
+	}
+	request_body {
+		max_size 64KB
+	}
+}

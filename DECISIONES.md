@@ -6,6 +6,7 @@
 |---|---|---|---|
 | Análisis inicial del repositorio (lectura de código, sin ejecutar) | Sesión previa | — | Hora exacta no registrada; **completar por el candidato**. |
 | Ejecución (baseline de Git a cierre) | 2026-10-28 16:24 (-05) | 2026-10-28 16:38 (-05) — ~20 min de reloj, de los cuales 5 min fueron la corrida k6 completa | Horas tomadas del reloj local y del historial de commits. |
+| Fase 2: presentación, ejecutor público, publicación y preparación del despliegue | 2026-10-28 ~18:40 (-05) | 2026-10-28 (cierre en `CAMBIOS.md`) | Incluye ~1 h perdida por el incidente de disco descrito abajo. Fuera de las 3 h del reto: es material de portafolio y despliegue, no parte del enunciado. |
 
 ## Decisiones técnicas
 
@@ -73,20 +74,71 @@
   3. Verificación de que la suite falla ante una regresión inyectada (`evidencias/e2e/mutacion-pending-detectada.txt`) y de que k6 devuelve 99 al incumplir un umbral.
 - **No validado:** la ejecución real en GitHub, la creación de los ambientes `qa` y `staging`, el secreto configurado y la acción `grafana/setup-k6-action`.
 
+## Fase 2: presentación, ejecutor público y publicación
+
+### Auditoría de cambios sobre los archivos originales
+
+| Archivo original | Cambio | Clasificación | Justificación y evidencia |
+|---|---|---|---|
+| `src/server.js` | `fileURLToPath` en la ruta estática | Corrección técnica indispensable | Sin ella, `GET /` respondía 404 y fallaban todas las pruebas de UI (`evidencias/baseline/`). |
+| `src/server.js` | Una línea: `registerQualityReview(app)` | Presentación (registro de la capa de revisión) | La lógica vive en `src/qa-runner.js`, aparte del sistema bajo prueba. |
+| `src/public/app.js` | Estado real en lugar de `PENDING` fijo | Modificación funcional justificada | El reto 2 exige validar el resultado en la interfaz; documentado en `DIAGNOSTICO.md` y verificado por mutación (`evidencias/e2e/mutacion-pending-detectada.txt`). |
+| `src/public/index.html` | Nueva estructura de página; los formularios y los IDs del laboratorio quedan intactos | Presentación | `app.js` sigue funcionando sin cambios: las 15 pruebas pasan. |
+| `src/public/styles.css` | Ninguno; se restauró el original | — | La sesión previa lo había mezclado con estilos de presentación; ahora viven en `revision.css`. |
+| `src/db.js`, reglas de negocio | Ninguno | — | El cargo del 10 %, DEF-01 y DEF-02 se conservan y se prueban como defectos abiertos. |
+| `README.md` | Reescrito para quien llega al repositorio | Documentación | El enunciado original, sin cambios, está en `ENUNCIADO.md`. |
+
+La sesión previa dejó la presentación mezclada con `app.js` y `styles.css`. Se conservó tal cual en el commit `df8edc6` para trazabilidad y luego se reorganizó.
+
+### Ejecutor de la suite desde la página (`src/qa-runner.js`)
+
+- **Modos:** `QA_RUNNER_MODE=off`, `local` (por defecto, solo loopback) o `public` (detrás del reverse proxy).
+- **Comando fijo:** Playwright con argumentos constantes. La petición HTTP no aporta parámetros, y el proceso hijo solo hereda `PATH`, `HOME`, `TMPDIR` y la ruta de navegadores, no los secretos de la aplicación.
+- **Controles:**
+  - Una ejecución a la vez.
+  - 1 worker.
+  - Máximo 180 s, con apagado en dos fases (`SIGINT` y luego `SIGKILL`).
+  - 90 s de espera entre ejecuciones.
+  - 4 ejecuciones por hora por IP y 15 por hora en total.
+  - Verificación de `Origin` para evitar ejecuciones disparadas desde otro sitio.
+  - `trust proxy` solo para el proxy configurado.
+- **Reporte por ejecución:** cada corrida tiene un ID; su reporte HTML lo muestra en la cabecera; se conservan las últimas 5.
+- **Resumen honesto:** se lee del reporte JSON y separa *conformes* de *defectos conocidos*, porque Playwright cuenta los `test.fail()` como «passed». Los títulos de DEF-01 y DEF-02 lo dicen explícitamente.
+- **Evidencia:** `evidencias/e2e/ejecutor-publico-seguridad.txt` contiene 18 verificaciones: sin `Origin` → 403, otro origen → 403, concurrencia → 409, enfriamiento → 429, límite por IP → 429, *path traversal* → 404, tiempo máximo sin procesos huérfanos y modo `off` → 403.
+- **Defecto propio detectado y corregido:** la primera versión cortaba con `SIGKILL` directo y dejaba vivos los `webServer` de Playwright, que corren en grupos de procesos propios.
+- **La prueba de carga no se puede lanzar desde la página:** corre solo en el pipeline.
+
+### Presentación
+
+- **Separación:** capa propia en `revision.css` y `revision.js`.
+- **Tipografía:** Outfit (la de Periferia) para titulares y la fuente del sistema para el texto, por legibilidad.
+- **Favicon:** derivado de la variante transparente; canal alfa verificado sobre pestañas claras y oscuras (`evidencias/visual/favicon-temas.png`).
+- **Hero:** carrusel de tres escenas en WebP (49 a 60 KB). Respeta `prefers-reduced-motion` y sin imágenes conserva un fondo oscuro.
+- **Pie de página:** fotografía tomada del CV del candidato, con los datos de contacto autorizados; sin dirección ni documento de identidad.
+- **Verificación visual:** escritorio, tableta y móvil (`evidencias/visual/`), sin desborde horizontal ni errores de consola.
+
+### Incidente: Docker llenó el disco de la Mac
+
+Una construcción de imagen Docker (Chromium y caché de BuildKit) agotó el disco local y dejó el motor de Docker en estado de error. Se liberaron solo cachés autorizadas y se descartó Docker como requisito. El despliegue propuesto usa Node.js con systemd y límites de cgroup (`DESPLIEGUE.md`). Ninguna imagen Docker se publicó ni se dejó en el repositorio sin verificar.
+
+### Despliegue
+
+El código y el procedimiento están listos (`DESPLIEGUE.md`, `deploy/`). No se ejecutó porque desde la Mac no existe un acceso autorizado al VPS; el detalle está en `DESPLIEGUE.md`.
+
 ## Pendientes y riesgos
 
 | Pendiente | Riesgo | Acción siguiente |
 |---|---|---|
-| Doble gasto concurrente (saldo −395 reproducido) | Pérdida financiera | Bloqueo por cliente o transacción atómica; agregar una prueba concurrente. |
+| DEF-02: doble gasto concurrente (saldo −395 reproducido) | Pérdida financiera | Bloqueo por cliente o transacción atómica; retirar `test.fail()` cuando se corrija. |
 | DEF-01: saldo negativo por el cargo del 10 % | Saldos negativos | Validar `balance >= amount * 1.1`; retirar `test.fail()`. |
 | Saldo inicial negativo o `null`, correo sin formato, XSS por `innerHTML` | Datos corruptos, ejecución de script | Validación en el servidor y `textContent` en el frontend; pruebas negativas. |
-| Rotar `qa-token-2026-visible` y `Admin2026!` | Credenciales expuestas en el historial | Rotar y purgar el historial si el repositorio es compartido. |
+| `qa-token-2026-visible` y `Admin2026!` siguen en el historial | Son valores ficticios sembrados por el enunciado (reto 5 y reto 6), no credenciales reales | En un sistema real: rotar y purgar el historial. Aquí se conservan porque son el objeto de la evaluación. |
 | Persistencia en JSON | No escala ni soporta varios procesos | Base de datos real para ambientes compartidos. |
 | Pipeline no ejecutado en GitHub | Diferencias de entorno | Primer run en una rama y ajustar si algo difiere. |
 
 ## Herramientas y asistentes de IA
 
-- **Herramientas:** Node 25.2 local (el CI usa 20), Playwright 1.64.1, k6 2.3.0, actionlint 1.7.12 y Git.
+- **Herramientas:** Node 25.2 local (el CI usa 20), Playwright 1.64.1, k6 2.3.0, actionlint 1.7.12, gitleaks, Git y GitHub CLI.
 - **Claude Code (Anthropic):** analizó el repositorio, ejecutó los comandos, escribió el código, las pruebas, el pipeline y los documentos, y recolectó la evidencia, bajo instrucciones y revisión del candidato.
 - **ChatGPT (OpenAI):** orquestó el proceso y definió las instrucciones y los criterios. Entre ellos: usar `RISK_MODE` aprobado y rechazado, conservar el cargo del 10 % con el saldo esperado de 890, decidir "solicitar cambios bloqueantes" en el PR, usar k6 con 50 VUs y 5 min, y no usar Cucumber ni Screenplay.
 - **Validación:** todo resultado declarado está respaldado por logs en `evidencias/`. El candidato revisó y asume las decisiones.
