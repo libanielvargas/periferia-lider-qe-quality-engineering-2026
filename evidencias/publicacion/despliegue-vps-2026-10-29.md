@@ -78,3 +78,32 @@ La suite se lanzó presionando «Ejecutar suite» en la página pública, sin t�
 | Contenedores existentes después | `qirava-portal` (healthy) y `caddy`, activos |
 
 ![Ejecución pública finalizada: 13 conformes y 2 defectos conocidos](ejecucion-publica-2026-10-29.webp)
+
+## Ejecución pública con los ajustes de cierre (commit `859e04b`)
+
+Después de agregar la consulta entre clientes, la presentación de resultados, el pie y las evidencias enlazadas, desplegué `859e04b` y volví a ejecutar la suite con el botón de https://prueba-tecnica-qa-lead-periferia-it.qirava.co.
+
+| Medición | Resultado |
+|---|---|
+| ID de la ejecución | `20261029-222852-b8ab` |
+| Resultado | Conforme: 17 escenarios, 15 conformes, 2 defectos conocidos (DEF-01 y DEF-02), 0 fallos inesperados |
+| Duración | 93 s (límite del ejecutor: 180 s) |
+| Reporte | El título contiene el mismo ID; el enlace «Ver en el reporte» de DEF-02 abre ese escenario con sus pasos |
+| Registro técnico | Contraído al terminar, bajo «Ver registro técnico» |
+| Procesos huérfanos | 0 |
+| Memoria del servicio | Pico de cgroup de 380 MiB; hasta 379 MiB en swap propio |
+| Memoria disponible del servidor | Mínimo de 240 MiB |
+| Carga máxima (1 min) | 2,91 |
+| `qirava.co` durante la ejecución | 50 de 50 respuestas HTTP 200; promedio de 0,34 s y máximo de 0,45 s |
+
+**Enlaces de la página, comprobados desde Internet:**
+- Evidencias y documentos internos: todos responden 200 con el tipo esperado.
+- `/evidencias/baseline/`: redirige al catálogo de evidencias.
+- GitHub y qirava.co: responden 200.
+- LinkedIn: responde 999 a clientes automatizados, así que solo se comprobó la redirección 301 hacia `/in/libanielvargas`.
+- Correo: Cloudflare ofuscaba el `mailto:`. Lo corregí con las marcas `email_off`, y ahora el enlace llega intacto.
+
+**Lectura:** con 17 pruebas, la ejecución tarda unos 30 s más que con 15, porque el servicio trabaja con swap en el droplet de 1 GB. Quedan unos 87 s de margen antes del límite. El portal no se degradó durante la ejecución.
+
+![Ejecución pública con 17 escenarios: 15 conformes y 2 defectos conocidos](ejecucion-publica-17-2026-10-29.webp)
+

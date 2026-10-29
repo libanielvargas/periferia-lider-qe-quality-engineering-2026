@@ -3,8 +3,11 @@
 **Destino:** `https://prueba-tecnica-qa-lead-periferia-it.qirava.co`
 
 **Estado (29-oct-2026):**
-- **Publicado y verificado desde Internet**, servido por Cloudflare (proxy) y Caddy con certificado de Let's Encrypt. La ejecución pública se hizo sobre el código de `f522eb9`; los commits posteriores solo actualizan documentación y se redesplegaron con el mismo instalador.
-- **Suite ejecutada desde el botón de la página pública** (`20261029-212552-d363`): 13 conformes y 2 defectos conocidos, 0 fallidas. El detalle está en `evidencias/publicacion/despliegue-vps-2026-10-29.md`.
+- **Publicado y verificado desde Internet**, servido por Cloudflare (proxy) y Caddy con certificado de Let's Encrypt. El servidor sirve `859e04b` o un commit posterior que solo cambia documentación.
+- **Suite ejecutada desde el botón de la página pública.**
+  - Primera ejecución (`20261029-212552-d363`): 15 pruebas, con 13 conformes y 2 defectos conocidos.
+  - Con los ajustes de cierre, commit `859e04b` (`20261029-222852-b8ab`): 17 escenarios, con 15 conformes, 2 defectos conocidos y 0 fallos inesperados.
+  - El detalle está en `evidencias/publicacion/despliegue-vps-2026-10-29.md`.
 
 ## Comandos (desde la Mac, con la clave de despliegue de Qirava)
 
@@ -66,7 +69,8 @@ La reversión (`deploy/revertir-en-vps.sh`) hace lo siguiente:
 - [x] `qirava.co` respondió 200 en las 50 muestras tomadas durante la ejecución, con un máximo de 1,64 s.
 - [x] Registro DNS `A prueba-tecnica-qa-lead-periferia-it → 206.81.7.100` en Cloudflare, con proxy activo (creado por el propietario).
 - [x] Caddy emitió el certificado de Let's Encrypt (desafío HTTP-01 a través del proxy) y `/health` responde 200 desde Internet.
-- [x] Suite ejecutada desde el botón de la URL pública (`20261029-212552-d363`): 13 conformes y 2 defectos conocidos en 62 s, reporte con el mismo ID y 0 procesos huérfanos. `qirava.co` respondió 200 en las 50 muestras (máximo 0,46 s).
+- [x] Suite de 17 escenarios ejecutada desde el botón de la URL pública con el commit `859e04b` (`20261029-222852-b8ab`): 15 conformes y 2 defectos conocidos en 93 s, reporte con el mismo ID, enlace directo a cada escenario y 0 procesos huérfanos. `qirava.co`: 50 de 50 respuestas 200, con un máximo de 0,45 s.
+- [x] Primera ejecución desde la URL pública (`20261029-212552-d363`): 13 conformes y 2 defectos conocidos en 62 s, reporte con el mismo ID y 0 procesos huérfanos. `qirava.co` respondió 200 en las 50 muestras (máximo 0,46 s).
 
 ## Capacidad y riesgo
 
