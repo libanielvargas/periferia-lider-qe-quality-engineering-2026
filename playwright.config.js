@@ -13,10 +13,21 @@ export default defineConfig({
   retries: 0,
   workers: isCI ? 2 : undefined,
   globalTeardown: './tests/support/global-teardown.js',
+  // El ejecutor de la página asigna carpeta e ID propios a cada corrida.
+  metadata: process.env.QA_RUN_ID
+    ? { 'ID de ejecución': process.env.QA_RUN_ID, 'Origen': process.env.QA_RUN_ORIGIN }
+    : {},
   reporter: [
     ['list', { printSteps: true }],
-    ['html', { open: 'never', outputFolder: 'playwright-report' }],
-    ['junit', { outputFile: 'reports/junit.xml' }]
+    ['html', {
+      open: 'never',
+      outputFolder: process.env.PLAYWRIGHT_HTML_OUTPUT_DIR || 'playwright-report',
+      title: process.env.QA_RUN_ID
+        ? `Ejecución ${process.env.QA_RUN_ID} · ${process.env.QA_RUN_ORIGIN} · DEF-01 y DEF-02 son defectos abiertos (fallo esperado)`
+        : 'Suite Líder QE · DEF-01 y DEF-02 son defectos abiertos (fallo esperado)'
+    }],
+    ['junit', { outputFile: process.env.PLAYWRIGHT_JUNIT_OUTPUT_FILE || 'reports/junit.xml' }],
+    ...(process.env.QA_RUN_JSON ? [['json', { outputFile: process.env.QA_RUN_JSON }]] : [])
   ],
   use: {
     trace: 'retain-on-failure',

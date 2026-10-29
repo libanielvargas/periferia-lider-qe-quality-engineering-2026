@@ -1,0 +1,19 @@
+1. estado público (GET):                         200
+2. POST sin cabecera Origin:                     403 {"error":"Solicitud rechazada: origen no válido."}
+3. POST desde otro origen (CSRF):                403 {"error":"Solicitud rechazada: origen no válido."}
+4. POST con parámetros inyectados (se ignoran):  202
+5. POST concurrente mientras corre:              409 {"error":"Ya hay una ejecución en curso. Puedes seguir su avance en esta misma página."}
+6. POST durante enfriamiento:                    429 {"error":"La última ejecución terminó hace poco. Espera 6 s para proteger los recursos del servidor."}
+   resultado 1ra ejecución: passed {'conformes': 13, 'defectosConocidos': 2, 'fallidas': 0, 'inestables': 0, 'omitidas': 0} /revision/ejecuciones/20261029-020559-4271/reporte/
+7. reporte de la ejecución:                      200
+8. reporte de ejecución inexistente:             404
+9. traversal documentos (../package.json):       404
+10. documento fuera de lista (.env.example):     404
+11. traversal ejecuciones (../../package.json):  404
+12. 2da ejecución tras enfriamiento:             202
+13. 3ra ejecución misma IP (límite 2/h):         429 {"error":"Alcanzaste el límite de ejecuciones por hora desde tu conexión."}
+14. X-Forwarded-For falso sin proxy de confianza: 429 (sigue limitada)
+15. procesos huérfanos en 4310/4311:             0
+16. límite de tiempo: status failed timedOut True duración 7 s
+17. huérfanos tras matar por tiempo:            0
+18. modo off (POST):                             403
