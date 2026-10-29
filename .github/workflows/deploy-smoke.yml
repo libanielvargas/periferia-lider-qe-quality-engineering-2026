@@ -1,0 +1,73 @@
+name: Simulacro de despliegue en VPS
+
+# Reproduce la topología del droplet (Caddy en contenedor, systemd en el host) en un
+# runner Ubuntu y ejecuta los scripts reales de instalación y reversión.
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'deploy/**'
+      - 'src/**'
+      - 'playwright.config.js'
+      - '.github/workflows/deploy-smoke.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  simulacro:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    env:
+      DOMINIO: prueba-tecnica-qa-lead-periferia-it.qirava.co
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Caddy como en el droplet (contenedor, Caddyfile en /opt/qirava-portal)
+        run: |
+          sudo mkdir -p /opt/qirava-portal
+          printf '{\n\tlocal_certs\n}\n\nqirava.co.test {\n\trespond "sitio existente" 200\n}\n' | sudo tee /opt/qirava-portal/Caddyfile
+          docker network create qirava-net
+          docker run -d --name qirava-portal-caddy-1 --network qirava-net -p 443:443 \
+            -v /opt/qirava-portal/Caddyfile:/etc/caddy/Caddyfile caddy:2.8
+          sleep 3 && docker ps
+
+      - name: Instalar con el script real
+        run: sudo bash deploy/instalar-en-vps.sh "$GITHUB_SHA"
+
+      - name: Sitio existente intacto y nuevo vhost por HTTPS
+        run: |
+          curl -sk --resolve qirava.co.test:443:127.0.0.1 https://qirava.co.test/ | grep -q "sitio existente"
+          curl -sk --resolve "$DOMINIO:443:127.0.0.1" "https://$DOMINIO/health"
+          curl -sk --resolve "$DOMINIO:443:127.0.0.1" "https://$DOMINIO/" | grep -q "Ejecutar la suite"
+
+      - name: Ejecutar la suite a través de Caddy, como el evaluador
+        run: |
+          B="https://$DOMINIO"
+          R=(--resolve "$DOMINIO:443:127.0.0.1")
+          test "$(curl -sk "${R[@]}" -o /dev/null -w '%{http_code}' -X POST "$B/revision/ejecutar")" = 403   # sin Origin
+          curl -sk "${R[@]}" -X POST -H "Origin: $B" "$B/revision/ejecutar"
+          for _ in $(seq 1 120); do
+            S=$(curl -sk "${R[@]}" "$B/revision/estado")
+            echo "$S" | grep -q '"status":"running"' || break
+            sleep 3
+          done
+          echo "$S" | python3 -c 'import sys,json; d=json.load(sys.stdin); print(d["status"], d["summary"], d["reportUrl"], d["elapsedSeconds"], "s"); assert d["status"]=="passed" and d["summary"]["conformes"]==13 and d["summary"]["defectosConocidos"]==2'
+          REPORTE=$(echo "$S" | python3 -c 'import sys,json; print(json.load(sys.stdin)["reportUrl"])')
+          test "$(curl -sk "${R[@]}" -o /dev/null -w '%{http_code}' "$B$REPORTE")" = 200
+          sleep 2
+          test "$(ss -tln | grep -cE ':(4310|4311) ')" = 0   # sin procesos huérfanos
+          systemctl show periferia-qe -p MemoryPeak -p MemoryMax -p CPUQuotaPerSecUSec
+
+      - name: Revertir con el script real y comprobar estado limpio
+        run: |
+          sudo bash deploy/revertir-en-vps.sh
+          if systemctl is-active --quiet periferia-qe; then echo "el servicio sigue activo"; exit 1; fi
+          if grep -q "$DOMINIO" /opt/qirava-portal/Caddyfile; then echo "el bloque sigue en Caddy"; exit 1; fi
+          test ! -d /opt/periferia-qe
+          curl -sk --resolve qirava.co.test:443:127.0.0.1 https://qirava.co.test/ | grep -q "sitio existente"
+
+      - name: Registro del servicio si algo falla
+        if: failure()
+        run: sudo journalctl -u periferia-qe --no-pager -n 120 || true
