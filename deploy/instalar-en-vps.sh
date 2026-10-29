@@ -41,7 +41,12 @@ echo "memoria disponible: ${DISPONIBLE} MiB · disco libre: ${LIBRE_DISCO} MiB"
 
 [ "$DISPONIBLE" -ge "$MIN_DISPONIBLE_MB" ] || falla "Memoria disponible ${DISPONIBLE} MiB < ${MIN_DISPONIBLE_MB} MiB: Chromium pondría en riesgo a qirava.co. No se instala."
 [ "$LIBRE_DISCO" -ge 2048 ] || falla "Menos de 2 GiB libres en disco."
-ss -tln | grep -qE ":(3300|4310|4311) " && falla "Puerto 3300, 4310 o 4311 ocupado."
+if systemctl is-active --quiet periferia-qe; then
+  # Actualización: el 3300 es del propio servicio; 4310/4311 ocupados indican una ejecución en curso.
+  ss -tln | grep -qE ":(4310|4311) " && falla "Hay una ejecución de la suite en curso (4310/4311 ocupados). Reintenta al terminar."
+else
+  ss -tln | grep -qE ":(3300|4310|4311) " && falla "Puerto 3300, 4310 o 4311 ocupado."
+fi
 [ -n "$CADDY" ] || falla "No se encontró el contenedor de Caddy."
 GATEWAY=$(docker inspect "$CADDY" -f '{{range .NetworkSettings.Networks}}{{.Gateway}} {{end}}' | awk '{print $1}')
 [ -n "$GATEWAY" ] || falla "No se pudo determinar el gateway de la red de Caddy."
