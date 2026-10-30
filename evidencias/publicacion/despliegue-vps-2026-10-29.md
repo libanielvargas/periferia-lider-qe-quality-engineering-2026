@@ -131,3 +131,23 @@ Después de agregar la consulta entre clientes, la presentación de resultados, 
 
 ![Ejecución pública con 18 escenarios: 16 conformes y 2 defectos conocidos](ejecucion-publica-18-2026-10-29.webp)
 
+## Ejecución pública con las correcciones de la revisión independiente (commit `2df1e72`, 30 de octubre)
+
+Antes del despliegue, el commit pasó en GitHub Actions: Quality ([41064931584](https://github.com/libanielvargas/periferia-lider-qe-quality-engineering-2026/actions/runs/41064931584)) con 19 pruebas y k6 con p95 de 3,46 ms y 0 % de errores, y el simulacro de despliegue ([41064931241](https://github.com/libanielvargas/periferia-lider-qe-quality-engineering-2026/actions/runs/41064931241)) con 17 conformes, 2 defectos conocidos y 0 fallidas. El reporte HTML de Quality no contiene capturas, videos ni trazas: solo el HTML, el JUnit y el contexto de error de DEF-01 y DEF-02.
+
+| Medición | Resultado |
+|---|---|
+| ID de la ejecución | `20261030-134632-b05c`, lanzada con el botón de la página pública |
+| Resultado | Conforme: 19 escenarios, 17 conformes, 2 defectos conocidos y 0 fallos inesperados |
+| Duración | 125 s (límite del ejecutor: 180 s) |
+| Reporte | Contiene el mismo ID, y el enlace directo a DEF-02 abre ese escenario |
+| Nombre con etiquetas HTML | El escenario `resumen-texto-seguro` pasó en el servidor publicado |
+| Adjuntos del ejecutor web | 3 capturas PNG de los escenarios con evidencia visual, como antes |
+| Procesos de navegador al terminar | 0 |
+| Memoria | Pico de cgroup de 381 MiB y 415 MiB de swap propio |
+| `qirava.co` después de la ejecución | HTTP 200 |
+| Errores de consola en la página | 0 |
+
+**Lectura:** la duración siguió subiendo con la prueba nueva (105 s con 18, 125 s con 19). Quedan 55 s de margen frente al límite de 180 s del ejecutor.
+
+![Ejecución pública con 19 escenarios: 17 conformes y 2 defectos conocidos](ejecucion-publica-19-2026-10-30.webp)
