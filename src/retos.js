@@ -248,9 +248,20 @@ function statusOf(action) {
   return { label: 'Ver acción', tone: 'pending' };
 }
 
-function evidenceLinks(cell) {
-  const files = [...cell.matchAll(/`([^`]+)`/g)].map(match => match[1]);
-  return files.map(file => sourceLink(file, path.basename(file.replace(/\/$/, '')))).join(' ');
+// DIAGNOSTICO.md cita la evidencia con códigos (E1, E2…) para caber en una página; la leyenda
+// «**Evidencias** (en `evidencias/`, salvo …)» da la ruta de cada código.
+function evidenceIndex(doc) {
+  const legend = doc.match(/\*\*Evidencias\*\*[^\n]*/)[0];
+  return new Map([...legend.matchAll(/(E\d+) `([^`]+)`/g)].map(([, code, file]) =>
+    [code, fs.existsSync(path.join(root, file)) ? file : `evidencias/${file}`]));
+}
+
+function evidenceLinks(cell, index) {
+  return [...cell.matchAll(/E\d+/g)].map(([code]) => {
+    const file = index.get(code);
+    if (!file) throw new Error(`DIAGNOSTICO.md cita ${code} sin ruta en la leyenda`);
+    return sourceLink(file, path.basename(file));
+  }).join(' ');
 }
 
 function counts(list) {
@@ -264,6 +275,7 @@ function statTiles(entries) {
 function diagnostico() {
   const doc = read('DIAGNOSTICO.md');
   const { rows } = firstTable(doc);
+  const index = evidenceIndex(doc);
   const findings = rows.map(([priority, finding, type, impact, action, evidence]) => ({
     priority: plain(priority), finding, type, impact, action, evidence, area: classify(type), status: statusOf(action)
   }));
@@ -271,7 +283,6 @@ function diagnostico() {
   const byArea = counts(findings.map(item => item.area));
   const byStatus = counts(findings.map(item => item.status.label));
   const summary = doc.match(/\*\*Resumen ejecutivo\.\*\*\s*(.*)/)[1];
-  const lineCount = doc.trimEnd().split('\n').length;
 
   const cards = findings.map((item, i) => `
         <article class="finding" data-priority="${esc(item.priority)}">
@@ -286,7 +297,7 @@ function diagnostico() {
           <dl class="finding-fields">
             <div><dt>Impacto</dt><dd>${inline(item.impact)}</dd></div>
             <div><dt>Acción</dt><dd>${inline(item.action)}</dd></div>
-            <div><dt>Evidencia</dt><dd>${evidenceLinks(item.evidence) || '—'}</dd></div>
+            <div><dt>Evidencia</dt><dd>${evidenceLinks(item.evidence, index) || '—'}</dd></div>
           </dl>
         </article>`).join('');
 
@@ -308,15 +319,14 @@ function diagnostico() {
       <section class="reto-block reto-columns" aria-labelledby="dependencias">
         <div>
           <h2 id="dependencias">Dependencias</h2>
-          ${markdown(doc.match(/\*\*Dependencias\.\*\*\n([\s\S]*?)\n\n/)[1])}
+          ${markdown(doc.match(/\*\*Dependencias\.\*\*\s*([^\n]*)/)[1])}
         </div>
         <div>
           <h2>Orden de corrección aplicado</h2>
-          ${markdown(doc.match(/\*\*Orden de corrección aplicado\.\*\*\n([\s\S]*?)\n\n/)[1])}
-          <p>${inline(doc.trimEnd().split('\n').at(-1))}</p>
+          ${markdown(doc.match(/\*\*Orden de corrección aplicado\.\*\*\s*([^\n]*)/)[1])}
         </div>
       </section>
-      <p class="reto-note">El enunciado pide el diagnóstico en una página. El documento original se conserva así: ${sourceLink('DIAGNOSTICO.md')}, ${lineCount} líneas. Esta vista lo presenta sin cambiar su contenido.</p>`;
+      <p class="reto-note">El enunciado pide el diagnóstico en una página. ${sourceLink('DIAGNOSTICO.md')} cabe en una página A4 legible (comprobado con <code>scripts/diagnostico-a4.mjs</code>: ${sourceLink('evidencias/diagnostico/diagnostico-a4.pdf', 'diagnostico-a4.pdf')}). Esta vista presenta el mismo contenido, con cada código de evidencia convertido en enlace.</p>`;
 
   return page({
     slug: 'diagnostico',

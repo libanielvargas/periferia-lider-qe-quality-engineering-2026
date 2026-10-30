@@ -29,6 +29,8 @@ export default defineConfig({
     ['junit', { outputFile: process.env.PLAYWRIGHT_JUNIT_OUTPUT_FILE || 'reports/junit.xml' }],
     ...(process.env.QA_RUN_JSON ? [['json', { outputFile: process.env.QA_RUN_JSON }]] : [])
   ],
+  // Solo en fallos, en cualquier origen. La captura adicional de pruebas exitosas depende del
+  // origen: ver attachEvidence() en tests/support/fixtures.js.
   use: {
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',

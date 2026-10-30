@@ -58,7 +58,7 @@
         </button>
         <button class="hero-scene" type="button" data-slide="1" aria-pressed="false">
           <b>02 · Automatización</b>
-          <span>Dieciocho pruebas independientes que validan la interfaz y confirman cada resultado por API.</span>
+          <span>Diecinueve pruebas independientes: 5 recorren la interfaz y confirman por API, 12 validan reglas y defectos en la API y 2 revisan esta presentación.</span>
         </button>
         <button class="hero-scene" type="button" data-slide="2" aria-pressed="false">
           <b>03 · Rendimiento</b>
@@ -105,7 +105,7 @@
         <li>
           <p class="stage">Resultado</p>
           <h3>Resultado</h3>
-          <p>La suite reescrita tenía <strong>15 pruebas</strong>: 13 conformes y 2 defectos conocidos. La repetí cinco veces seguidas y las 75 ejecuciones dieron el resultado esperado. Después agregué tres pruebas de la capa de presentación; hoy son 18 y puedes <a href="#ejecucion">ejecutarlas desde esta página</a>.</p>
+          <p>La suite reescrita tenía <strong>15 pruebas</strong>: 13 conformes y 2 defectos conocidos. La repetí cinco veces seguidas y las 75 ejecuciones dieron el resultado esperado. Después agregué cuatro pruebas de la capa de presentación, una de ellas sobre el nombre del cliente mostrado como texto; hoy son 19 y puedes <a href="#ejecucion">ejecutarlas desde esta página</a>.</p>
           <p class="stage-links">Evidencia: <a href="/revision/evidencias/e2e/suite-completa-15.txt">suite reescrita, 15 de 15 con el resultado esperado</a> · <a href="/revision/evidencias/e2e/estabilidad-repeat-each-5-15.txt">estabilidad, 75 de 75</a></p>
         </li>
       </ol>
@@ -123,7 +123,7 @@
               <tr><th scope="row"><a href="/revision/evidencias/baseline/probe-static.txt">Consulta directa al servidor original</a><span>Texto</span></th><td><code>GET /</code> responde 404 y <code>GET /health</code> responde 200: el servidor funciona, pero no encuentra la carpeta de la interfaz.</td><td><span class="state initial">Estado inicial</span></td></tr>
               <tr><th scope="row"><a href="/revision/evidencias/baseline/suite-original-reutilizo-servidor-viejo.txt">Ejecución que reutilizó un servidor viejo</a><span>Texto</span></th><td>Con <code>reuseExistingServer</code>, Playwright se conectó a un servidor que ya estaba en marcha, y las 4 fallaron igual. Por eso la suite nueva levanta sus propios servidores.</td><td><span class="state initial">Estado inicial</span></td></tr>
               <tr><th scope="row"><a href="/revision/evidencias/baseline/suite-original-tras-fix-static.txt">Ejecución después de corregir la ruta estática</a><span>Texto</span></th><td>Con la interfaz disponible pasa 1 de 4. Las otras 3 fallan por defectos de la propia suite.</td><td><span class="state intervened">Intervenido: solo la ruta</span></td></tr>
-              <tr><th scope="row"><a href="/revision/evidencias/baseline/sondeo-defectos-api.txt">Sondeo inicial de defectos por API</a><span>Texto</span></th><td>Saldo de −100 tras una operación aprobada (DEF-01), saldo de −395 con cinco operaciones simultáneas (DEF-02) y validaciones ausentes en la creación de clientes.</td><td><span class="state initial">Estado inicial, reglas de negocio sin cambios</span></td></tr>
+              <tr><th scope="row"><a href="/revision/evidencias/baseline/sondeo-defectos-api.txt">Sondeo inicial de defectos por API</a><span>Texto</span></th><td>Saldo de -$ 100 tras una operación aprobada (DEF-01), saldo de -$ 395 con cinco operaciones simultáneas (DEF-02) y validaciones ausentes en la creación de clientes.</td><td><span class="state initial">Estado inicial, reglas de negocio sin cambios</span></td></tr>
               <tr><th scope="row"><a href="/revision/evidencias/e2e/suite-completa-15.txt">Suite reescrita</a><span>Texto</span></th><td>15 de 15 con el resultado esperado: 13 conformes y los 2 defectos como fallo esperado.</td><td><span class="state intervened">Intervenido: suite nueva</span></td></tr>
               <tr><th scope="row"><a href="/revision/evidencias/e2e/estabilidad-repeat-each-5-15.txt">Prueba de estabilidad</a><span>Texto</span></th><td>La suite repetida cinco veces: 75 de 75 con el resultado esperado.</td><td><span class="state intervened">Intervenido: suite nueva</span></td></tr>
             </tbody>
@@ -146,16 +146,16 @@
           <tbody>
             <tr>
               <th scope="row">Suite funcional (Playwright)</th>
-              <td class="metric-value">18 pruebas</td>
-              <td>Flujo completo, reglas negativas, rechazo por riesgo, los dos defectos conocidos, la consulta entre clientes, los enlaces a las evidencias y las vistas de los retos, sobre dos instancias aisladas de la aplicación.</td>
-              <td>16 conformes y 2 fallos esperados (DEF-01 y DEF-02), sin fallos inesperados. En mi equipo, en GitHub Actions y en el servidor de esta página.</td>
+              <td class="metric-value">19 pruebas</td>
+              <td>5 recorren la interfaz y confirman el resultado por API: flujo completo, saldo insuficiente, rechazo por riesgo, consulta entre clientes y nombre con etiquetas HTML. 12 validan directamente la API: reglas negativas y los dos defectos conocidos. 2 revisan esta presentación: enlaces a las evidencias y vistas de los retos. Todas corren sobre dos instancias aisladas de la aplicación.</td>
+              <td>17 conformes y 2 fallos esperados (DEF-01 y DEF-02), sin fallos inesperados. En mi equipo, en GitHub Actions y en el servidor de esta página.</td>
               <td>La automatización es confiable. La aplicación no está lista para producción mientras los dos defectos sigan abiertos.</td>
             </tr>
             <tr>
               <th scope="row">Estabilidad</th>
-              <td class="metric-value">90 de 90</td>
-              <td>La suite completa repetida cinco veces (<code>--repeat-each=5</code>) en paralelo, para detectar pruebas intermitentes.</td>
-              <td>Con 18 pruebas, las 90 ejecuciones dieron el resultado esperado (29 de octubre). Antes, con 17 fueron 85 de 85 y con 15, 75 de 75; y DEF-02 se reprodujo en las 5 repeticiones.</td>
+              <td class="metric-value">95 de 95</td>
+              <td>La suite completa repetida cinco veces (<code>--repeat-each=5</code>) con 2 workers en paralelo, como en CI, para detectar pruebas intermitentes.</td>
+              <td>Con 19 pruebas, las 95 ejecuciones dieron el resultado esperado (30 de octubre). Antes, con 18 fueron 90 de 90, con 17, 85 de 85 y con 15, 75 de 75; y DEF-01 y DEF-02 se reprodujeron en las 5 repeticiones.</td>
               <td>No encontré pruebas intermitentes en esa muestra. El doble gasto se repite siempre: no es un caso fortuito.</td>
             </tr>
             <tr>
@@ -182,7 +182,7 @@
           </tbody>
         </table>
       </div>
-      <p class="metrics-source">Fuentes: <a href="/revision/evidencias/e2e/suite-completa-15.txt">suite completa</a>, pruebas de estabilidad con <a href="/revision/evidencias/e2e/estabilidad-repeat-each-5-18.txt">18</a>, <a href="/revision/evidencias/e2e/estabilidad-repeat-each-5-17.txt">17</a> y <a href="/revision/evidencias/e2e/estabilidad-repeat-each-5-15.txt">15 pruebas</a>, <a href="/revision/evidencias/performance/summary-completa-5m.json">resumen de k6 de la prueba de cinco minutos</a> y <a href="/revision/evidencias/performance/k6-completa-50vus-5m.txt">su salida completa</a> (28 de octubre de 2026), y la <a href="https://github.com/libanielvargas/periferia-lider-qe-quality-engineering-2026/actions/runs/40805453568" target="_blank" rel="noopener">ejecución 40805453568 de GitHub Actions</a>.</p>
+      <p class="metrics-source">Fuentes: <a href="/revision/evidencias/e2e/suite-completa-15.txt">suite completa</a>, pruebas de estabilidad con <a href="/revision/evidencias/e2e/estabilidad-repeat-each-5-19.txt">19</a>, <a href="/revision/evidencias/e2e/estabilidad-repeat-each-5-18.txt">18</a>, <a href="/revision/evidencias/e2e/estabilidad-repeat-each-5-17.txt">17</a> y <a href="/revision/evidencias/e2e/estabilidad-repeat-each-5-15.txt">15 pruebas</a>, <a href="/revision/evidencias/performance/summary-completa-5m.json">resumen de k6 de la prueba de cinco minutos</a> y <a href="/revision/evidencias/performance/k6-completa-50vus-5m.txt">su salida completa</a> (28 de octubre de 2026), y la <a href="https://github.com/libanielvargas/periferia-lider-qe-quality-engineering-2026/actions/runs/40805453568" target="_blank" rel="noopener">ejecución 40805453568 de GitHub Actions</a>.</p>
     </section>
 
     <section class="section" id="retos" aria-labelledby="retos-title">
@@ -310,7 +310,7 @@
         <div>
           <p class="eyebrow">Playwright · ejecución en el servidor</p>
           <h2 id="runner-title">Ejecutar la suite completa</h2>
-          <p>El botón lanza las 18 pruebas contra dos instancias aisladas de la aplicación, una con el servicio de riesgo en «aprobado» y otra en «rechazado». Cada ejecución usa datos sintéticos que se borran al terminar y genera su propio reporte oficial de Playwright, identificado con el mismo ID que ves aquí.</p>
+          <p>El botón lanza las 19 pruebas contra dos instancias aisladas de la aplicación, una con el servicio de riesgo en «aprobado» y otra en «rechazado». Cada ejecución usa datos sintéticos que se borran al terminar y genera su propio reporte oficial de Playwright, identificado con el mismo ID que ves aquí.</p>
         </div>
         <button id="run-suite" class="button-primary" type="button">Ejecutar suite</button>
       </div>
@@ -368,7 +368,7 @@
         <div class="defect-body">
           <div class="defect-text">
             <h4>Impacto</h4>
-            <p>Un cliente termina con saldo negativo sin que la aplicación lo advierta. Ocurre siempre que el valor de la operación cubre el saldo pero el valor más el 10 % no lo cubre: con saldo de 1 000, cualquier operación por encima de 909,09 y hasta 1 000. No depende de la concurrencia ni del azar.</p>
+            <p>Un cliente termina con saldo negativo sin que la aplicación lo advierta. Ocurre siempre que el valor de la operación cubre el saldo pero el valor más el 10 % no lo cubre: con saldo de $ 1.000, cualquier operación por encima de $ 909,09 y hasta $ 1.000. No depende de la concurrencia ni del azar.</p>
             <h4>Regla de negocio afectada</h4>
             <p>La aplicación rechaza una operación con <code>insufficient balance</code> cuando el saldo no la cubre, pero luego descuenta el valor <strong>más</strong> un cargo del 10 %. La validación y el descuento usan montos distintos. El enunciado no menciona el cargo; lo conservé como comportamiento observado.</p>
             <h4>Precondiciones</h4>
@@ -377,33 +377,33 @@
             </ul>
             <h4>Datos de prueba</h4>
             <ul>
-              <li>Saldo inicial: <strong>1 000</strong>.</li>
-              <li>Valor de la operación: <strong>1 000</strong>.</li>
+              <li>Saldo inicial: <strong>$ 1.000</strong>.</li>
+              <li>Valor de la operación: <strong>$ 1.000</strong>.</li>
               <li>Cliente con documento único de 10 dígitos, generado por la suite.</li>
             </ul>
             <h4>Pasos para reproducir</h4>
             <ol>
-              <li>En «1. Crear cliente», registra un cliente con saldo inicial de 1 000.</li>
-              <li>En «2. Ejecutar operación», elige ese cliente y escribe 1 000 como valor.</li>
+              <li>En «1. Crear cliente», registra un cliente con saldo inicial de $ 1.000 (escribe 1000).</li>
+              <li>En «2. Ejecutar operación», elige ese cliente y escribe 1000 como valor.</li>
               <li>Presiona «Realizar operación».</li>
               <li>En «3. Consultar resultado», revisa el saldo y el historial.</li>
             </ol>
             <h4>Resultado esperado</h4>
-            <p>La aplicación rechaza la operación por saldo insuficiente, porque el descuento total sería 1 100. El saldo nunca queda por debajo de cero.</p>
+            <p>La aplicación rechaza la operación por saldo insuficiente, porque el descuento total sería $ 1.100. El saldo nunca queda por debajo de cero.</p>
             <h4>Resultado obtenido</h4>
-            <p>La operación se aprueba (HTTP 201) y el saldo queda en <strong>−100</strong>.</p>
+            <p>La operación se aprueba (HTTP 201) y el saldo queda en <strong>-$ 100</strong>.</p>
             <h4>Evidencia y trazabilidad</h4>
             <ul>
               <li>Prueba: <a href="https://github.com/libanielvargas/periferia-lider-qe-quality-engineering-2026/blob/main/tests/e2e/defectos-conocidos.spec.js" target="_blank" rel="noopener"><code>tests/e2e/defectos-conocidos.spec.js</code></a>, «DEF-01 · Defecto abierto (fallo esperado)…».</li>
-              <li>En el reporte de cada ejecución aparece como fallo esperado.</li>
+              <li>Se marca como fallo esperado solo después de comprobar que se reprodujo este defecto. Un error distinto la pone en rojo y, si el defecto desaparece, avisa que hay que retirar la marca (<a href="/revision/evidencias/e2e/defectos-falla-controlada.txt">control con fallas inyectadas</a>).</li>
               <li><a href="/revision/evidencias/baseline/sondeo-defectos-api.txt">Sondeo inicial por API</a>, sobre la aplicación original.</li>
             </ul>
             <h4>Observaciones y riesgos</h4>
             <p>En <code>src/server.js</code>, la validación es <code>client.balance &lt; amount</code> y el descuento, <code>amount + amount * 0.1</code>. La corrección depende de una decisión de negocio: validar contra el total que se descuenta o redefinir el cargo. Hasta resolverla, un saldo positivo no garantiza que la siguiente operación sea segura.</p>
           </div>
           <figure class="defect-evidence">
-            <img src="/evidencias/def-01-interfaz.webp" alt="Interfaz de la aplicación: operación de 1 000 aprobada y saldo del cliente en −100" width="1200" height="1104" loading="lazy" />
-            <figcaption>Reproducción en la interfaz con los pasos anteriores: operación aprobada y saldo de −100 según la API.</figcaption>
+            <img src="/evidencias/def-01-interfaz.webp" alt="Interfaz de la aplicación: operación de $ 1.000 aprobada y saldo del cliente en -$ 100" width="1200" height="1104" loading="lazy" />
+            <figcaption>Reproducción en la interfaz con los pasos anteriores: operación aprobada y saldo de -$ 100 según la API.</figcaption>
           </figure>
         </div>
       </article>
@@ -421,7 +421,7 @@
         <div class="defect-body">
           <div class="defect-text">
             <h4>Impacto</h4>
-            <p>La pérdida no tiene límite: cada solicitud simultánea adicional vuelve a descontar. En la reproducción, un saldo de 100 terminó en −395, es decir, se descontaron 495. Basta con que lleguen solicitudes al mismo tiempo, algo que provocan los reintentos de red, un doble clic o una integración.</p>
+            <p>La pérdida no tiene límite: cada solicitud simultánea adicional vuelve a descontar. En la reproducción, un saldo de $ 100 terminó en -$ 395, es decir, se descontaron $ 495. Basta con que lleguen solicitudes al mismo tiempo, algo que provocan los reintentos de red, un doble clic o una integración.</p>
             <h4>Regla de negocio afectada</h4>
             <p>El saldo debe validarse y descontarse como una sola operación. La aplicación valida el saldo, espera la respuesta del servicio de riesgo (entre 150 y 1 050 ms) y solo después descuenta. Durante esa espera, las demás solicitudes leen el mismo saldo sin descontar.</p>
             <h4>Precondiciones</h4>
@@ -431,31 +431,32 @@
             </ul>
             <h4>Datos de prueba</h4>
             <ul>
-              <li>Saldo inicial: <strong>100</strong>.</li>
-              <li>Cinco operaciones de <strong>90</strong>, enviadas al mismo tiempo.</li>
+              <li>Saldo inicial: <strong>$ 100</strong>.</li>
+              <li>Cinco operaciones de <strong>$ 90</strong>, enviadas al mismo tiempo.</li>
             </ul>
             <h4>Pasos para reproducir</h4>
             <ol>
-              <li>Crea un cliente con saldo de 100: <code>POST /api/clients</code>. Anota su ID.</li>
+              <li>Crea un cliente con saldo de $ 100: <code>POST /api/clients</code>. Anota su ID.</li>
               <li>Envía en paralelo cinco <code>POST /api/operations</code> con <code>{"clientId": ID, "amount": 90}</code>. Por ejemplo, con <code>Promise.all</code> o con cinco <code>curl</code> en segundo plano.</li>
               <li>Consulta <code>GET /api/clients/ID/summary</code>.</li>
             </ol>
             <h4>Resultado esperado</h4>
-            <p>Se aprueba una sola operación (90 más 9 de cargo) y el saldo queda en 1. Las otras cuatro se rechazan por saldo insuficiente.</p>
+            <p>Se aprueba una sola operación ($ 90 más $ 9 de cargo) y el saldo queda en $ 1. Las otras cuatro se rechazan por saldo insuficiente.</p>
             <h4>Resultado obtenido</h4>
-            <p>Las cinco operaciones se aprueban (HTTP 201), quedan cinco registros y el saldo termina en <strong>−395</strong>.</p>
+            <p>Las cinco operaciones se aprueban (HTTP 201), quedan cinco registros y el saldo termina en <strong>-$ 395</strong>.</p>
             <h4>Evidencia y trazabilidad</h4>
             <ul>
               <li>Prueba: <a href="https://github.com/libanielvargas/periferia-lider-qe-quality-engineering-2026/blob/main/tests/e2e/defectos-conocidos.spec.js" target="_blank" rel="noopener"><code>tests/e2e/defectos-conocidos.spec.js</code></a>, «DEF-02 · Defecto abierto (fallo esperado)…».</li>
-              <li>Reproducido en las 5 repeticiones de la <a href="/revision/evidencias/e2e/estabilidad-repeat-each-5-15.txt">prueba de estabilidad</a>.</li>
+              <li>Reproducido en las 5 repeticiones de la <a href="/revision/evidencias/e2e/estabilidad-repeat-each-5-19.txt">prueba de estabilidad</a>.</li>
+              <li>Se marca como fallo esperado solo después de comprobar que se reprodujo este defecto. Un error distinto la pone en rojo y, si el defecto desaparece, avisa que hay que retirar la marca (<a href="/revision/evidencias/e2e/defectos-falla-controlada.txt">control con fallas inyectadas</a>).</li>
               <li><a href="/revision/evidencias/baseline/sondeo-defectos-api.txt">Sondeo inicial por API</a>, sobre la aplicación original.</li>
             </ul>
             <h4>Observaciones y riesgos</h4>
             <p>La persistencia es un archivo JSON que se lee y se reescribe completo, sin bloqueo. La corrección requiere que la validación y el descuento sean atómicos, por ejemplo con un bloqueo por cliente o una transacción en una base de datos real. Es el defecto que bloquearía una salida a producción.</p>
           </div>
           <figure class="defect-evidence">
-            <img src="/evidencias/def-02-interfaz.webp" alt="Historial del cliente en la interfaz: cinco operaciones de 90 aprobadas y saldo de −395" width="1200" height="1085" loading="lazy" />
-            <figcaption>Envié las cinco operaciones en paralelo por API. Para cargar el resumen en la interfaz intenté una sexta operación de 90, que la aplicación rechazó por saldo insuficiente porque el saldo ya era −395. El historial muestra las cinco aprobadas.</figcaption>
+            <img src="/evidencias/def-02-interfaz.webp" alt="Historial del cliente en la interfaz: cinco operaciones de $ 90 aprobadas y saldo de -$ 395" width="1200" height="1085" loading="lazy" />
+            <figcaption>Envié las cinco operaciones en paralelo por API. Para cargar el resumen en la interfaz intenté una sexta operación de $ 90, que la aplicación rechazó por saldo insuficiente porque el saldo ya era -$ 395. El historial muestra las cinco aprobadas.</figcaption>
           </figure>
         </div>
       </article>

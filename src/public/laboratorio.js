@@ -1,6 +1,7 @@
 // Capa de presentación sobre la aplicación entregada. No modifica app.js ni el backend:
 // observa lo que app.js escribe en pantalla y consulta la API existente para mostrarlo con
 // más contexto. Nunca calcula saldos ni resultados; solo presenta lo que devuelve la API.
+// Todo dato de la API se escribe con textContent: nunca se interpreta como HTML.
 //
 // Límite de la API: no existe un endpoint para listar o buscar clientes. Por eso los selectores
 // solo ofrecen los clientes creados desde este navegador o agregados por su ID interno.
@@ -168,6 +169,8 @@ document.addEventListener('submit', event => {
   if (event.target !== operationForm) return;
   hiddenClientId.value = clientSelect.value;
   operatedClientId = clientSelect.value;
+  // La operación cambia el saldo: el resumen guardado de ese cliente ya no sirve.
+  summaries.delete(operatedClientId);
   // Sin una consulta elegida, «3. Consultar resultado» sigue al cliente operado, como en app.js.
   if (!summaryClient.value) summaryClient.value = operatedClientId;
   operationCard.hidden = true;
@@ -251,7 +254,8 @@ function renderHistory(data) {
   history.hidden = false;
 }
 
-// Mismo contenido y formato que el resumen de app.js, escrito con textContent.
+// Mismo contenido que el resumen de app.js, escrito con textContent. El saldo usa el mismo
+// formato en pesos que el resto de la página; el valor es el que devuelve la API.
 function renderSummary(data) {
   const latest = data.operations[0];
   const cell = (label, value, id) => {
@@ -264,17 +268,15 @@ function renderSummary(data) {
   summary.className = 'summary';
   summary.replaceChildren(
     cell('Cliente', data.client.name),
-    cell('Saldo', `$${Number(data.client.balance).toFixed(2)}`, 'summary-balance'),
+    cell('Saldo', money(data.client.balance), 'summary-balance'),
     cell('Última operación', latest ? latest.status : 'Sin operaciones', 'summary-status')
   );
-  summaryObserver.takeRecords();
   renderHistory(data);
 }
 
 function showSummaryMessage(text) {
   summary.className = 'summary empty';
   summary.textContent = text;
-  summaryObserver.takeRecords();
   history.hidden = true;
 }
 
@@ -294,23 +296,22 @@ async function consult(id) {
   }
 }
 
-// app.js escribe el resumen del cliente operado. Si la persona no ha elegido uno, la consulta
-// adopta ese cliente; si eligió otro, se vuelve a mostrar el suyo.
-const summaryObserver = new MutationObserver(() => {
-  if (!operatedClientId) return;
-  // Señal observable para las pruebas: cuántas veces app.js ha escrito el resumen.
-  summary.dataset.appWrites = String(Number(summary.dataset.appWrites || 0) + 1);
-  summaryObserver.takeRecords();
-  if (summaryClient.value === operatedClientId && summary.querySelector('#summary-balance')) {
-    getJson(`/api/clients/${operatedClientId}/summary`).then(data => {
-      summaries.set(operatedClientId, data);
-      if (summaryClient.value === operatedClientId) renderHistory(data);
-    }).catch(() => { history.hidden = true; });
-    return;
+// app.js escribe el resumen con innerHTML e interpola el nombre del cliente sin escaparlo
+// (hallazgo P3 de DIAGNOSTICO.md): un nombre con etiquetas se interpretaría como HTML. Esta
+// capa reemplaza esa escritura, solo en este elemento, antes de que el navegador analice la
+// cadena: la descarta sin interpretarla y presenta los datos de la API con textContent.
+// Si la persona no ha elegido un cliente, la consulta adopta el operado; si eligió otro,
+// se vuelve a mostrar el suyo.
+const readInnerHtml = Object.getOwnPropertyDescriptor(Element.prototype, 'innerHTML').get;
+Object.defineProperty(summary, 'innerHTML', {
+  configurable: true,
+  get() { return readInnerHtml.call(this); },
+  set() {
+    // Señal observable para las pruebas: cuántas veces app.js ha escrito el resumen.
+    summary.dataset.appWrites = String(Number(summary.dataset.appWrites || 0) + 1);
+    consult(summaryClient.value || operatedClientId || '');
   }
-  consult(summaryClient.value);
 });
-summaryObserver.observe(summary, { childList: true });
 
 summaryClient.addEventListener('change', () => consult(summaryClient.value));
 

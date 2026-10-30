@@ -1,0 +1,32 @@
+Control de falsos verdes en tests/e2e/defectos-conocidos.spec.js — 2026-10-29, equipo local, puertos 4377/4378.
+Configuración de control: reutiliza playwright.config.js y cambia un solo factor. El repositorio no se modifica.
+  riesgo-caido: RISK_SERVICE_URL apunta a un puerto cerrado (falla de red que NO es el defecto).
+  corregida:    copia aislada de la app con DEF-01 y DEF-02 corregidos (validación con el cargo y operaciones en serie).
+
+==================== riesgo-caido-specs-originales
+Especificación anterior (commit 06159bf): test.fail() antes de preparar los datos.
+    Expected to fail, but passed.
+  1 failed
+  1 passed (838ms)
+
+==================== riesgo-caido-specs-nuevas
+Especificación nueva.
+    Error: Resultado distinto de DEF-01: HTTP 503, {"error":"risk validation unavailable"}, saldo 1000
+    Error: Resultado distinto de DEF-02: [{"http":503,"body":{"error":"risk validation unavailable"}},{"http":503,"body":{"error":"risk validation unavailable"}},{"http":503,"body":{"error":"risk validation unavailable"}},{"http":503,"body":{"error":"risk validation unavailable"}},{"http":503,"body"
+  2 failed
+
+==================== corregida-specs-nuevas
+Especificación nueva.
+    Error: DEF-01 ya no se reproduce (la operación se rechaza por saldo insuficiente y el saldo queda intacto). Revisa la corrección y retira la marca de defecto conocido de esta prueba.
+    Error: DEF-02 ya no se reproduce (1 aprobada y saldo 1). Revisa la corrección y retira la marca de defecto conocido de esta prueba.
+  2 failed
+
+==================== normal-specs-nuevas
+Especificación nueva.
+  2 passed (1.8s)
+
+Lectura:
+- Especificación anterior con el servicio de riesgo caído: DEF-01 cuenta como «fallo esperado» (1 passed) aunque el defecto no se reprodujo: falso verde. DEF-02 falló con «Expected to fail, but passed», que tampoco distingue una caída del servicio de una corrección.
+- Especificación nueva con la misma falla: ambas pruebas fallan con «Resultado distinto de DEF-0x» (HTTP 503).
+- Con los defectos corregidos: ambas fallan con el aviso para revisar y retirar la marca.
+- Sin fallas inyectadas: 2 passed (DEF-01 y DEF-02 reproducidos y marcados como fallo esperado).

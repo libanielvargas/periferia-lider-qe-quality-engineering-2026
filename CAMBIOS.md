@@ -31,3 +31,12 @@ El historial de Git (`git log --reverse`) es la fuente principal. Este resumen s
 18. **Publicación:** registro DNS creado, certificado emitido y suite ejecutada desde el botón de https://prueba-tecnica-qa-lead-periferia-it.qirava.co (`20261029-212552-d363`): 13 conformes y 2 defectos conocidos.
 19. **Ajustes de cierre:** consulta independiente entre clientes, resultados de Playwright como protagonistas del ejecutor, pie de página con contactos, evidencias del punto de partida enlazadas y dos pruebas nuevas (17 en total). Detalle en `DECISIONES.md`.
 20. **Vistas de los retos 1, 3, 4 y 6:** presentación en el navegador generada desde los documentos y evidencias originales, con encabezado y pie compartidos con la portada y una prueba de aceptación (18 pruebas en total). Detalle en `DECISIONES.md`.
+21. **Correcciones de la revisión independiente:**
+    - Resumen protegido en la capa pública: los datos de la API se muestran como texto antes de insertarse.
+    - DEF-01 y DEF-02 se marcan como fallo esperado solo si se reproducen.
+    - En GitHub Actions, capturas, videos y trazas solo en fallos.
+    - Diagnóstico en una página A4.
+    - Tiempos corregidos.
+    - Formato de pesos unificado.
+
+    19 pruebas en total. Detalle en `DECISIONES.md`.

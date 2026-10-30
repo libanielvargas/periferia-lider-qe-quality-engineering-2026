@@ -1,0 +1,18 @@
+Prueba tests/e2e/resumen-texto-seguro.spec.js — 2026-10-29, equipo local, ambiente aislado (puertos 4377/4378, base test-data/ propia).
+Contenido inofensivo: nombre «<em>Marca Evaluacion</em> <img src="/favicon.png" onload/onerror que solo escribe document.body.dataset.sonda>».
+
+1. Con la protección (src/public/laboratorio.js intercepta summary.innerHTML antes de que se interprete):
+   1 passed. Resumen, historial y tarjetas muestran el nombre literal; 0 elementos <em>/<img> en esas zonas; sonda sin definir.
+   La API conserva el nombre tal como se registró.
+
+2. Mutación «limpiar después de insertar»: el setter deja que el navegador interprete la cadena de app.js
+   y luego reescribe el resumen como texto (el contador data-app-writes se conserva).
+   Resultado: 1 failed
+     Error: expect(received).toBeUndefined()
+     Received: "html"
+   El manejador de la imagen se ejecutó aunque el contenido se reemplazó enseguida: limpiar después no protege.
+
+3. Mutación «sin protección»: la intercepción no se instala.
+   Resultado: 1 failed (la escritura de app.js no pasa por la capa pública: data-app-writes no aumenta).
+
+Ambas mutaciones se revirtieron; laboratorio.js quedó idéntico a la versión protegida (cmp sin diferencias).

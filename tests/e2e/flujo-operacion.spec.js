@@ -13,7 +13,7 @@ test.describe('Flujo completo de operación aprobada', () => {
     expect(expectedBalance).toBe(890);
 
     const clientId = await test.step(
-      'Dado: un cliente con saldo inicial de $1 000,00 es registrado en el sistema vía la interfaz web',
+      `Dado: un cliente con saldo inicial de ${formatCurrency(client.balance)} es registrado en el sistema vía la interfaz web`,
       () => operationsPage.createClient(client)
     );
 
@@ -30,7 +30,7 @@ test.describe('Flujo completo de operación aprobada', () => {
     );
 
     const operation = await test.step(
-      `Cuando: se envía una operación de $${amount}.00 — el sistema aplica cargo de servicio del 10 % ($${serviceCharge}) → total descontado $${totalDeducted}`,
+      `Cuando: se envía una operación de ${formatCurrency(amount)} — el sistema aplica cargo de servicio del 10 % (${formatCurrency(serviceCharge)}) → total descontado ${formatCurrency(totalDeducted)}`,
       async () => {
         await operationsPage.executeOperation(clientId, amount);
         return operationsPage.operationOutcome();
@@ -39,7 +39,7 @@ test.describe('Flujo completo de operación aprobada', () => {
     expect(operation.status).toBe('APPROVED');
 
     await test.step(
-      `Entonces: la interfaz muestra estado APPROVED y saldo resultante $${expectedBalance.toFixed(2)} (cálculo: $1 000 − $${totalDeducted} = $${expectedBalance})`,
+      `Entonces: la interfaz muestra estado APPROVED y saldo resultante ${formatCurrency(expectedBalance)} (cálculo: ${formatCurrency(client.balance)} − ${formatCurrency(totalDeducted)} = ${formatCurrency(expectedBalance)})`,
       async () => {
         await operationsPage.expectSummary({ name: client.name, balance: formatCurrency(expectedBalance), status: 'APPROVED' });
         await expect(operationsPage.operationCard).toContainText('Operación aprobada');
@@ -49,7 +49,7 @@ test.describe('Flujo completo de operación aprobada', () => {
     );
 
     const evidence = await test.step(
-      'Y: la API confirma el registro completo: operación con referencia externa UUID, saldo $890.00 y contador de operaciones igual a 1',
+      `Y: la API confirma el registro completo: operación con referencia externa UUID, saldo ${formatCurrency(expectedBalance)} y contador de operaciones igual a 1`,
       async () => {
         const savedOperation = await api.getOperation(operation.id);
         expect(savedOperation).toMatchObject({ id: operation.id, client_id: clientId, amount, status: 'APPROVED' });

@@ -50,6 +50,9 @@ export function expectedBalanceAfterApproval(balance, amount) {
   return balance - amount * (1 + dataRules.operation.serviceChargeRate);
 }
 
+// Mismo formato en pesos que presenta la página (src/public/laboratorio.js).
+const cop = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0, maximumFractionDigits: 2 });
+
 export function formatCurrency(value) {
-  return `$${Number(value).toFixed(2)}`;
+  return cop.format(Number(value));
 }

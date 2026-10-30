@@ -1,0 +1,12 @@
+Comando: E2E_PORT_APPROVED=4377 E2E_PORT_REJECTED=4378 npx playwright test --repeat-each=5 --workers=2 --reporter=dot
+Fecha: 2026-10-30 (equipo local). Suite de 19 pruebas: 5 de interfaz con confirmación por API, 12 de API y 2 de presentación.
+Resultado: 95 de 95 corridas con el resultado esperado. DEF-01 y DEF-02 cuentan como fallo esperado solo después de reproducir su condición.
+Condición: 2 workers, igual que en CI. Un intento previo con 4 workers, en el mismo equipo con 8 GB de RAM y 12 GB de swap en uso,
+terminó con 13 pruebas de navegador por tiempo agotado («Target page, context or browser has been closed», traza truncada) en las
+dos primeras rondas y sin fallas de aserción; se atribuye a falta de memoria del equipo, no a la suite, y no se usa como evidencia.
+
+
+Running 95 tests using 2 workers
+················································································
+···············
+  95 passed (2.4m)

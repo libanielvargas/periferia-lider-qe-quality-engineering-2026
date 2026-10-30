@@ -47,6 +47,11 @@ test.describe('Presentación de la entrega', () => {
       await page.goto('/retos/diagnostico');
       await expect(page.locator('.finding')).toHaveCount(findings.length);
       expect(await page.locator('.finding .prio').allTextContents()).toEqual(findings.map(line => cell(line, 0)));
+      // Cada código de evidencia (E1, E2…) de la tabla se presenta como enlace a su archivo.
+      const codes = findings.map(line => cell(line, 5).match(/E\d+/g).length);
+      for (const [i, count] of codes.entries()) {
+        await expect(page.locator('.finding').nth(i).locator('.finding-fields div:last-child a')).toHaveCount(count);
+      }
     });
 
     await test.step('Y: la revisión del PR muestra los 9 hallazgos, su severidad, la decisión y el archivo revisado', async () => {

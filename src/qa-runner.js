@@ -25,6 +25,9 @@ const evidence = new Set([
   'e2e/estabilidad-repeat-each-5-17.txt',
   'e2e/estabilidad-repeat-each-5-18.txt',
   'e2e/mutacion-pending-detectada.txt',
+  'e2e/estabilidad-repeat-each-5-19.txt',
+  'e2e/defectos-falla-controlada.txt',
+  'e2e/resumen-texto-seguro-mutacion.txt',
   'performance/summary-completa-5m.json',
   'performance/k6-completa-50vus-5m.txt',
   'performance/summary-reducida-30s.json',
@@ -34,6 +37,7 @@ const evidence = new Set([
   'pipeline/actionlint-original.txt',
   'pipeline/actionlint-corregido.txt',
   'pipeline/simulacion-local-pasos-ci.txt',
+  'pipeline/adjuntos-por-origen.txt',
   'publicacion/escaneo-secretos.txt',
   'publicacion/github-actions-run-40805453568.md'
 ]);

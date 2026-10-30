@@ -12,12 +12,12 @@ test.describe('Reglas de negocio negativas', () => {
     const { client, amount } = clientWithInsufficientBalance();
 
     const clientId = await test.step(
-      `Dado: un cliente con saldo insuficiente ($${client.balance}) es registrado en el sistema`,
+      `Dado: un cliente con saldo insuficiente (${formatCurrency(client.balance)}) es registrado en el sistema`,
       () => operationsPage.createClient(client)
     );
 
     await test.step(
-      `Cuando: se intenta ejecutar una operación de $${amount} que supera el saldo disponible`,
+      `Cuando: se intenta ejecutar una operación de ${formatCurrency(amount)} que supera el saldo disponible`,
       () => operationsPage.executeOperation(clientId, amount)
     );
 
@@ -112,7 +112,7 @@ test.describe('Reglas de negocio negativas', () => {
 
   test('rechaza operación para un cliente inexistente', async ({ api }) => {
     const response = await test.step(
-      'Cuando: se envía una operación de $100 para el ID de cliente 999999, que no existe en el sistema',
+      `Cuando: se envía una operación de ${formatCurrency(100)} para el ID de cliente 999999, que no existe en el sistema`,
       () => api.postOperation(999999, 100)
     );
 

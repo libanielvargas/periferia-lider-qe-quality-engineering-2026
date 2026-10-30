@@ -1,0 +1,17 @@
+Adjuntos del reporte según el origen de la ejecución — 2026-10-29, equipo local, suite completa (19 pruebas).
+Ambos orígenes con CI=true. El origen se distingue así (tests/support/fixtures.js):
+  pipeline:      GITHUB_ACTIONS=true y sin QA_RUN_ID (el ejecutor web no hereda GITHUB_ACTIONS: src/qa-runner.js filtra el entorno).
+  ejecutor web:  QA_RUN_ID definido por src/qa-runner.js.
+
+Origen pipeline (GITHUB_ACTIONS=true): 19 esperadas, 0 inesperadas
+  passed  crea cliente, ejecuta operación, valida…   → application/json
+  passed  rechaza la operación por saldo insuficie…  → application/json
+  passed  una operación rechazada por riesgo queda…  → application/json
+  failed (esperado) DEF-01 / DEF-02                   → text/markdown (contexto del error, sin imagen)
+  Carpeta data/ del reporte HTML: 2 .md, 0 .png, 0 .webm, 0 .zip
+
+Origen ejecutor web (QA_RUN_ID): 19 esperadas, 0 inesperadas
+  passed  crea cliente…, saldo insuficiente…, rechazada por riesgo… → image/png + application/json
+  Carpeta data/ del reporte HTML: 2 .md, 3 .png
+
+En ambos orígenes, un fallo inesperado conserva captura, video y traza (playwright.config.js: only-on-failure / retain-on-failure).

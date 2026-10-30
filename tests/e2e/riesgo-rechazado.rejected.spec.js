@@ -11,7 +11,7 @@ test('una operación rechazada por riesgo queda registrada y no descuenta saldo'
   );
 
   const operation = await test.step(
-    'Cuando: se envía una operación de $100 — el motor de riesgo la intercepta y emite veredicto REJECTED',
+    `Cuando: se envía una operación de ${formatCurrency(100)} — el motor de riesgo la intercepta y emite veredicto REJECTED`,
     async () => {
       await operationsPage.executeOperation(clientId, 100);
       return operationsPage.operationOutcome();

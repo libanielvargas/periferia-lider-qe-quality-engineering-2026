@@ -4,9 +4,11 @@
 
 | Fase | Inicio | Fin | Nota |
 |---|---|---|---|
-| Análisis inicial del repositorio (lectura de código, sin ejecutar) | Sesión previa | — | Hora exacta no registrada; **completar por el candidato**. |
-| Ejecución (baseline de Git a cierre) | 2026-10-28 16:24 (-05) | 2026-10-28 16:38 (-05) — ~20 min de reloj, de los cuales 5 min fueron la corrida k6 completa | Horas tomadas del reloj local y del historial de commits. |
-| Fase 2: presentación, ejecutor público, publicación y preparación del despliegue | 2026-10-28 ~18:40 (-05) | 2026-10-28 (cierre en `CAMBIOS.md`) | Incluye ~1 h perdida por el incidente de disco descrito abajo. Fuera de las 3 h del reto: es material de portafolio y despliegue, no parte del enunciado. |
+| Análisis inicial del repositorio (lectura de código, sin ejecutar) | No registrado | No registrado | No hay hora de inicio ni de fin en el historial ni en los registros. No se estima. |
+| Ejecución (commit del baseline a commit de cierre) | 2026-10-28 16:24:36 (-05) | 2026-10-28 16:38:56 (-05) | **14 minutos** entre esos dos commits. El reporte HTML se agregó a las 16:39:02. La evidencia de la corrida k6 completa de 5 min entró en el commit de las 16:38. Son horas de commit: no muestran cuándo empezó el trabajo de ese tramo. |
+| Fase 2: presentación, ejecutor público, publicación y preparación del despliegue | 2026-10-28 ~18:40 (-05) | 2026-10-28 (cierre en `CAMBIOS.md`) | Incluye ~1 h perdida por el incidente de disco descrito abajo. No forma parte del enunciado: es material de portafolio y despliegue. |
+
+**Límite de 3 horas.** Lo registrado solo cubre el tramo de ejecución (14 minutos entre commits). El análisis inicial no tiene hora registrada, así que con esta evidencia no puedo afirmar si el total cumplió o excedió el límite.
 
 ## Decisiones técnicas
 
@@ -16,7 +18,7 @@
    - El `PENDING` fijo del resumen.
 
    No se tocaron reglas de negocio. El **cargo del 10 %** se conserva como comportamiento observado: 1000 − (100 + 10) = **890**, valor que verifica la prueba principal.
-3. **Defectos conocidos visibles, no ocultos.** El saldo negativo (DEF-01) se automatizó con `test.fail()`: aparece como "expected to fail" y se pone en rojo cuando se corrija. El doble gasto concurrente y las validaciones faltantes quedan documentados en `DIAGNOSTICO.md`, sin cambiar el código.
+3. **Defectos conocidos visibles, no ocultos.** DEF-01 (saldo negativo) y DEF-02 (doble gasto concurrente) son defectos abiertos, automatizados como fallo esperado. Cada prueba comprueba primero que se reprodujo la condición exacta del defecto y solo entonces activa `test.fail()`. Un error distinto (preparación, red, servicio de riesgo caído) la pone en rojo, y si el defecto desaparece falla con el aviso de retirar la marca (`evidencias/e2e/defectos-falla-controlada.txt`). Las validaciones faltantes de la API quedan documentadas en `DIAGNOSTICO.md`, sin cambiar el código.
 4. **Determinismo del servicio de riesgo.** Hay dos proyectos de Playwright (`riesgo-aprobado` y `riesgo-rechazado`), cada uno con su propio servidor (`RISK_MODE=approved` y `rejected`), puerto (4310 y 4311) y base JSON en `test-data/`. Nunca se reutiliza un servidor existente; durante el diagnóstico se reprodujo cómo esa opción conectaba la suite a un proceso viejo.
 5. **Diseño de la suite.** Se usa un Page Object sencillo (`tests/pages/operations-page.js`), un cliente API, fixtures y pasos con `test.step`. Las esperas son por condición, incluida la del refresco aleatorio del resumen. No hay reintentos (`retries: 0`) para que la inestabilidad se vea. No se agregaron Cucumber ni Screenplay.
 6. **Evidencias.**
@@ -206,7 +208,7 @@ La suite pasó de 15 a 17 pruebas: 15 conformes y 2 defectos conocidos. Repetida
 
 Verifiqué que la prueba detecta errores: al alterar a propósito el p95 mostrado, falló.
 
-**Estado de la suite.** Ahora tiene 18 pruebas: 16 conformes y 2 defectos conocidos. Repetida cinco veces, dio 90 de 90 (`evidencias/e2e/estabilidad-repeat-each-5-18.txt`).
+**Estado de la suite en ese momento.** 18 pruebas: 16 conformes y 2 defectos conocidos. Repetida cinco veces, dio 90 de 90 (`evidencias/e2e/estabilidad-repeat-each-5-18.txt`).
 
 ### Incidente: Docker llenó el disco de la Mac
 
@@ -222,13 +224,53 @@ El filtro de red reveló que la página dependía de Google Fonts, y ahora la fu
 
 Instalé el commit `e33bc04` y ejecuté la suite en el servidor: 13 conformes y 2 defectos conocidos en 62 s, con `qirava.co` respondiendo 200 durante toda la ejecución. Después actualicé a `f522eb9` y, con el registro DNS creado, ejecuté la suite desde el botón de la página pública (https://prueba-tecnica-qa-lead-periferia-it.qirava.co): 13 conformes y 2 defectos conocidos. La evidencia está en `evidencias/publicacion/despliegue-vps-2026-10-29.md`.
 
+### Correcciones de la revisión independiente (29 de octubre)
+
+La revisión partió de la ejecución pública `20261029-235105-df44` (16 conformes y 2 defectos conocidos).
+
+**1. Resumen protegido en la capa pública.** `app.js` arma el resumen con `innerHTML` e interpola el nombre del cliente sin escaparlo.
+- **Qué cambié:** `laboratorio.js` redefine `innerHTML` solo en el elemento `#summary`. Cuando `app.js` escribe, la cadena se descarta sin que el navegador la interprete, y los datos de `GET /api/clients/:id/summary` se presentan con `textContent`.
+- **Por qué así:** limpiar después de insertar no sirve, porque los manejadores del HTML ya se habrían ejecutado.
+- **Qué no cambió:** `app.js`, la API y las reglas financieras quedan como evidencia reproducible.
+- **Hallazgo:** sigue en `DIAGNOSTICO.md` como pendiente en la API y en `app.js`.
+- **Comprobación:** `tests/e2e/resumen-texto-seguro.spec.js` usa contenido inofensivo en un ambiente aislado y cubre la operación y la consulta. Dos mutaciones, la de quitar la protección y la de limpiar después de insertar, hacen fallar la prueba (`evidencias/e2e/resumen-texto-seguro-mutacion.txt`).
+
+**2. Sin falsos verdes en los defectos conocidos.** `test.fail()` se activaba antes de preparar los datos. Ahora cada prueba:
+1. Prepara los datos con verificaciones normales.
+2. Clasifica el resultado en tres casos:
+   - Firma exacta del defecto: solo entonces se activa la marca de fallo esperado.
+   - Defecto corregido: la prueba falla con el aviso de retirar la marca.
+   - Cualquier otro resultado: la prueba falla.
+
+Con el servicio de riesgo caído, la versión anterior daba DEF-01 como «fallo esperado». La nueva falla en ambas pruebas (`evidencias/e2e/defectos-falla-controlada.txt`).
+
+**3. Capturas del pipeline.** `attachEvidence()` distingue el origen de la ejecución. Ambos orígenes definen `CI`, así que la variable `CI` no sirve para distinguirlos.
+- **GitHub Actions:** se reconoce por `GITHUB_ACTIONS`, que el ejecutor web no hereda porque filtra el entorno. Allí no se adjunta ninguna captura de pruebas exitosas; captura, video y traza quedan solo para fallos.
+- **Ejecutor web:** se reconoce por `QA_RUN_ID` y conserva la captura del resultado que consulta el evaluador.
+- **Comprobación:** `evidencias/pipeline/adjuntos-por-origen.txt`.
+
+**4. Diagnóstico en una página A4.** `DIAGNOSTICO.md` conserva los 13 hallazgos y cita la evidencia con códigos (E1–E16) que una leyenda resuelve a rutas. La vista web convierte cada código en enlace. `scripts/diagnostico-a4.mjs` lo imprime en A4 con Chromium:
+- márgenes de 12 mm, texto de 10 pt y tabla de 9 pt;
+- falla si ocupa más de una página o si algo queda recortado;
+- resultado: una página, sin recortes (`evidencias/diagnostico/diagnostico-a4.pdf`).
+
+**5. Tiempos.** El tramo de 16:24 a 16:38 son 14 minutos entre commits, no unos 20. El análisis inicial no tiene hora registrada, así que no afirmo si se cumplió el límite de 3 h.
+
+**6. Precisión de la presentación.**
+- La portada distingue las pruebas de flujo en la interfaz, las de API y las de presentación.
+- El diagnóstico aclara que la ruta estática bloqueó las 3 pruebas de interfaz y que la de API también dependía de un ID fijo.
+- DEF-01 y DEF-02 figuran como abiertos en todos los documentos.
+- Los saldos se muestran en un solo formato de pesos (`$ 1.000`). El resumen ya no usa `$890.00`. Los valores de la API no cambian.
+
+**Estado de la suite.** 19 pruebas: 17 conformes y 2 defectos conocidos. Repetida cinco veces con 2 workers, como en CI, dio 95 de 95 (`evidencias/e2e/estabilidad-repeat-each-5-19.txt`). Con 4 workers, en el mismo equipo con poca memoria libre, las pruebas de navegador agotaron el tiempo sin fallas de aserción; el archivo lo deja registrado.
+
 ## Pendientes y riesgos
 
 | Pendiente | Riesgo | Acción siguiente |
 |---|---|---|
-| DEF-02: doble gasto concurrente (saldo −395 reproducido) | Pérdida financiera | Bloqueo por cliente o transacción atómica; retirar `test.fail()` cuando se corrija. |
+| DEF-02: doble gasto concurrente (saldo -$ 395 reproducido) | Pérdida financiera | Bloqueo por cliente o transacción atómica; retirar `test.fail()` cuando se corrija. |
 | DEF-01: saldo negativo por el cargo del 10 % | Saldos negativos | Validar `balance >= amount * 1.1`; retirar `test.fail()`. |
-| Saldo inicial negativo o `null`, correo sin formato, XSS por `innerHTML` | Datos corruptos, ejecución de script | Validación en el servidor y `textContent` en el frontend; pruebas negativas. |
+| Saldo inicial negativo o `null`, correo sin formato, XSS por `innerHTML` en `app.js` | Datos corruptos; ejecución de script si se sirve `app.js` sin la capa pública | Validación en el servidor y `textContent` en `app.js`; pruebas negativas. La capa pública ya presenta los datos como texto. |
 | `qa-token-2026-visible` y `Admin2026!` siguen en el historial | Son valores ficticios sembrados por el enunciado (reto 5 y reto 6), no credenciales reales | En un sistema real: rotar y purgar el historial. Aquí se conservan porque son el objeto de la evaluación. |
 | Persistencia en JSON | No escala ni soporta varios procesos | Base de datos real para ambientes compartidos. |
 | Droplet de 1 GB | Durante una ejecución el portal responde más lento y la suite usa swap | Ampliar a 2 GB si la página tendrá uso frecuente (decisión de costo). |
